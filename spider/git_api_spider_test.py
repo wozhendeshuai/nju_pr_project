@@ -6,6 +6,13 @@ r = requests.get(url)
 
 print("Status Code:", r.status_code)
 print(r.json())
+
+import  json
+json_str=r.json()
+print(json_str)
+print('r body: ',r.json()['body'])
+print('json body: ',json_str['body'])
+print('json user login: ',json_str['user']['login'])
 # import requests
 # import pygal
 # from pygal.style import LightColorizedStyle as LCS, LightenStyle as LS
