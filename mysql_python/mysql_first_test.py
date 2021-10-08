@@ -16,7 +16,7 @@ print(data)
 url = 'https://api.github.com/repos/nodejs/node/pulls/40371'
 
 r = requests.get(url)
-
+#打印下看看
 print("Status Code:", r.status_code)
 json_str=r.json()
 print(json_str)
@@ -34,6 +34,7 @@ print('json merged_at: ',json_str['merged_at'])
 print('json merged: ',json_str['merged'])
 print('json comments_number: ',json_str['comments'])
 
+#2021-10-08T01:11:34Z时间转换2021-10-08 01:11:34
 def time_reverse(time_str):
     try:
         time_temp=time_str.replace('T',' ')
@@ -45,7 +46,7 @@ create_time=json_str['created_at'].replace('T',' ')
 create_time=create_time.replace('Z','')
 print(create_time)
 print('json created_at: ', time_reverse(json_str['created_at']))
-
+#SQL语句书写
 sql = """INSERT INTO nodejs_pr_test(
          pr_number,
          pr_url,
@@ -71,7 +72,7 @@ sqlData=(
          , time_reverse(json_str['merged_at'])
          , ((json_str['merged']==True) and 1 or 0)
          , json_str['comments'])
-
+#执行SQL
 cursor.execute(sql,sqlData)
 
 database.commit()
