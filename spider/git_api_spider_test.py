@@ -1,14 +1,15 @@
 import requests
 from utils.access_token import get_token
+
 url = 'https://api.github.com/repos/nodejs/node/pulls/13'
-access_token=get_token()
-headers={
-'Authorization': 'token ' + access_token
+access_token = get_token()
+headers = {
+    'Authorization': 'token ' + access_token
 }
-r = requests.get(url,headers=headers)
+r = requests.get(url, headers=headers)
 
 print("Status Code:", r.status_code)
-print('status header',r.headers)
+print('status header', r.headers)
 print(r.json())
 
 # import  json
