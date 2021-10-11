@@ -15,9 +15,9 @@ cursor.execute('select version()')
 data=cursor.fetchone()
 print(data)
 
-
+repo_name= 'nodejs/node'
 # 调用api接口
-url = 'https://api.github.com/repos/nodejs/node/pulls/40370'
+url = 'https://api.github.com/repos/' + repo_name + '/pulls/40370'
 access_token = get_token()
 headers = {
     'Authorization': 'token ' + access_token
@@ -57,6 +57,7 @@ print('json created_at: ', time_reverse(json_str['created_at']))
 sql = """INSERT INTO nodejs_pr_test(
          pr_number,
          pr_url,
+         repo_name,
          pr_user_id,
          pr_user_name,
          created_at,
@@ -71,10 +72,11 @@ sql = """INSERT INTO nodejs_pr_test(
          pr_line_add_num,
          pr_line_del_num,
          commits_num)
-         VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) """
+         VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) """
 sqlData=(
     json_str['number']
          , json_str['url']
+          ,repo_name
          , json_str['user']['id']
          , json_str['user']['login']
          , time_reverse(json_str['created_at'])
