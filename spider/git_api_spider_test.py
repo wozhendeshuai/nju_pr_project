@@ -1,18 +1,22 @@
 import requests
-# 调用api接口
-url = 'https://api.github.com/repos/nodejs/node/pulls/40371'
-
-r = requests.get(url)
+from utils.access_token import get_token
+url = 'https://api.github.com/repos/nodejs/node/pulls/13'
+access_token=get_token()
+headers={
+'Authorization': 'token ' + access_token
+}
+r = requests.get(url,headers=headers)
 
 print("Status Code:", r.status_code)
+print('status header',r.headers)
 print(r.json())
 
-import  json
-json_str=r.json()
-print(json_str)
-print('r body: ',r.json()['body'])
-print('json body: ',json_str['body'])
-print('json user login: ',json_str['user']['login'])
+# import  json
+# json_str=r.json()
+# print(json_str)
+# print('r body: ',r.json()['body'])
+# print('json body: ',json_str['body'])
+# print('json user login: ',json_str['user']['login'])
 # import requests
 # import pygal
 # from pygal.style import LightColorizedStyle as LCS, LightenStyle as LS
