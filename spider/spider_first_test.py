@@ -17,11 +17,16 @@ print(data)
 
 
 # 调用api接口
-url = 'https://api.github.com/repos/nodejs/node/pulls/40371'
+url = 'https://api.github.com/repos/nodejs/node/pulls/40370'
+access_token = get_token()
+headers = {
+    'Authorization': 'token ' + access_token
+}
+r = requests.get(url, headers=headers)
 
-r = requests.get(url)
-#打印下看看
 print("Status Code:", r.status_code)
+print('status header', r.headers)
+print(r.json())
 json_str=r.json()
 print(json_str)
 print('r body: ',r.json()['body'])
@@ -35,8 +40,13 @@ print('json updated_at: ',json_str['updated_at'])
 print('json close_at: ',json_str['closed_at'])
 print('json mergeable: ',((json_str['mergeable']==True ) and  1 or 0))
 print('json merged_at: ',json_str['merged_at'])
-print('json merged: ',json_str['merged'])
+print('json is_merged: ',json_str['merged'])
 print('json comments_number: ',json_str['comments'])
+print('json pr_body: ',json_str['body'])
+print('json pr_file_edit_num: ',json_str['changed_files'])
+print('json pr_line_add_num: ',json_str['additions'])
+print('json pr_line_del_num: ',json_str['deletions'])
+print('json commits_num: ',json_str['commits'])
 
 
 create_time=json_str['created_at'].replace('T',' ')
@@ -52,11 +62,16 @@ sql = """INSERT INTO nodejs_pr_test(
          created_at,
          updated_at,
          close_at,
-         mergeable,
+         is_merged,
          merged_at,
-         merged,
-         comments_number)
-         VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) """
+         mergeable,
+         comments_number,
+         pr_body,
+         pr_file_edit_num,
+         pr_line_add_num,
+         pr_line_del_num,
+         commits_num)
+         VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) """
 sqlData=(
     json_str['number']
          , json_str['url']
@@ -68,23 +83,29 @@ sqlData=(
          , ((json_str['mergeable']==True ) and  1 or 0)
          , time_reverse(json_str['merged_at'])
          , ((json_str['merged']==True) and 1 or 0)
-         , json_str['comments'])
-#执行SQL
-cursor.execute(sql,sqlData)
+         , json_str['comments']
+    ,json_str['body']
+    ,json_str['changed_files']
+    ,json_str['additions']
+    ,json_str['deletions']
+    ,json_str['commits'])
+# #执行SQL
+# cursor.execute(sql,sqlData)
+#
+# database.commit()
 
-database.commit()
 
-'''
 try:
     # 执行sql语句
     cursor.execute(sql,sqlData)
     # 提交到数据库执行
     database.commit()
+    print("成功", json_str['number'])
 except:
     # 如果发生错误则回滚
     print("失败",json_str['number'] )
     database.rollback()
-'''
+
 # 关闭数据库连接
 database.close()
 
