@@ -3,18 +3,6 @@ import pymysql as db
 import requests
 from utils.time_utils import time_reverse
 from utils.access_token import get_token
-
-#链接数据库
-
-
-database=db.connect(host='127.0.0.1',port=3306,user='root',password='root',db='test_pr_first',charset='utf8')
-#创建游标对象
-cursor=database.cursor()
-#利用游标对象进行操作
-cursor.execute('select version()')
-data=cursor.fetchone()
-print(data)
-
 repo_name= 'nodejs/node'
 # 调用api接口
 url = 'https://api.github.com/repos/' + repo_name + '/pulls/40370'
@@ -47,12 +35,13 @@ print('json pr_file_edit_num: ',json_str['changed_files'])
 print('json pr_line_add_num: ',json_str['additions'])
 print('json pr_line_del_num: ',json_str['deletions'])
 print('json commits_num: ',json_str['commits'])
-
-
 create_time=json_str['created_at'].replace('T',' ')
 create_time=create_time.replace('Z','')
 print(create_time)
 print('json created_at: ', time_reverse(json_str['created_at']))
+
+
+#数据操作部分
 #SQL语句书写
 sql = """INSERT INTO nodejs_pr_test(
          pr_number,
@@ -96,7 +85,17 @@ sqlData=(
 #
 # database.commit()
 
+#链接数据库
 
+
+database=db.connect(host='127.0.0.1',port=3306,user='root',password='root',db='test_pr_first',charset='utf8')
+#创建游标对象
+cursor=database.cursor()
+#利用游标对象进行操作
+cursor.execute('select version()')
+data=cursor.fetchone()
+
+print(data)
 try:
     # 执行sql语句
     cursor.execute(sql,sqlData)
