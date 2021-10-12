@@ -4,9 +4,10 @@ from utils.time_utils import time_reverse
 from utils.access_token import get_token
 from utils.exception_handdle import write_file
 import traceback
+import time
 
-owner_name = 'nodejs'
-repo_name = 'node'
+owner_name = "nodejs"
+repo_name = "node"
 access_token = get_token()
 headers = {
     'Authorization': 'token ' + access_token
@@ -42,8 +43,9 @@ cursor.execute('select version()')
 data = cursor.fetchone()
 
 # print(data)
-for i in range(1, 4):
-    print("\n==========================" + str(i) + "====================================\n")
+for i in range(1, 10000):
+    print("\n===0.7秒一次哦===============" + str(i) + "====================================\n")
+    time.sleep(0.7)
     # 调用api接口
     url = 'https://api.github.com/repos/' + owner_name + '/' + repo_name + '/pulls/' + i.__str__()
     r = requests.get(url, headers=headers)
@@ -54,7 +56,7 @@ for i in range(1, 4):
         sqlData = (
             json_str['number']
             , json_str['url']
-            , repo_name
+            ,owner_name+"/"+repo_name
             , json_str['user']['id']
             , json_str['user']['login']
             , time_reverse(json_str['created_at'])
