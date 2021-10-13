@@ -47,12 +47,10 @@ index = 20000
 # print(data)
 while index < 40426:
     print("\n===0.7秒一次哦===============" + str(index) + "====================================\n")
-    # time.sleep(0.7)
+    #
     # 调用api接口
     # 调用api接口
     url = 'https://api.github.com/repos/' + owner_name + '/' + repo_name + '/pulls/' + index.__str__()
-    r = requests.get(url, headers=headers)
-    print("url: " + url + "  Status Code:", r.status_code)
     try:
         r = requests.get(url)
         print("url: " + url + "  Status Code:", r.status_code)
@@ -63,6 +61,7 @@ while index < 40426:
         filename = repo_name+'_PR_network_exception.csv'
         write_file(index, repo_name, str(e) + url, filename)
         print(e)
+        time.sleep(7)
         continue
 
     # 如果返回的状态码以2开头，则说明正常此时去写入到数据库中即可
