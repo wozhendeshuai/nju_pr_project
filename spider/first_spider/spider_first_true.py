@@ -45,7 +45,7 @@ data = cursor.fetchone()
 index = 20000
 
 # print(data)
-while index < 40426:
+while index < 20001:
     print("\n===0.7秒一次哦===============" + str(index) + "====================================\n")
     #
     # 调用api接口
