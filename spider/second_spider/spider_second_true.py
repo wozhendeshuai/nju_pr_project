@@ -37,7 +37,6 @@ headers = {
 }
 
 for i in range(0, len(temp_user_name_id)):
-    print(i, "  ", temp_user_name_id[i])
     temp_val = temp_user_name_id[i]
     print(temp_val)
     # 此处是为了去除数据中相关多余的符号
@@ -45,14 +44,16 @@ for i in range(0, len(temp_user_name_id)):
     user_id = val[0].replace("\"", "")
     user_name = val[1][:len(val[1]) - 1].replace("\"", "")
     id_name_dict[user_id] = user_name
-
+    # 用于存储关注和被关注用户信息集合
     following_id_name_str = ""
     follower_id_name_str = ""
-    # 获取该用户关注和被关注的集合
+
+    # 获取该用户关注和被关注的集合url拼接
     following_url = 'https://api.github.com/users/' + user_name + '/following'
-    print("following_url", following_url)
+    # print("following_url", following_url)
     follower_url = 'https://api.github.com/users/' + user_name + '/followers'
-    print("follower_url", follower_url)
+    # print("follower_url", follower_url)
+    # 调用接口，出错的话进行记录，然后直接跳过该条
     try:
         followering_r = requests.get(following_url, headers=headers)
         print("following_url: " + following_url + "  Status Code:", followering_r.status_code)
@@ -62,18 +63,18 @@ for i in range(0, len(temp_user_name_id)):
         # 如果发生错误则回滚
         print("网络连接失败: user_name: ", user_name, "user_id: ", user_id)
         filename = 'user_network_exception.csv'
-        write_file(index, user_id + "-" + user_name, str(e) + ("网络连接失败: user_name: ", user_name, "user_id: ", user_id),
+        write_file(index, user_id + "-" + user_name, str(e) + ("网络连接失败: user_name: "+ user_name+ "user_id: "+ user_id),
                    filename)
         print(e)
-        time.sleep(7)
+        time.sleep(10)
         continue
 
     try:
         # 如果返回的状态码以2开头，则说明正常此时去写入到数据库中即可
         if followering_r.status_code >= 200 and followering_r.status_code < 300:
             following_json_str = followering_r.json()
-            print(len(following_json_str))
             length_following = len(following_json_str)
+            print("length_following:", length_following)
             if length_following > 0:
                 for num in range(0, length_following):
                     following_name = following_json_str[num]['login']
@@ -83,27 +84,27 @@ for i in range(0, len(temp_user_name_id)):
             else:
                 filename = 'user_data_exception.csv'
                 write_file(index, user_name,
-                           followering_r.status_code.__str__() + str(followering_r.json()) + " following none data",
+                           followering_r.status_code.__str__() + " following none data ",
                            filename)
         # 如果返回的状态码有问题，则按照问题去处理一下，记录到文件中
         else:
             filename = 'user_data_exception.csv'
             write_file(index, user_name,
-                       followering_r.status_code.__str__() + str(followering_r.json()),
+                       followering_r.status_code.__str__() + " following status ",
                        filename)
     except Exception as e:
         # 如果发生错误则回滚
-        print("第", index, "行 following 数据出现问题", "问题是: ", e)
+        print("第", index, "行 following 数据出现问题", "问题是: ", str(e))
         filename = 'user_data_exception.csv'
-        write_file(index, user_name, str(e) + ("第", index, "行数据出现问题", "问题是: ", e), filename)
+        write_file(index, user_name, ("第"+ str(index)+ "行数据出现问题"+ "问题是: "+ str(e)), filename)
         time.sleep(7)
 
     # 获取该关注该用户的集合
     try:
         if follower_r.status_code >= 200 and follower_r.status_code < 300:
             follower_json_str = follower_r.json()
-            print(len(follower_json_str))
             length_follower = len(follower_json_str)
+            print("length_follower:",length_follower)
             if length_follower > 0:
                 for num in range(0, length_follower):
                     follower_name = follower_json_str[num]['login']
@@ -113,22 +114,23 @@ for i in range(0, len(temp_user_name_id)):
                 else:
                     filename = 'user_data_exception.csv'
                     write_file(index, user_name,
-                               follower_r.status_code.__str__() + str(follower_r.json()) + " follower none data",
+                               follower_r.status_code.__str__() + " follower none data",
                                filename)
             # 如果返回的状态码有问题，则按照问题去处理一下，记录到文件中
         else:
             filename = 'user_data_exception.csv'
             write_file(index, user_name,
-                       follower_r.status_code.__str__() + str(follower_r.json()),
+                       follower_r.status_code.__str__() + " following status ",
                        filename)
     except Exception as e:
         # 如果发生错误则回滚
-        print("第", index, "行 follower 数据出现问题", "问题是: ", e)
+        print("第", index, "行 follower 数据出现问题", "问题是: ", str(e))
         filename = 'user_data_exception.csv'
-        write_file(index, user_name, str(e) + ("第", index, "行数据出现问题", "问题是: ", e), filename)
+        write_file(index, user_name, ("第" + str(index) + "行数据出现问题" + "问题是: " + str(e)), filename)
         time.sleep(7)
 
     index = index + 1
+
     try:
         sqlData = (
             user_id
@@ -144,12 +146,13 @@ for i in range(0, len(temp_user_name_id)):
         # 如果发生错误则回滚
         print("第", index, "行数据插入数据库失败: ", "user_name:", user_name, "user_id:", user_id)
         filename = 'user_database_operation_exception.csv'
-        write_file(index, "user", str(e) + ("第", index, "行数据插入数据库失败: ", "user_name:", user_name, "user_id:", user_id),
+        write_file(index, "user",
+                   ("第" + str(index) + "行数据插入数据库失败: " + "user_name:" + user_name + "user_id:" + user_id + str(e)),
                    filename)
         print(e)
         # traceback.print_exc()
         database.rollback()
-
+    print("======================" + str(index) + "=========================")
 # 关闭数据库连接
 database.close()
 print(len(id_name_dict))
