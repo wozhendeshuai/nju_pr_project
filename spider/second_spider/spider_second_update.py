@@ -53,12 +53,14 @@ data = cursor.fetchall()
 print(data)
 data_len = data.__len__()
 index_id = 0
+
 while index_id < data_len:
     print("==============", index_id.__str__(), "==================")
     # 调用api接口
     pr_number = data[index_id][0]
     print("index_id: " + str(index_id) + "pr_number", pr_number)
     pr_url = 'https://api.github.com/repos/' + owner_name + '/' + repo_name + '/pulls/' + str(pr_number)
+
     try:
         pr_r = requests.get(pr_url, headers=headers)
         print("index_id: " + str(index_id) + "pr_url: " + pr_url + "  Status Code:", pr_r.status_code)
@@ -71,6 +73,7 @@ while index_id < data_len:
         print(e)
         time.sleep(7)
         continue
+
     # 如果返回的状态码以2开头，则说明正常此时去写入到数据库中即可
     if pr_r.status_code >= 200 and pr_r.status_code < 300:
         pr_json = pr_r.json()
@@ -94,6 +97,7 @@ while index_id < data_len:
                                                                                              comments_json)
             print("review_comment_time, review_comment_user, review_comment_user_id :", review_comment_time,
                   review_comment_user, review_comment_user_id)
+
         # 将获取得到的数据进行相应的存储
         if review_comment_time is not None and comment_time is not None:
             if review_comment_time > comment_time:
@@ -107,6 +111,7 @@ while index_id < data_len:
                 final_comment_time, final_comment_user, final_comment_user_id = review_comment_time, review_comment_user, review_comment_user_id
             else:
                 final_comment_time, final_comment_user, final_comment_user_id = comment_time, comment_user, comment_user_id
+        print("final_comment_time, final_comment_user, final_comment_user_id:",final_comment_time, final_comment_user, final_comment_user_id)
         print("index_id: " + str(index_id), final_comment_time, final_comment_user, final_comment_user_id)
 
         try:
