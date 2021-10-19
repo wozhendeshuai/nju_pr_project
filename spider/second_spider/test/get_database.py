@@ -34,6 +34,7 @@ access_token = get_token()
 headers = {
     'Authorization': 'token ' + access_token
 }
+exception_filename = repo_name + '_comment_exception.csv'
 # 数据操作部分
 # 查询SQL语句书写
 select_sql = """
@@ -58,16 +59,17 @@ index_id = 0
 while index_id < data_len:
     # 调用api接口
     pr_number = data[index_id][0]
-    print("pr_number", pr_number)
+    print("index_id: " + str(index_id) + "pr_number", pr_number)
     pr_url = 'https://api.github.com/repos/' + owner_name + '/' + repo_name + '/pulls/' + str(pr_number)
     try:
         pr_r = requests.get(pr_url, headers=headers)
-        print("pr_url: " + pr_url + "  Status Code:", pr_r.status_code)
+        print("index_id: " + str(index_id) + "pr_url: " + pr_url + "  Status Code:", pr_r.status_code)
     except Exception as e:
         # 如果发生错误则回滚
-        print("网络连接失败: ", pr_url)
-        filename = repo_name + '_PR_network_exception.csv'
-        write_file(index_id, repo_name, str(pr_number) + str(e) + pr_url, filename)
+        print("index_id: " + str(index_id) + "网络连接失败: ", pr_url)
+        write_file(index_id, repo_name,
+                   "index_id: " + str(index_id) + " pr_number: " + str(pr_number) + str(e) + pr_url,
+                   exception_filename)
         print(e)
         time.sleep(7)
         continue
@@ -91,7 +93,7 @@ while index_id < data_len:
         if review_comments_json.__len__() > 0:
             review_comment_time, review_comment_user, review_comment_user_id = find_min_time(pr_user_id, pr_user_name,
                                                                                              comments_json)
-        #将获取得到的数据进行相应的存储
+        # 将获取得到的数据进行相应的存储
         if review_comment_time is not None and comment_time is not None:
             if review_comment_time > comment_time:
                 final_comment_time, final_comment_user, final_comment_user_id = comment_time, comment_user, comment_user_id
@@ -104,50 +106,44 @@ while index_id < data_len:
                 final_comment_time, final_comment_user, final_comment_user_id = review_comment_time, review_comment_user, review_comment_user_id
             else:
                 final_comment_time, final_comment_user, final_comment_user_id = comment_time, comment_user, comment_user_id
+        print("index_id: " + str(index_id), final_comment_time, final_comment_user, final_comment_user_id)
+        try:
+            updata_sql = "UPDATE nodejs_pr_test SET pr_author_association = %s,first_comment_time = %s,first_comment_member_id = %s,first_comment_member_name = %s WHERE pr_number = %s"
+            val = (pr_json["author_association"], time_reverse(final_comment_time), final_comment_user_id, final_comment_user,pr_number)
+            cursor.execute(updata_sql, val)
+            database.commit()
+            print(index_id, " 条记录已更新", "pr_number: ", pr_number)
+        except Exception as e:
+            # 如果发生错误则回滚
+            print(index_id, " 条记录插入数据库失败", "pr_number: ", pr_number)
+            filename = repo_name + '_PR_database_operation_exception.csv'
+            write_file(index_id, repo_name, "index_id: " + str(index_id) + " pr_number: " + str(pr_number) + str(e),
+                       filename)
+            print(e)
+            # traceback.print_exc()
+            database.rollback()
+            continue
+
+        # 成功执行继续下一个
+        index_id = index_id + 1
     else:
-        filename = repo_name + '_PRNumbers_exception.csv'
-        write_file(index_id, repo_name, str(pr_number) + pr_r.status_code.__str__() + str(pr_r.json()), filename)
+        write_file(index_id, repo_name,
+                   "index_id: " + str(index_id) + " pr_number: " + str(pr_number) + pr_r.status_code.__str__() + str(
+                       pr_r.json()), exception_filename)
+    continue
 # 关闭数据库连接
 database.close()
 
 '''
 index = 20000
 
-# print(data)
-while index < 20001:
-    #
-    sqlData = (
-            json_str['number']
-            , json_str['url']
-            , owner_name + "/" + repo_name
-            , json_str['user']['id']
-            , json_str['user']['login']
-            , time_reverse(json_str['created_at'])
-            , time_reverse(json_str['updated_at'])
-            , time_reverse(json_str['closed_at'])
-            , ((json_str['mergeable'] == True) and 1 or 0)
-            , time_reverse(json_str['merged_at'])
-            , ((json_str['merged'] == True) and 1 or 0)
-            , json_str['comments']
-            , json_str['body']
-            , json_str['changed_files']
-            , json_str['additions']
-            , json_str['deletions']
-            , json_str['commits'])
-        try:
+        
             # 执行sql语句
             cursor.execute(sql, sqlData)
             # 提交到数据库执行
             database.commit()
             print("插入数据库成功: ", json_str['number'])
-        except Exception as e:
-            # 如果发生错误则回滚
-            print("插入数据库失败: ", url + "  " + str(json_str['number']))
-            filename = repo_name + '_PR_database_operation_exception.csv'
-            write_file(index, repo_name, str(e), filename)
-            print(e)
-            # traceback.print_exc()
-            database.rollback()
+       
     # 如果返回的状态码有问题，则按照问题去处理一下，记录到文件中
   
 
