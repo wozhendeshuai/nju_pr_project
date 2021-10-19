@@ -83,6 +83,7 @@ while index_id < data_len:
         comments_json = comments_r.json()
         if comments_json.__len__() > 0:
             comment_time, comment_user, comment_user_id = find_min_time(pr_user_id, pr_user_name, comments_json)
+            print("comment_time, comment_user, comment_user_id:", comment_time, comment_user, comment_user_id)
 
         # 获取评审评论相关信息
         review_comments_url = pr_json["_links"]["review_comments"]["href"]
@@ -91,6 +92,8 @@ while index_id < data_len:
         if review_comments_json.__len__() > 0:
             review_comment_time, review_comment_user, review_comment_user_id = find_min_time(pr_user_id, pr_user_name,
                                                                                              comments_json)
+            print("review_comment_time, review_comment_user, review_comment_user_id :", review_comment_time,
+                  review_comment_user, review_comment_user_id)
         # 将获取得到的数据进行相应的存储
         if review_comment_time is not None and comment_time is not None:
             if review_comment_time > comment_time:
@@ -105,6 +108,7 @@ while index_id < data_len:
             else:
                 final_comment_time, final_comment_user, final_comment_user_id = comment_time, comment_user, comment_user_id
         print("index_id: " + str(index_id), final_comment_time, final_comment_user, final_comment_user_id)
+
         try:
             updata_sql = "UPDATE nodejs_pr_test SET pr_author_association = %s,first_comment_time = %s,first_comment_member_id = %s,first_comment_member_name = %s WHERE pr_number = %s"
             val = (
