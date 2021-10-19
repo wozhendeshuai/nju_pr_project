@@ -93,7 +93,7 @@ while index_id < data_len:
         review_comments_json = review_comments_r.json()
         if review_comments_json.__len__() > 0:
             review_comment_time, review_comment_user, review_comment_user_id = find_min_time(pr_user_id, pr_user_name,
-                                                                                             comments_json)
+                                                                                             review_comments_json)
         print("review_comment_time, review_comment_user, review_comment_user_id :", review_comment_time,
                   review_comment_user, review_comment_user_id)
 
