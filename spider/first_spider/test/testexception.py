@@ -15,7 +15,7 @@ headers = {
 '''
 url = 'https://api.github.com/repos/' + +repo_name + '/pulls/3'
 print(url)
-r = requests.get(url, headers=headers)
+pr_r = requests.get(url, headers=headers)
 print()
 '''
 for i in range(1, 20):
@@ -27,12 +27,12 @@ for i in range(1, 20):
         write_file(i, repo_name, r.status_code.__str__() + str(r.json()))
 
 '''
-print("Status Code:", r.status_code)
-print('status header', r.headers)
-print(r.json())
-json_str = r.json()
+print("Status Code:", pr_r.status_code)
+print('status header', pr_r.headers)
+print(pr_r.json())
+json_str = pr_r.json()
 print(json_str)
-print('r body: ', r.json()['body'])
+print('pr_r body: ', pr_r.json()['body'])
 print('json body: ', json_str['body'])
 print('json created_at: ', time_reverse(json_str['created_at']))
 '''

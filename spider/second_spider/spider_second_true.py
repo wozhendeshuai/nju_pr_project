@@ -8,7 +8,7 @@ import time
 
 # 获取文件相关内容
 filepath = "E:\\pythonProject\\nju_pr_project\\spider\\second_spider\\test\\user_name_and_id.csv"
-user_name_and_id = open(filepath, 'r')
+user_name_and_id = open(filepath, 'pr_r')
 temp_user_name_id = user_name_and_id.readlines()
 id_name_dict = {}
 user_name = "wozhendeshuai"

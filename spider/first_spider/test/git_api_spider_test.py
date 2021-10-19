@@ -13,9 +13,9 @@ print('status header', r.headers)
 print(r.json())
 
 # import  json
-# json_str=r.json()
+# json_str=pr_r.json()
 # print(json_str)
-# print('r body: ',r.json()['body'])
+# print('pr_r body: ',pr_r.json()['body'])
 # print('json body: ',json_str['body'])
 # print('json user login: ',json_str['user']['login'])
 # import requests
@@ -24,11 +24,11 @@ print(r.json())
 #
 # url = 'https://api.github.com/search/repositories?q=language:python&sort=stars'
 #
-# r = requests.get(url)
+# pr_r = requests.get(url)
 #
-# print("Status Code:", r.status_code)
+# print("Status Code:", pr_r.status_code)
 #
-# response_dict = r.json()
+# response_dict = pr_r.json()
 #
 # print("Total repositories:", response_dict['total_count'])
 #

@@ -154,7 +154,7 @@ def plot_show(data_temp,Muk):
         typen1_y.append(data[i][1])
     fig = plt.figure()
     axes = fig.add_subplot(111)
-    typen1 = axes.scatter(typen1_x, typen1_y, c='r', marker='o')
+    typen1 = axes.scatter(typen1_x, typen1_y, c='pr_r', marker='o')
     plt.xlabel('x')
     plt.ylabel('y')
     # 画聚类中心
