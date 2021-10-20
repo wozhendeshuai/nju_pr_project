@@ -8,12 +8,14 @@ import time
 
 
 def find_min_time(pr_user_id, pr_user_name, comments_json):
-    if comments_json.__len__() == 0:
+    if comments_json.__len__() == 0 :
         return None
     comment_time = None
     comment_user = pr_user_name
     comment_user_id = pr_user_id
     for i in range(0, comments_json.__len__()):
+        if comments_json[i]["user"]==None:
+            continue
         if comments_json[i]["user"]["login"].__eq__(pr_user_name) and comments_json[i]["user"]["id"].__eq__(pr_user_id):
             continue
         elif comment_time == None:
@@ -51,7 +53,7 @@ cursor.execute(select_sql)
 data = cursor.fetchall()
 print(data)
 data_len = data.__len__()
-index_id = 0
+index_id = 4866
 
 while index_id < data_len:
     print("==============", index_id.__str__(), "==================")
