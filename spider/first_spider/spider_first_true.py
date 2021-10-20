@@ -42,7 +42,7 @@ cursor = database.cursor()
 cursor.execute('select version()')
 data = cursor.fetchone()
 
-index = 20000
+index = 6810
 
 # print(data)
 while index < 20001:
@@ -76,9 +76,9 @@ while index < 20001:
             , time_reverse(json_str['created_at'])
             , time_reverse(json_str['updated_at'])
             , time_reverse(json_str['closed_at'])
-            , ((json_str['mergeable'] == True) and 1 or 0)
-            , time_reverse(json_str['merged_at'])
             , ((json_str['merged'] == True) and 1 or 0)
+            , time_reverse(json_str['merged_at'])
+            , ((json_str['mergeable'] == True) and 1 or 0)
             , json_str['comments']
             , json_str['body']
             , json_str['changed_files']

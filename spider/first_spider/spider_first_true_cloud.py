@@ -52,7 +52,7 @@ while index < 8794:
     # 调用api接口
     url = 'https://api.github.com/repos/' + owner_name + '/' + repo_name + '/pulls/' + index.__str__()
     try:
-        r = requests.get(url,headers=headers)
+        r = requests.get(url, headers=headers)
         print("url: " + url + "  Status Code:", r.status_code)
         index = index + 1
     except Exception as e:
@@ -75,9 +75,9 @@ while index < 8794:
             , time_reverse(json_str['created_at'])
             , time_reverse(json_str['updated_at'])
             , time_reverse(json_str['closed_at'])
-            , ((json_str['mergeable'] == True) and 1 or 0)
-            , time_reverse(json_str['merged_at'])
             , ((json_str['merged'] == True) and 1 or 0)
+            , time_reverse(json_str['merged_at'])
+            , ((json_str['mergeable'] == True) and 1 or 0)
             , json_str['comments']
             , json_str['body']
             , json_str['changed_files']
