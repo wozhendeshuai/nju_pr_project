@@ -14,6 +14,8 @@ def find_min_time(pr_user_id, pr_user_name, comments_json):
     comment_user = pr_user_name
     comment_user_id = pr_user_id
     for i in range(0, comments_json.__len__()):
+        if comments_json[i]["user"] is None:
+            continue
         if comments_json[i]["user"]["login"].__eq__(pr_user_name) and comments_json[i]["user"]["id"].__eq__(pr_user_id):
             continue
         elif comment_time == None:

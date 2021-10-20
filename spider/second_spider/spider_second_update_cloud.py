@@ -14,6 +14,8 @@ def find_min_time(pr_user_id, pr_user_name, comments_json):
     comment_user = pr_user_name
     comment_user_id = pr_user_id
     for i in range(0, comments_json.__len__()):
+        if comments_json[i]["user"] is None:
+            continue
         if comments_json[i]["user"]["login"].__eq__(pr_user_name) and comments_json[i]["user"]["id"].__eq__(pr_user_id):
             continue
         elif comment_time == None:
@@ -51,7 +53,7 @@ cursor.execute(select_sql)
 data = cursor.fetchall()
 print(data)
 data_len = data.__len__()
-index_id = 0
+index_id = 4866
 
 while index_id < data_len:
     print("==============", index_id.__str__(), "==================")
@@ -95,7 +97,7 @@ while index_id < data_len:
             review_comment_time, review_comment_user, review_comment_user_id = find_min_time(pr_user_id, pr_user_name,
                                                                                              review_comments_json)
         print("review_comment_time, review_comment_user, review_comment_user_id :", review_comment_time,
-                  review_comment_user, review_comment_user_id)
+              review_comment_user, review_comment_user_id)
 
         # 将获取得到的数据进行相应的存储
         if review_comment_time is not None and comment_time is not None:
@@ -110,7 +112,8 @@ while index_id < data_len:
                 final_comment_time, final_comment_user, final_comment_user_id = review_comment_time, review_comment_user, review_comment_user_id
             else:
                 final_comment_time, final_comment_user, final_comment_user_id = comment_time, comment_user, comment_user_id
-        print("final_comment_time, final_comment_user, final_comment_user_id:",final_comment_time, final_comment_user, final_comment_user_id)
+        print("final_comment_time, final_comment_user, final_comment_user_id:", final_comment_time, final_comment_user,
+              final_comment_user_id)
 
         try:
             updata_sql = "UPDATE nodejs_pr_test SET pr_author_association = %s,first_comment_time = %s,first_comment_member_id = %s,first_comment_member_name = %s WHERE pr_number = %s"
