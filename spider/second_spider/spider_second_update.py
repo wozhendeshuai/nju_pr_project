@@ -30,8 +30,8 @@ def find_min_time(pr_user_id, pr_user_name, comments_json):
     return comment_time, comment_user, comment_user_id
 
 
-owner_name = "nodejs"
-repo_name = "node"
+owner_name = "tensorflow"
+repo_name = "tensorflow"
 access_token = get_token()
 headers = {
     'Authorization': 'token ' + access_token
@@ -39,7 +39,7 @@ headers = {
 exception_filename = repo_name + '_comment_exception.csv'
 # 数据操作部分
 # 查询SQL语句书写
-select_sql = """SELECT pr_number from nodejs_pr_test order by pr_number
+select_sql = """SELECT pr_number from tensorflow_pr_test order by pr_number
 """
 # 初始化一下
 comment_time, comment_user, comment_user_id = None, None, None
@@ -54,7 +54,7 @@ cursor.execute(select_sql)
 data = cursor.fetchall()
 print(data)
 data_len = data.__len__()
-index_id = 0
+index_id = 17009
 
 while index_id < data_len:
     print("==============", index_id.__str__(), "==================")
