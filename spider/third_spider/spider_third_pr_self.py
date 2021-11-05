@@ -163,52 +163,52 @@ while index < 873:
         write_file(index, repo_name, pr_r.status_code.__str__() + str(pr_r.json()), filename)
         index = index + 1
         continue
-    # try:
-    sqlData = (
-        pr_number,
-        pr_url,
-        repo_name,
-        pr_user_id,
-        pr_user_name,
-        title,
-        body,
-        labels,
-        state,
-        time_reverse(created_at),
-        time_reverse(updated_at),
-        time_reverse(closed_at),
-        time_reverse(merged_at),
-        ((merged == True) and 1 or 0),
-        ((mergeable == True) and 1 or 0),
-        mergeable_state,
-        merge_commit_sha,
-        assignees_content,
-        requested_reviewers_content,
-        comments_number,
-        json.dumps(comments_content),
-        review_comments_number,
-        json.dumps(review_comments_content),
-        commit_number,
-        json.dumps(commit_content),
-        changed_file_num,
-        total_add_line,
-        total_delete_line)
-    # 执行sql语句
-    cursor.execute(sql, sqlData)
-    # 提交到数据库执行
-    database.commit()
-    print("第", index, "行数据插入数据库成功: ", repo_name)
-    index = index + 1
-# except Exception as e:
-#       # 如果发生错误则回滚
-#       print("第", index, "行数据插入数据库失败: ", "repo_name:", repo_name)
-#       filename = repo_name + '_exception.csv'
-#       write_file(index, "user",
-#                  ("第" + str(index) + "行数据插入数据库失败: " + "repo_name:" + repo_name+" " + str(e)),
-#                  filename)
-#       print(e)
-#       # traceback.print_exc()
-#       database.rollback()
-#       continue
-#   # 关闭数据库连接
-#   database.close()
+    try:
+        sqlData = (
+            pr_number,
+            pr_url,
+            repo_name,
+            pr_user_id,
+            pr_user_name,
+            title,
+            body,
+            labels,
+            state,
+            time_reverse(created_at),
+            time_reverse(updated_at),
+            time_reverse(closed_at),
+            time_reverse(merged_at),
+            ((merged == True) and 1 or 0),
+            ((mergeable == True) and 1 or 0),
+            mergeable_state,
+            merge_commit_sha,
+            assignees_content,
+            requested_reviewers_content,
+            comments_number,
+            json.dumps(comments_content),
+            review_comments_number,
+            json.dumps(review_comments_content),
+            commit_number,
+            json.dumps(commit_content),
+            changed_file_num,
+            total_add_line,
+            total_delete_line)
+        # 执行sql语句
+        cursor.execute(sql, sqlData)
+        # 提交到数据库执行
+        database.commit()
+        print("第", index, "行数据插入数据库成功: ", repo_name)
+        index = index + 1
+    except Exception as e:
+        # 如果发生错误则回滚
+        print("第", index, "行数据插入数据库失败: ", "repo_name:", repo_name)
+        filename = repo_name + '_exception.csv'
+        write_file(index, "user",
+                   ("第" + str(index) + "行数据插入数据库失败: " + "repo_name:" + repo_name + " " + str(e)),
+                   filename)
+        print(e)
+        # traceback.print_exc()
+        database.rollback()
+        continue
+# 关闭数据库连接
+database.close()
