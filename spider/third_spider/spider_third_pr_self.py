@@ -7,7 +7,7 @@ import traceback
 import time
 import json
 
-index = 872
+index = 39
 owner_name = "tensorflow"
 repo_name = "tensorflow"
 # https://api.github.com/repos/tensorflow/tensorflow/pulls/872
@@ -108,7 +108,7 @@ def url_to_json(url, number):
     return re_json
 
 
-while index < 873:
+while index < 52952 :
     try:
         temp_url = pr_url + index.__str__()
         pr_r = requests.get(temp_url, headers=headers)
@@ -129,7 +129,7 @@ while index < 873:
         print("len(pr_json_str):", len(pr_json_str))
         # 基础数据
         pr_number = index
-        pr_url = temp_url
+
         pr_user_id = pr_json_str["user"]["id"]
         pr_user_name = pr_json_str["user"]["login"]
         title = pr_json_str["title"]
@@ -166,7 +166,7 @@ while index < 873:
     try:
         sqlData = (
             pr_number,
-            pr_url,
+            temp_url,
             repo_name,
             pr_user_id,
             pr_user_name,
@@ -209,6 +209,6 @@ while index < 873:
         print(e)
         # traceback.print_exc()
         database.rollback()
-        continue
+        break
 # 关闭数据库连接
 database.close()
