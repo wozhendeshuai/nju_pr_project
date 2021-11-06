@@ -109,7 +109,7 @@ def url_to_json(url, number):
     return re_json
 
 
-while index < 52952 :
+while index < 52952:
     try:
         temp_url = pr_url + index.__str__()
         pr_r = requests.get(temp_url, headers=headers)
@@ -204,6 +204,9 @@ while index < 52952 :
         # 如果发生错误则回滚
         print("第", index, "行数据插入数据库失败: ", "repo_name:", repo_name)
         filename = repo_name + '_exception.csv'
+        if e.args[0] == 1062 or e.args[1].__contains__("Duplicate"):
+            index = index + 1
+            continue
         write_file(index, "user",
                    ("第" + str(index) + "行数据插入数据库失败: " + "repo_name:" + repo_name + " " + str(e)),
                    filename)
