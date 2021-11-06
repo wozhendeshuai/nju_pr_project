@@ -138,15 +138,16 @@ while index < data_len:
                 database.rollback()
                 break
         elif pr_user_data.__len__() == 1:
-            user_id = pr_user_data[index][0]
-            user_name = pr_user_data[index][1]
-            author_association_with_repo = json.loads(pr_user_data[index][2])
-            if author_association_with_repo.__contains__(repo_name):
+            user_id = pr_user_data[0][0]
+            user_name = pr_user_data[0][1]
+            author_association_with_repo_old = json.loads(pr_user_data[0][2])
+            if author_association_with_repo_old.__contains__(repo_name):
+                index = index + 1
                 continue
             else:
-                author_association_with_repo[repo_name] = author_association_with_repo
-                val = (json.dumps(author_association_with_repo), user_id)
-                cursor.execute(repo_name, val)
+                author_association_with_repo_old[repo_name] = author_association_with_repo
+                val = (json.dumps(author_association_with_repo_old), user_id)
+                cursor.execute(updata_sql, val)
                 database.commit()
         else:
             print("第" + str(index) + "号 user: " + str(pr_user_name) + " 用户信息异常: " + str(pr_user_data.__len__()))
