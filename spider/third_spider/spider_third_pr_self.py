@@ -7,7 +7,7 @@ import traceback
 import time
 import json
 
-index = 9584
+index = 0
 
 owner_name = "tensorflow"
 repo_name = "tensorflow"
@@ -30,6 +30,7 @@ sql = """INSERT into pr_self(
     repo_name,
     pr_user_id,
     pr_user_name,
+    pr_author_association,
     title,
     body,
     labels,
@@ -53,7 +54,7 @@ sql = """INSERT into pr_self(
     changed_file_num,
     total_add_line,
     total_delete_line
-    )VALUES(%s,%s,%s, %s,%s,%s,%s, %s,%s, %s,%s, %s,%s, %s, %s,%s,%s,%s, %s,%s,%s,%s, %s, %s,%s,%s,%s,%s)"""
+    )VALUES(%s,%s,%s,%s, %s,%s,%s,%s, %s,%s, %s,%s, %s,%s, %s, %s,%s,%s,%s, %s,%s,%s,%s, %s, %s,%s,%s,%s,%s)"""
 
 # 链接数据库
 database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8mb4')
@@ -130,9 +131,9 @@ while index < 52952:
         print("len(pr_json_str):", len(pr_json_str))
         # 基础数据
         pr_number = index
-
         pr_user_id = pr_json_str["user"]["id"]
         pr_user_name = pr_json_str["user"]["login"]
+        pr_author_association=pr_json_str["author_association"]
         title = pr_json_str["title"]
         body = pr_json_str["body"]
         state = pr_json_str["state"]
@@ -171,6 +172,7 @@ while index < 52952:
             repo_name,
             pr_user_id,
             pr_user_name,
+            pr_author_association,
             title,
             body,
             labels,
