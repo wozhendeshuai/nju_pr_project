@@ -7,7 +7,8 @@ import traceback
 import time
 import json
 
-index = 39
+index = 9584
+
 owner_name = "tensorflow"
 repo_name = "tensorflow"
 # https://api.github.com/repos/tensorflow/tensorflow/pulls/872
@@ -55,7 +56,7 @@ sql = """INSERT into pr_self(
     )VALUES(%s,%s,%s, %s,%s,%s,%s, %s,%s, %s,%s, %s,%s, %s, %s,%s,%s,%s, %s,%s,%s,%s, %s, %s,%s,%s,%s,%s)"""
 
 # 链接数据库
-database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
+database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8mb4')
 # 创建游标对象
 cursor = database.cursor()
 # 利用游标对象进行操作
