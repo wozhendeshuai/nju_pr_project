@@ -8,12 +8,13 @@ import time
 import json
 
 index = 0
+num=0;
 owner_name = "tensorflow"
 repo_name = "tensorflow"
 # https://api.github.com/orgs/tensorflow/members?per_page=100&page=3 需要分页查询进而获取所有信息，也可以从页面直接爬取https://github.com/tensorflow
 # https://api.github.com/repos/tensorflow/tensorflow watchers
 # 获取token todo：可以进行选择，不然这样一直是一个会有限制
-access_token = get_token()
+access_token = get_token(num)
 headers = {
     'Authorization': 'token ' + access_token
 }
@@ -86,6 +87,11 @@ while index < 1:
                    str(e) + ("网络连接失败: user_name: " + repo_name + "owner_name: " + owner_name),
                    filename)
         print(e)
+        num = num + 1;
+        access_token = get_token(num)
+        headers = {
+            'Authorization': 'token ' + access_token
+        }
         time.sleep(10)
         continue
         # 如果返回的状态码以2开头，则说明正常此时去写入到数据库中即可
