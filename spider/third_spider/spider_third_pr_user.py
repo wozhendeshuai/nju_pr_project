@@ -15,20 +15,24 @@ import json
 
 
 # 根据url以及url中蕴含的数来取
-def url_to_json(url, number):
+def follow_str(url, number):
     url_str = url + "?per_page=100&anon=true&page="
     # (url_str)
     page = 1
     maxPage = number // 100 + 1
     count = 0
-    re_json = json.loads("[]")
+    follow_id_name_str = ""
     while page <= maxPage:
         temp_url_str = url_str + page.__str__()
         print(temp_url_str)
         url_r = requests.get(temp_url_str, headers=headers)
-        re_json = re_json + url_r.json()
+        re_json = url_r.json()
+        for num in range(0, len(re_json)):
+            following_name = re_json[num]['login']
+            following_id = re_json[num]['id']
+            follow_id_name_str = follow_id_name_str + (str(following_id) + "-" + following_name + ";")
         page = page + 1
-    return re_json
+    return follow_id_name_str
 
 
 access_token = get_token()
@@ -99,10 +103,10 @@ while index < data_len:
             user_json = temp_pr_url_r.json()
             followers_num = user_json["followers"]
             followers_url = user_json["followers_url"]
-            followers_json = url_to_json(followers_url, followers_num)
+            followers_json = follow_str(followers_url, followers_num)
             following_num = user_json["following"]
             following_url = 'https://api.github.com/users/' + pr_user_name + '/following'
-            following_json = url_to_json(following_url, following_num)
+            following_json = follow_str(following_url, following_num)
             public_repos_num = user_json["public_repos"]
             relation = {}
             relation[repo_name] = author_association_with_repo
