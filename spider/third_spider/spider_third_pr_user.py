@@ -17,7 +17,7 @@ import json
 # 根据url以及url中蕴含的数来取
 def url_to_json(url, number):
     url_str = url + "?per_page=100&anon=true&page="
-    print(url_str)
+    # (url_str)
     page = 1
     maxPage = number // 100 + 1
     count = 0
@@ -71,7 +71,7 @@ cursor = database.cursor()
 # 利用游标对象进行操作
 cursor.execute(select_pr_self_sql)
 data = cursor.fetchall()
-print(data)
+# print(data)
 data_len = data.__len__()
 index = 0
 while index < data_len:

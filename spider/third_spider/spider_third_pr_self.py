@@ -64,11 +64,10 @@ cursor = database.cursor()
 database.ping(reconnect=True)
 
 
-
 # 统计url中含有的元素数量
 def findUrlJsonCount(url_str):
     url_str = url_str + "?per_page=100&anon=true&page="
-    print(url_str)
+    # print(url_str)
     page = 1
     count = 0
     while 1:
@@ -96,7 +95,7 @@ def list_to_json(temp_list):
 # 根据评论条数来取
 def url_to_json(url, number):
     url_str = url + "?per_page=100&anon=true&page="
-    print(url_str)
+    # print(url_str)
     page = 1
     maxPage = number // 100 + 1
     count = 0
@@ -112,6 +111,7 @@ def url_to_json(url, number):
 
 while index < 52952:
     try:
+        print("========================" + "第" + str(index) + "号 pr_number: " + str(index) + "信息保存中==========================")
         temp_url = pr_url + index.__str__()
         pr_r = requests.get(temp_url, headers=headers)
         print("pr_url: " + temp_url + "  Status Code:", pr_r.status_code)
@@ -128,12 +128,12 @@ while index < 52952:
     # 如果返回的状态码以2开头，则说明正常此时去写入到数据库中即可
     if pr_r.status_code >= 200 and pr_r.status_code < 300:
         pr_json_str = pr_r.json()
-        print("len(pr_json_str):", len(pr_json_str))
+        # print("len(pr_json_str):", len(pr_json_str))
         # 基础数据
         pr_number = index
         pr_user_id = pr_json_str["user"]["id"]
         pr_user_name = pr_json_str["user"]["login"]
-        pr_author_association=pr_json_str["author_association"]
+        pr_author_association = pr_json_str["author_association"]
         title = pr_json_str["title"]
         body = pr_json_str["body"]
         state = pr_json_str["state"]
@@ -158,7 +158,6 @@ while index < 52952:
         comments_content = url_to_json(pr_json_str["comments_url"], comments_number)
         review_comments_content = url_to_json(pr_json_str["review_comments_url"], review_comments_number)
         commit_content = url_to_json(pr_json_str["commits_url"], commit_number)
-
         # 如果返回的状态码有问题，则按照问题去处理一下，记录到文件中
     else:
         filename = repo_name + '_exception.csv'

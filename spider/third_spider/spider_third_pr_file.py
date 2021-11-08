@@ -41,7 +41,7 @@ cursor = database.cursor()
 # 利用游标对象进行操作
 cursor.execute(select_sql)
 data = cursor.fetchall()
-print(data)
+# print(data)
 data_len = data.__len__()
 index = 0
 while index < data_len:
@@ -50,9 +50,6 @@ while index < data_len:
     repo_name = data[index][1]
     file_num = data[index][2]
     pr_url = data[index][3]
-    print(pr_number)
-    print(repo_name)
-    print(file_num)
     if file_num == 0:
         index = index + 1
         continue
@@ -63,8 +60,10 @@ while index < data_len:
     page = 1
     try:
         while page <= maxPage:
-            print("========================" + "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(
-                page) + "页" + "==========================")
+            print("========================" + "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页" + "==========================")
+            print(pr_number)
+            print(repo_name)
+            print(file_num)
             temp_url_str = file_url + page.__str__()
             print(temp_url_str)
             url_r = requests.get(temp_url_str, headers=headers)
@@ -93,21 +92,18 @@ while index < data_len:
                     cursor.execute(sql, sqlData)
                     # 提交到数据库执行
                     database.commit()
-                    print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(
-                        temp_index) + "个数据插入成功")
+                    print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(temp_index) + "个数据插入成功")
                     temp_index = temp_index + 1
                 except Exception as e:
                     # 如果发生错误则回滚
-                    print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(
-                        temp_index) + "个数据插入数据库失败: " + str(e))
+                    print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(temp_index) + "个数据插入数据库失败: " + str(e))
                     # 当出现重复key时应当可以继续往下走，取下一条数据
                     if e.args[0] == 1062 or e.args[1].__contains__("Duplicate"):
                         temp_index = temp_index + 1
                         continue
                     filename = repo_name + '_file_exception.csv'
                     write_file(index, "user", (
-                            "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(
-                        temp_index) + "个数据插入数据库失败: " + str(e)), filename)
+                            "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(temp_index) + "个数据插入数据库失败: " + str(e)), filename)
                     print(e)
                     # traceback.print_exc()
                     database.rollback()
