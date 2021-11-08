@@ -3,11 +3,12 @@ import requests
 from utils.time_utils import time_reverse
 from utils.access_token import get_token
 from utils.exception_handdle import write_file
+from requests.adapters import HTTPAdapter
 import traceback
 import time
 import json
 
-index = 0
+index = 44852
 
 owner_name = "tensorflow"
 repo_name = "tensorflow"
@@ -60,9 +61,8 @@ sql = """INSERT into pr_self(
 database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8mb4')
 # 创建游标对象
 cursor = database.cursor()
-# 利用游标对象进行操作
-cursor.execute('select version()')
-data = cursor.fetchone()
+database.ping(reconnect=True)
+
 
 
 # 统计url中含有的元素数量
@@ -196,6 +196,7 @@ while index < 52952:
             changed_file_num,
             total_add_line,
             total_delete_line)
+        database.ping(reconnect=True)
         # 执行sql语句
         cursor.execute(sql, sqlData)
         # 提交到数据库执行
@@ -214,6 +215,7 @@ while index < 52952:
                    filename)
         print(e)
         # traceback.print_exc()
+        database.ping(reconnect=True)
         database.rollback()
         break
 # 关闭数据库连接
