@@ -29,9 +29,8 @@ sql = """
     VALUES( %s,%s,%s, %s,%s, %s,%s, %s,%s, %s )
    """
 select_sql = """
-select b.pr_number,b.repo_name,b.changed_file_num,b.pr_url
-from (SELECT pr_number,count(*) file_total FROM `pr_file` GROUP BY pr_number)a,pr_self b
-where a.pr_number=b.pr_number and a.file_total!=b.changed_file_num
+select pr_number,repo_name,changed_file_num,pr_url
+from pr_self 
 """
 # """
 #     select pr_number,repo_name,changed_file_num,pr_url
@@ -48,7 +47,7 @@ cursor.execute(select_sql)
 data = cursor.fetchall()
 # print(data)
 data_len = data.__len__()
-index = 45
+index = 0
 while index < data_len:
     # 取出查询的数据
     pr_number = data[index][0]
