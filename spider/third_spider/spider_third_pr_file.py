@@ -29,10 +29,15 @@ sql = """
     VALUES( %s,%s,%s, %s,%s, %s,%s, %s,%s, %s )
    """
 select_sql = """
-    select pr_number,repo_name,changed_file_num,pr_url
-	from pr_self
-	order by pr_number
-	"""
+select b.pr_number,b.repo_name,b.changed_file_num,b.pr_url
+from (SELECT pr_number,count(*) file_total FROM `pr_file` GROUP BY pr_number)a,pr_self b
+where a.pr_number=b.pr_number and a.file_total!=b.changed_file_num
+"""
+# """
+#     select pr_number,repo_name,changed_file_num,pr_url
+# 	from pr_self
+# 	order by pr_number
+# 	"""
 
 # 链接数据库
 database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8mb4')
@@ -43,7 +48,7 @@ cursor.execute(select_sql)
 data = cursor.fetchall()
 # print(data)
 data_len = data.__len__()
-index = 0
+index = 45
 while index < data_len:
     # 取出查询的数据
     pr_number = data[index][0]

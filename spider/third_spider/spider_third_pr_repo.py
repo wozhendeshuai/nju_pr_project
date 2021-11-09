@@ -8,7 +8,7 @@ import time
 import json
 
 index = 0
-num=0;
+num=0
 owner_name = "tensorflow"
 repo_name = "tensorflow"
 # https://api.github.com/orgs/tensorflow/members?per_page=100&page=3 需要分页查询进而获取所有信息，也可以从页面直接爬取https://github.com/tensorflow
@@ -87,7 +87,7 @@ while index < 1:
                    str(e) + ("网络连接失败: user_name: " + repo_name + "owner_name: " + owner_name),
                    filename)
         print(e)
-        num = num + 1;
+        num = num + 1
         access_token = get_token(num)
         headers = {
             'Authorization': 'token ' + access_token
