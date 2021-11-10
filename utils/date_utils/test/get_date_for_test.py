@@ -1,7 +1,7 @@
 import pymysql as db
 import requests
 
-from utils.date_utils.date_function import project_age, get_first_comment_time,is_weekday_commit
+from utils.date_utils.date_function import project_age, get_first_comment_time, is_weekday_commit
 from utils.time_utils import time_reverse
 from utils.access_token import get_token
 from utils.exception_handdle import write_file
@@ -30,6 +30,7 @@ def test_month_diff():
     print(time_dict)
     print(project_age(time_dict))
 
+
 def test_wait_time_diff():
     global pushed_time, time_dict, index
     # 利用游标对象进行操作
@@ -49,8 +50,9 @@ def test_wait_time_diff():
         time_dict[data[index][0]]["review_comments_content"] = data[index][8]
         time_dict[data[index][0]]["pr_user_name"] = data[index][9]
         index = index + 1
-    #print(time_dict)
+    # print(time_dict)
     print(get_first_comment_time(time_dict))
+
 
 def test_is_weekday():
     global pushed_time, time_dict, index
@@ -63,8 +65,10 @@ def test_is_weekday():
     while index < data.__len__():
         time_dict[data[index][0]] = data[index][1]
         index = index + 1
-    #print(time_dict)
+    # print(time_dict)
     print(is_weekday_commit(time_dict))
+
+
 # 数据操作部分
 # SQL语句书写
 repo_sql = """select * from pr_repo"""
@@ -76,4 +80,3 @@ cursor = database.cursor()
 test_is_weekday()
 # 关闭数据库连接
 database.close()
-
