@@ -32,7 +32,7 @@ def project_age(project_dict):
     return re_dict
 
 
-def get_first_time(pr_user_name, number, content):
+def get_first_content_time(pr_user_name, number, content):
     # 找出content里面最早评论的时间
     if number == 0:
         return None
@@ -57,7 +57,7 @@ def get_first_time(pr_user_name, number, content):
     return re_time
 
 
-def get_first_comment_time(pr_dict):
+def get_waiting_time(pr_dict):
     """
     获取pr中comments/review_comments中第一个非pr提交者评论时间
     pr_dict:
@@ -73,6 +73,7 @@ def get_first_comment_time(pr_dict):
         },
     }
     返回的dict为{id：相差的月份}
+    调用get_first_content_time获取当前content json中最早非本人评论时间，再找出review/comments最早的时间减去创建时间，即为等待时间
     """
     re_dict = {}
     for key in pr_dict.keys():
@@ -85,8 +86,8 @@ def get_first_comment_time(pr_dict):
         review_comments_number = pr_dict[key]['review_comments_number']
         review_comments_content = pr_dict[key]['review_comments_content']
         try:
-            first_comments_time = get_first_time(pr_user_name, comments_number, comments_content)
-            first_review_time = get_first_time(pr_user_name, review_comments_number, review_comments_content)
+            first_comments_time = get_first_content_time(pr_user_name, comments_number, comments_content)
+            first_review_time = get_first_content_time(pr_user_name, review_comments_number, review_comments_content)
         except Exception as e:
             print(str(key) + "      ")
             print(e)
