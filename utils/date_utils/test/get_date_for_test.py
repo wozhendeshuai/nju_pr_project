@@ -1,7 +1,7 @@
 import pymysql as db
 import requests
 
-from utils.date_utils.date_function import project_age, get_first_comment_time, is_weekday_commit
+from utils.date_utils.date_function import project_age, get_waiting_time, is_weekday_commit
 from utils.time_utils import time_reverse
 from utils.access_token import get_token
 from utils.exception_handdle import write_file
@@ -51,7 +51,7 @@ def test_wait_time_diff():
         time_dict[data[index][0]]["pr_user_name"] = data[index][9]
         index = index + 1
     # print(time_dict)
-    print(get_first_comment_time(time_dict))
+    print(get_waiting_time(time_dict))
 
 
 def test_is_weekday():
