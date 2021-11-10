@@ -72,7 +72,7 @@ def get_waiting_time(pr_dict):
             'pr_user_name': 'tlemo'
         },
     }
-    返回的dict为{id：相差的月份}
+    返回的dict为{id：相差的分钟}
     调用get_first_content_time获取当前content json中最早非本人评论时间，再找出review/comments最早的时间减去创建时间，即为等待时间
     """
     re_dict = {}
