@@ -32,7 +32,7 @@ def project_age(project_dict):
     return re_dict
 
 
-def get_first_time(pr_user_name, number, content):
+def get_first_content_time(pr_user_name, number, content):
     # 找出content里面最早评论的时间
     if number == 0:
         return None
@@ -57,22 +57,25 @@ def get_first_time(pr_user_name, number, content):
     return re_time
 
 
-def get_first_comment_time(pr_dict):
+def get_waiting_time(pr_dict):
     """
     获取pr中comments/review_comments中第一个非pr提交者评论时间
-    pr_dict:
-    {
-        52949:
+     pr_dict:
+       {
+          52556:
         {
-            'created_time': datetime.datetime(2021, 11, 4, 23, 37, 50),
+            'created_time': datetime.datetime(2021, 10, 18, 23, 58, 22),
+            'updated_time': datetime.datetime(2021, 10, 21, 22, 49, 40),
+            'closed_time': datetime.datetime(2021, 10, 21, 22, 49, 40),
             'comments_number': 0,
             'comments_content': '[]',
             'review_comments_number': 0,
             'review_comments_content': '[]',
-            'pr_user_name': 'tlemo'
-        },
+            'pr_user_name': 'pranve'
+       }
     }
-    返回的dict为{id：相差的月份}
+    返回的dict为{id：相差的分钟}
+    调用get_first_content_time获取当前content json中最早非本人评论时间，再找出review/comments最早的时间减去创建时间，即为等待时间
     """
     re_dict = {}
     for key in pr_dict.keys():
@@ -85,8 +88,8 @@ def get_first_comment_time(pr_dict):
         review_comments_number = pr_dict[key]['review_comments_number']
         review_comments_content = pr_dict[key]['review_comments_content']
         try:
-            first_comments_time = get_first_time(pr_user_name, comments_number, comments_content)
-            first_review_time = get_first_time(pr_user_name, review_comments_number, review_comments_content)
+            first_comments_time = get_first_content_time(pr_user_name, comments_number, comments_content)
+            first_review_time = get_first_content_time(pr_user_name, review_comments_number, review_comments_content)
         except Exception as e:
             print(str(key) + "      ")
             print(e)
@@ -125,4 +128,61 @@ def is_weekday_commit(pr_dict):
             re_dict[key] = 1
         else:
             re_dict[key] = 0
+    return re_dict
+
+
+def get_latency_after_response(pr_dict):
+    """
+        响应后到关闭时间的长度，对于还未close的pr不予计算
+       获取pr中comments/review_comments中第一个非pr提交者评论时间，与pr关闭时间之差
+       pr_dict:
+       {
+          52556:
+        {
+            'created_time': datetime.datetime(2021, 10, 18, 23, 58, 22),
+            'updated_time': datetime.datetime(2021, 10, 21, 22, 49, 40),
+            'closed_time': datetime.datetime(2021, 10, 21, 22, 49, 40),
+            'comments_number': 0,
+            'comments_content': '[]',
+            'review_comments_number': 0,
+            'review_comments_content': '[]',
+            'pr_user_name': 'pranve'
+       }
+       返回的dict为{id：相差的分钟}
+       调用get_first_content_time获取当前content json中最早非本人评论时间，再找出review/comments最早的时间减去创建时间，即为等待时间
+       """
+    re_dict = {}
+    for key in pr_dict.keys():
+        created_time = pr_dict[key]['created_time']
+        # 如果没有关闭时间，此时不计算响应后到关闭的时间
+        if pr_dict[key]['closed_time'] == None:
+            continue
+        closed_time = pr_dict[key]['closed_time']
+        pr_user_name = pr_dict[key]['pr_user_name']
+        comments_number = pr_dict[key]['comments_number']
+        comments_content = pr_dict[key]['comments_content']
+        review_comments_number = pr_dict[key]['review_comments_number']
+        review_comments_content = pr_dict[key]['review_comments_content']
+        try:
+            first_comments_time = get_first_content_time(pr_user_name, comments_number, comments_content)
+            first_review_time = get_first_content_time(pr_user_name, review_comments_number, review_comments_content)
+        except Exception as e:
+            print(str(key) + "      ")
+            print(e)
+            break
+        final_time = None
+        # 对无评论的进行处理
+        if first_comments_time is None:
+            if first_review_time is None:
+                final_time = created_time
+            else:
+                final_time = first_review_time
+        elif first_review_time is None:
+            final_time = first_comments_time
+        else:
+            if first_review_time < first_comments_time:
+                final_time = first_review_time
+            else:
+                final_time = first_comments_time
+        re_dict[key] = (closed_time - final_time).total_seconds() / 60
     return re_dict
