@@ -127,6 +127,7 @@ def get_accept_num(pr_dict):
         re_dict[key] = count
     return re_dict
 
+
 def get_close_num(pr_dict):
     """
        获取该pr提交之前，提交者提交的pr的关闭总数
@@ -146,9 +147,75 @@ def get_close_num(pr_dict):
             for temp_key in temp_dict.keys():
                 temp_user_name = temp_dict[temp_key]['pr_user_name']
                 temp_created_time = temp_dict[temp_key]['created_time']
-                temp_closed_time = ((temp_dict[temp_key]['closed_time'] is not None) and temp_dict[temp_key]['closed_time'] or datetime.now())
+                temp_closed_time = ((temp_dict[temp_key]['closed_time'] is not None) and temp_dict[temp_key][
+                    'closed_time'] or datetime.now())
                 if temp_user_name == pr_user_name and temp_created_time < created_time < temp_closed_time and temp_closed_time >= closed_time:
                     count = count + 1
         temp_dict[key] = pr_dict[key]
         re_dict[key] = count
+    return re_dict
+
+
+def get_review_num(pr_dict):
+    """
+     该pr作者之前评审过多少pr review_comments
+       user_pr_dict
+       {
+           52949: {'pr_user_name': 'tlemo', 'created_time': datetime.datetime(2021, 11, 4, 23, 37, 50), 'closed_time': None, 'merged_at': None},
+        }
+    """
+    re_dict = {}
+    return re_dict
+
+
+
+def get_content_people( number, content,re_set):
+    # 找出content里面参与人数
+    if number == 0:
+        return re_set
+    index = 0
+    content_json = json.loads(content)
+    while index < len(content_json):
+        # 有的是没有user这个属性的
+        if content_json[index]["user"] is None:
+            user_name = None
+        else:
+            user_name = content_json[index]["user"]["login"]
+            re_set.add(user_name.__str__())
+        index = index + 1
+    return re_set
+
+def get_participants_count(pr_dict):
+    """
+     该pr的参与者之和，包括提交者，评论者，评审者人数
+       user_pr_dict
+       {
+          52949: {
+          'pr_user_name': 'tlemo',
+          'created_time': datetime.datetime(2021, 11, 4, 23, 37, 50),
+          'closed_time': None,
+          'comments_number': 0,
+          'comments_content': '[]',
+          'review_comments_number': 0,
+          'review_comments_content': '[]'
+          },
+        }
+    """
+    re_dict = {}
+    for key in pr_dict.keys():
+        pr_user_name = pr_dict[key]['pr_user_name']
+        comments_number = pr_dict[key]['comments_number']
+        comments_content = pr_dict[key]['comments_content']
+        review_comments_number = pr_dict[key]['review_comments_number']
+        review_comments_content = pr_dict[key]['review_comments_content']
+        name_set=set()
+        name_set.add(pr_user_name.__str__())
+        try:
+            name_set=get_content_people(comments_number,comments_content,name_set)
+            name_set=get_content_people(review_comments_number,review_comments_content,name_set)
+        except Exception as e:
+            print(str(key) + "      ")
+            print(e)
+            break
+        re_dict[key] = name_set.__len__()
     return re_dict

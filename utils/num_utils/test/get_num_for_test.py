@@ -2,7 +2,7 @@ import pymysql as db
 import requests
 
 from utils.num_utils.num_function import get_label_count, get_workload, get_prev_prs, get_change_num, get_accept_num, \
-    get_close_num
+    get_close_num, get_participants_count, get_review_num
 from utils.time_utils import time_reverse
 from utils.access_token import get_token
 from utils.exception_handdle import write_file
@@ -75,6 +75,7 @@ def test_get_change_num():
     print(user_pr_dict)
     print(get_change_num(user_pr_dict))
 
+
 def test_get_accept_num():
     global pushed_time, time_dict, index
     # 利用游标对象进行操作
@@ -92,6 +93,7 @@ def test_get_accept_num():
         index = index + 1
     print(user_pr_dict)
     print(get_accept_num(user_pr_dict))
+
 
 def test_get_close_num():
     global pushed_time, time_dict, index
@@ -111,6 +113,49 @@ def test_get_close_num():
     print(user_pr_dict)
     print(get_close_num(user_pr_dict))
 
+
+def test_get_review_num():
+    global pushed_time, time_dict, index
+    # 利用游标对象进行操作
+    cursor.execute(pr_sql)
+    data = cursor.fetchall()
+    print(data.__len__())
+    user_pr_dict = {}
+    index = 0
+    while index < data.__len__():
+        user_pr_dict[data[index][0]] = {}
+        user_pr_dict[data[index][0]]["pr_user_name"] = data[index][5]
+        user_pr_dict[data[index][0]]["created_time"] = data[index][1]
+        user_pr_dict[data[index][0]]["closed_time"] = data[index][3]
+        user_pr_dict[data[index][0]]["review_comments_number"] = data[index][13]
+        user_pr_dict[data[index][0]]["review_comments_content"] = data[index][14]
+        index = index + 1
+    print(user_pr_dict)
+    print(get_review_num(user_pr_dict))
+
+
+def test_get_participants_count():
+    global pushed_time, time_dict, index
+    # 利用游标对象进行操作
+    cursor.execute(pr_sql)
+    data = cursor.fetchall()
+    print(data.__len__())
+    user_pr_dict = {}
+    index = 0
+    while index < data.__len__():
+        user_pr_dict[data[index][0]] = {}
+        user_pr_dict[data[index][0]]["pr_user_name"] = data[index][5]
+        user_pr_dict[data[index][0]]["created_time"] = data[index][1]
+        user_pr_dict[data[index][0]]["closed_time"] = data[index][3]
+        user_pr_dict[data[index][0]]["comments_number"] = data[index][11]
+        user_pr_dict[data[index][0]]["comments_content"] = data[index][12]
+        user_pr_dict[data[index][0]]["review_comments_number"] = data[index][13]
+        user_pr_dict[data[index][0]]["review_comments_content"] = data[index][14]
+        index = index + 1
+    print(user_pr_dict)
+    print(get_participants_count(user_pr_dict))
+
+
 # 数据操作部分
 # SQL语句书写
 pr_sql = """
@@ -125,12 +170,16 @@ labels,
 state,
 changed_file_num,
 total_add_line,
-total_delete_line
+total_delete_line,
+comments_number,
+comments_content,
+review_comments_number,
+review_comments_content
  from pr_self"""
 # 链接数据库
 database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
 # 创建游标对象
 cursor = database.cursor()
-test_get_close_num()
+test_get_participants_count()
 # 关闭数据库连接
 database.close()
