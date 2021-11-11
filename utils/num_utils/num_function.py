@@ -159,17 +159,53 @@ def get_close_num(pr_dict):
 def get_review_num(pr_dict):
     """
      该pr作者之前评审过多少pr review_comments
-       user_pr_dict
+       pr_dict
        {
-           52949: {'pr_user_name': 'tlemo', 'created_time': datetime.datetime(2021, 11, 4, 23, 37, 50), 'closed_time': None, 'merged_at': None},
+           52949: {
+            'pr_user_name': 'tlemo',
+            'created_time': datetime.datetime(2021, 11, 4, 23, 37, 50),
+            'closed_time': None,
+            'review_comments_number': 0,
+            'review_comments_content': '[]'
         }
     """
     re_dict = {}
+    # 存储这个pr的所有的review名字
+    temp_dict = {}
+    for key in pr_dict.keys():
+        pr_user_name = pr_dict[key]['pr_user_name']
+        review_comments_number = pr_dict[key]['review_comments_number']
+        review_comments_content = pr_dict[key]['review_comments_content']
+        try:
+            if review_comments_number == 0:
+                re_dict[key] = 0
+            else:
+                #计算之前存储中有没有该pr_user_name评审过的
+                count = 0
+                for temp_key in temp_dict.keys():
+                    temp_set = temp_dict[temp_key]
+                    if temp_set.__contains__(pr_user_name):
+                        count = count + 1
+                # 把该pr的reviewer给保存起来
+                content_json = json.loads(review_comments_content)
+                index = 0
+                reviewer_set = set()
+                while index < len(content_json):
+                    # 有的是没有user这个属性的
+                    if content_json[index]["user"] is not None:
+                        user_name = content_json[index]["user"]["login"]
+                        reviewer_set.add(user_name.__str__())
+                    index = index + 1
+                temp_dict[key] = reviewer_set
+                re_dict[key] = count
+        except Exception as e:
+            print(str(key) + "      ")
+            print(e)
+            break
     return re_dict
 
 
-
-def get_content_people( number, content,re_set):
+def get_content_people(number, content, re_set):
     # 找出content里面参与人数
     if number == 0:
         return re_set
@@ -184,6 +220,7 @@ def get_content_people( number, content,re_set):
             re_set.add(user_name.__str__())
         index = index + 1
     return re_set
+
 
 def get_participants_count(pr_dict):
     """
@@ -208,11 +245,11 @@ def get_participants_count(pr_dict):
         comments_content = pr_dict[key]['comments_content']
         review_comments_number = pr_dict[key]['review_comments_number']
         review_comments_content = pr_dict[key]['review_comments_content']
-        name_set=set()
+        name_set = set()
         name_set.add(pr_user_name.__str__())
         try:
-            name_set=get_content_people(comments_number,comments_content,name_set)
-            name_set=get_content_people(review_comments_number,review_comments_content,name_set)
+            name_set = get_content_people(comments_number, comments_content, name_set)
+            name_set = get_content_people(review_comments_number, review_comments_content, name_set)
         except Exception as e:
             print(str(key) + "      ")
             print(e)

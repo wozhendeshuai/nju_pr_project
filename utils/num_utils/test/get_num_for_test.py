@@ -180,6 +180,6 @@ review_comments_content
 database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
 # 创建游标对象
 cursor = database.cursor()
-test_get_participants_count()
+test_get_review_num()
 # 关闭数据库连接
 database.close()
