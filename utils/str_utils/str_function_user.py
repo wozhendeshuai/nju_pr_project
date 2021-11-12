@@ -21,6 +21,26 @@ database = db.connect(host='127.0.0.1', port=3306, user='root', password='asd159
 cursor = database.cursor()
 database.ping(reconnect=True)
 
+def is_text(author_association):
+    # 判断is_contributor、is_core_member、is_reviewer
+    is_contributor = 0
+    is_core_member = 0
+    is_reviewer = 0
+    if author_association is None:
+        print("author_association为空")
+    else:
+        if author_association == "CONTRIBUTOR":
+            is_contributor = 1
+        elif author_association == "MEMBER":
+            is_core_member = 1
+        elif author_association == "REVIEWER":
+            is_reviewer = 1
+    is_list = []
+    is_list.append(is_contributor)
+    is_list.append(is_core_member)
+    is_list.append(is_reviewer)
+    return is_list
+
 try:
     # 执行SQL语句
     cursor.execute(sql)
@@ -32,22 +52,12 @@ try:
         author_association_json = json.loads(row[1])
         author_association=author_association_json["tensorflow"]
         print(author_association)
-        #判断is_contributor、is_core_member、is_reviewer
-        is_contributor = 0
-        is_core_member = 0
-        is_reviewer = 0
-        if author_association is None:
-            print("pr_author_association为空")
-        else:
-            if author_association == "CONTRIBUTOR":
-                is_contributor = 1
-            elif author_association == "MEMBER":
-                is_core_member = 1
-            elif author_association == "REVIEWER":
-                is_reviewer = 1
+
+        is_list=is_text(author_association)
+
         try:
            #将计算数据放入数据库
-           sqlData_user=(is_contributor,is_core_member,is_reviewer,user_id)
+           sqlData_user=(is_list[0],is_list[1],is_list[2],user_id)
            database.ping(reconnect=True)
            cursor.execute(update_sql_user, sqlData_user)
            # 提交到数据库执行
