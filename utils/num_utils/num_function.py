@@ -44,8 +44,8 @@ def get_workload(pr_dict):
             count = 0
             remove_list = []  # 存储需要被移除的key值
             for temp_key in temp_dict.keys():
-                temp_created_time = pr_dict[temp_key]['created_time']
-                temp_closed_time = ((pr_dict[temp_key]['closed_time'] != None) and pr_dict[temp_key][
+                temp_created_time = temp_dict[temp_key]['created_time']
+                temp_closed_time = ((temp_dict[temp_key]['closed_time'] != None) and temp_dict[temp_key][
                     'closed_time'] or datetime.now())
                 if temp_created_time < created_time and temp_closed_time > created_time:
                     count = count + 1
