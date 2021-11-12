@@ -1,26 +1,20 @@
-import json
 from datetime import datetime
+import dateutil
+import json
+from utils.time_utils import time_reverse
 
 
-def get_developer_stats(labels_dict):
+def get_pr_author_rate(pr_dict):
     """
-       计算pr作者在代码仓的总提交成功率
+       计算pr作者在代码仓的总提交成功率,接受概率，总的贡献给率，代码仓的贡献率
        labels_dict
        {
-            52950: '{"0": {"id": 300136587, "url": "https://api.github.com/repos/tensorflow/tensorflow/labels/cla:%20yes", "name": "cla: yes", "color": "009800", "default": false, "node_id": "MDU6TGFiZWwzMDAxMzY1ODc=", "description": null}, "1": {"id": 1169365682, "url": "https://api.github.com/repos/tensorflow/tensorflow/labels/size:L", "name": "size:L", "color": "adafea", "default": false, "node_id": "MDU6TGFiZWwxMTY5MzY1Njgy", "description": "CL Change Size: Large"}}'
-       }
-       转为json后计算json的长度
-       """
-    re_dict = {}
-    return re_dict
-
-
-def get_pr_author_accept_rate(pr_dict):
-    """
-       计算pr作者在代码仓的总提交成功率
-       labels_dict
-       {
-            52948: {'created_time': datetime.datetime(2021, 11, 4, 22, 23, 45), 'closed_time': None, 'merged_time': None, 'pr_user_name': 'EwoutH'},
+            52948: {
+            'created_time': datetime.datetime(2021, 11, 4, 22, 23, 45),
+            'closed_time': None,
+            'merged_time': None,
+            'pr_user_name': 'EwoutH'
+            },
         }
        转为json后计算json的长度
        如果该pr_author还未提交过，我们认为该pr_user_name的接受概率为1，拒绝概率为0
@@ -84,4 +78,77 @@ def get_pr_author_accept_rate(pr_dict):
             re_dict[key]['self_contribution_rate'] = self_pr_num / pr_num
             re_dict[key]['project_accept_rate'] = pr_accept_num / pr_num
             temp_dict[key] = pr_dict[key]
+    return re_dict
+
+
+def get_project_line_rate(pr_dict):
+    """
+       计算project上一周的平均删除，增加，改变的行的数量
+       labels_dict
+       {
+            52950: {'created_time': datetime.datetime(2021, 11, 5, 0, 4, 17), 'total_add_line': 254, 'total_delete_line': 205}
+        }
+       转为json后计算json的长度
+       如果该pr_author还未提交过，我们认为该pr_user_name的接受概率为1，拒绝概率为0
+       """
+    re_dict = {}
+    # 用于存储之前周改变的行数
+    temp_dict = {}
+
+    for key in pr_dict.keys():
+        created_time = pr_dict[key]['created_time']
+        total_add_line = pr_dict[key]['total_add_line']
+        total_delete_line = pr_dict[key]['total_delete_line']
+        total_change_line = total_add_line + total_delete_line
+        created_week = created_time.isocalendar()
+        year = created_week[0]
+        week = created_week[1]
+        # 累计多少周
+        contain_week = 0
+        # 累计增加了多少行
+        temp_add_line = 0
+        # 累计删除了多少行
+        temp_delete_line = 0
+        # 累计改变了多少行
+        temp_change_line = 0
+
+        for temp_year in temp_dict.keys():
+            for temp_week in temp_dict[temp_year].keys():
+                if temp_year == year and temp_week == week:
+                    break
+                else:
+                    contain_week = contain_week + 1
+                    temp_add_line = temp_add_line + temp_dict[temp_year][temp_week]["total_add_line"]
+                    temp_delete_line = temp_delete_line + temp_dict[temp_year][temp_week]["total_delete_line"]
+                    temp_change_line = temp_change_line + temp_dict[temp_year][temp_week]["total_change_line"]
+        re_dict[key] = {}
+        if contain_week == 0:
+            re_dict[key]['deletions_per_week'] = 0
+            re_dict[key]['additions_per_week'] = 0
+            re_dict[key]['changes_per_week'] = 0
+        else:
+            re_dict[key]['deletions_per_week'] = temp_delete_line / contain_week
+            re_dict[key]['additions_per_week'] = temp_add_line / contain_week
+            re_dict[key]['changes_per_week'] = temp_change_line / contain_week
+        # 计算完后，放入新的数据到temp_dict中
+        if temp_dict.__contains__(year) is False:
+            # 年份为key，周数为第二个key
+            temp_dict[year] = {}
+            temp_dict[year][week] = {}
+            temp_dict[year][week]["total_add_line"] = total_add_line
+            temp_dict[year][week]["total_delete_line"] = total_delete_line
+            temp_dict[year][week]["total_change_line"] = total_change_line
+        else:
+            if temp_dict[year].__contains__(week) is False:
+                temp_dict[year][week] = {}
+                temp_dict[year][week]["total_add_line"] = total_add_line
+                temp_dict[year][week]["total_delete_line"] = total_delete_line
+                temp_dict[year][week]["total_change_line"] = total_change_line
+            else:
+                temp_dict[year][week]["total_add_line"] = total_add_line + temp_dict[year][week]["total_add_line"]
+                temp_dict[year][week]["total_delete_line"] = total_delete_line + temp_dict[year][week][
+                    "total_delete_line"]
+                temp_dict[year][week]["total_change_line"] = total_change_line + temp_dict[year][week][
+                    "total_change_line"]
+
     return re_dict
