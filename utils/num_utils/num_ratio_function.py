@@ -152,3 +152,45 @@ def get_project_line_rate(pr_dict):
                     "total_change_line"]
 
     return re_dict
+
+
+def get_line_weekday_rate(pr_dict):
+    """
+       计算pr根据所在周的周几，判断该周几的平均修改的行数，增加的数量，删除的数量
+       labels_dict
+       {
+            52950: {'created_time': datetime.datetime(2021, 11, 5, 0, 4, 17), 'total_add_line': 254, 'total_delete_line': 205}
+        }
+       转为json后计算json的长度
+       如果该pr_author还未提交过，我们认为该pr_user_name的接受概率为1，拒绝概率为0
+       """
+    re_dict = {}
+    # 用于存储之前周改变的行数
+    temp_dict = {}
+    for key in pr_dict.keys():
+        created_time = pr_dict[key]['created_time']
+        total_add_line = pr_dict[key]['total_add_line']
+        total_delete_line = pr_dict[key]['total_delete_line']
+        total_change_line = total_add_line + total_delete_line
+        created_week = created_time.isocalendar()
+        week_day = created_week[2]
+        # 该日有多少pr
+        re_dict[key] = {}
+        if temp_dict.__contains__(week_day) is False:
+            re_dict[key]['per_lines_changed_week_days'] = 0
+            re_dict[key]['per_lines_added_week_days'] = 0
+            re_dict[key]['per_lines_deleted_week_days'] = 0
+            temp_dict[week_day] = {}
+            temp_dict[week_day]["total_add_line"] = total_add_line
+            temp_dict[week_day]["total_delete_line"] = total_delete_line
+            temp_dict[week_day]["total_change_line"] = total_change_line
+            temp_dict[week_day]["contain_pr"] = 1
+        else:
+            re_dict[key]['per_lines_deleted_week_days'] = temp_dict[week_day]["total_delete_line"] / temp_dict[week_day]["contain_pr"]
+            re_dict[key]['per_lines_added_week_days'] = temp_dict[week_day]["total_add_line"] / temp_dict[week_day]["contain_pr"]
+            re_dict[key]['per_lines_changed_week_days'] = temp_dict[week_day]["total_change_line"] / temp_dict[week_day]["contain_pr"]
+            temp_dict[week_day]["total_add_line"] = total_add_line + temp_dict[week_day]["total_add_line"]
+            temp_dict[week_day]["total_delete_line"] = total_delete_line + temp_dict[week_day]["total_delete_line"]
+            temp_dict[week_day]["total_change_line"] = total_change_line + temp_dict[week_day]["total_change_line"]
+            temp_dict[week_day]["contain_pr"] = 1 + temp_dict[week_day]["contain_pr"]
+    return re_dict
