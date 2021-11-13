@@ -212,11 +212,227 @@ def get_line_weekday_rate(pr_dict):
             temp_dict[week_day]["total_change_line"] = total_change_line
             temp_dict[week_day]["contain_pr"] = 1
         else:
-            re_dict[key]['per_lines_deleted_week_days'] = temp_dict[week_day]["total_delete_line"] / temp_dict[week_day]["contain_pr"]
-            re_dict[key]['per_lines_added_week_days'] = temp_dict[week_day]["total_add_line"] / temp_dict[week_day]["contain_pr"]
-            re_dict[key]['per_lines_changed_week_days'] = temp_dict[week_day]["total_change_line"] / temp_dict[week_day]["contain_pr"]
+            re_dict[key]['per_lines_deleted_week_days'] = temp_dict[week_day]["total_delete_line"] / \
+                                                          temp_dict[week_day]["contain_pr"]
+            re_dict[key]['per_lines_added_week_days'] = temp_dict[week_day]["total_add_line"] / temp_dict[week_day][
+                "contain_pr"]
+            re_dict[key]['per_lines_changed_week_days'] = temp_dict[week_day]["total_change_line"] / \
+                                                          temp_dict[week_day]["contain_pr"]
             temp_dict[week_day]["total_add_line"] = total_add_line + temp_dict[week_day]["total_add_line"]
             temp_dict[week_day]["total_delete_line"] = total_delete_line + temp_dict[week_day]["total_delete_line"]
             temp_dict[week_day]["total_change_line"] = total_change_line + temp_dict[week_day]["total_change_line"]
             temp_dict[week_day]["contain_pr"] = 1 + temp_dict[week_day]["contain_pr"]
+    return re_dict
+
+
+def get_project_line_churn_rate(pr_dict):
+    """
+       计算pr的平均删除，增加，改变的行的数量,不是一周一个单位了，而是pr的数量
+       labels_dict
+       {
+            52949: {'total_add_line': 13, 'total_delete_line': 6},
+        }
+       转为json后计算json的长度
+       返回值
+       {
+         52949: {
+         'deletions_per_pr': 1024.7502845907068,
+         'additions_per_pr': 3147.855634895995,
+         'changes_per_pr': 4172.605919486702
+         },
+       }
+       """
+    re_dict = {}
+    # 用于存储之前周改变的行数
+    temp_dict = {}
+    for key in pr_dict.keys():
+        total_add_line = pr_dict[key]['total_add_line']
+        total_delete_line = pr_dict[key]['total_delete_line']
+        total_change_line = total_add_line + total_delete_line
+        re_dict[key] = {}
+        if temp_dict.__len__() == 0:
+            temp_dict["total_add_line"] = total_add_line
+            temp_dict["total_delete_line"] = total_delete_line
+            temp_dict["total_change_line"] = total_change_line
+            temp_dict["total_pr_num"] = 1
+            re_dict[key]['deletions_per_pr'] = 0
+            re_dict[key]['additions_per_pr'] = 0
+            re_dict[key]['changes_per_pr'] = 0
+        else:
+            re_dict[key]['deletions_per_pr'] = temp_dict["total_delete_line"] / temp_dict["total_pr_num"]
+            re_dict[key]['additions_per_pr'] = temp_dict["total_add_line"] / temp_dict["total_pr_num"]
+            re_dict[key]['changes_per_pr'] = temp_dict["total_change_line"] / temp_dict["total_pr_num"]
+            temp_dict["total_add_line"] = total_add_line + temp_dict["total_add_line"]
+            temp_dict["total_delete_line"] = total_delete_line + temp_dict["total_delete_line"]
+            temp_dict["total_change_line"] = total_change_line + temp_dict["total_change_line"]
+            temp_dict["total_pr_num"] = 1 + temp_dict["total_pr_num"]
+    return re_dict
+
+
+def get_commits_average(pr_dict):
+    """
+       根据当前pr创建的时间，计算所有pr的平均提交数量
+       labels_dict
+       {
+            52950: {'created_time': datetime.datetime(2021, 11, 5, 0, 4, 17), 'closed_time': datetime.datetime(2021, 11, 5, 15, 40, 43), 'commit_number': 1}
+        }
+
+       返回值
+       {
+            52946: 21.698354377975573,
+            pr_number:commits_average
+       }
+       """
+    re_dict = {}
+    # 用于存储之前周改变的行数
+    temp_dict = {}
+    for key in pr_dict.keys():
+        created_time = pr_dict[key]['created_time']
+        closed_time = pr_dict[key]['closed_time']
+        commit_number = pr_dict[key]['commit_number']
+        if temp_dict.__len__() == 0:
+            temp_dict["total_commit_number"] = commit_number
+            temp_dict["pr_num"] = 1
+            re_dict[key] = 0
+        else:
+            re_dict[key] = temp_dict["total_commit_number"] / temp_dict["pr_num"]
+            temp_dict["total_commit_number"] = temp_dict["total_commit_number"] + commit_number
+            temp_dict["pr_num"] = temp_dict["pr_num"] + 1
+    return re_dict
+
+
+def get_avg_comments(pr_dict):
+    """
+       根据当前pr创建的时间，计算所有pr的平均评论数，以及合并的pr的平均评论数
+       labels_dict
+       {
+            52950: {
+            'created_time': datetime.datetime(2021, 11, 5, 0, 4, 17),
+            'closed_time': datetime.datetime(2021, 11, 5, 15, 40, 43),
+            'merged_time': None, 'comments_number': 1}
+        }
+       转为json后计算json的长度
+       如果该pr_author还未提交过，我们认为该pr_user_name的接受概率为1，拒绝概率为0
+
+       返回值
+       {
+            52948: {
+            'comments_per_closed_pr': 5.77386725063872,
+            'comments_per_merged_pr': 5.345905961622968
+            },
+       }
+       """
+    re_dict = {}
+    # 用于存储之前周改变的行数
+    temp_dict = {}
+    for key in pr_dict.keys():
+        created_time = pr_dict[key]['created_time']
+        re_dict[key] = {}
+        if temp_dict.__len__() == 0:
+            re_dict[key]['comments_per_closed_pr'] = 0
+            re_dict[key]['comments_per_merged_pr'] = 0
+            temp_dict[key] = pr_dict[key]
+        else:
+            # 关闭的pr评论累计数
+            closed_comments_number = 0
+            # 合并的pr评论累计数
+            merged_comments_number = 0
+            # 关闭的pr数
+            closed_pr_number = 0
+            # 合并的pr数
+            merged_pr_number = 0
+            # 此处遍历符合条件的pr和评论数，并累加起来，用于后面除
+            for temp_key in temp_dict.keys():
+                temp_closed_time = temp_dict[temp_key]["closed_time"]
+                temp_merged_time = temp_dict[temp_key]["merged_time"]
+                temp_comments_number = temp_dict[temp_key]["comments_number"]
+                if temp_closed_time is not None and temp_closed_time <= created_time:
+                    closed_pr_number = closed_pr_number + 1
+                    closed_comments_number = closed_comments_number + temp_comments_number
+                if temp_merged_time is not None and temp_merged_time <= created_time:
+                    merged_pr_number = merged_pr_number + 1
+                    merged_comments_number = merged_comments_number + temp_comments_number
+            if closed_pr_number == 0:
+                re_dict[key]['comments_per_closed_pr'] = 0
+            else:
+                re_dict[key]['comments_per_closed_pr'] = closed_comments_number / closed_pr_number
+            if merged_pr_number == 0:
+                re_dict[key]['comments_per_merged_pr'] = 0
+            else:
+                re_dict[key]['comments_per_merged_pr'] = merged_comments_number / merged_pr_number
+            temp_dict[key] = pr_dict[key]
+    return re_dict
+
+
+def get_avg_latency(pr_dict):
+    """
+       计算pr的合并时间，计算，从pr的打开状态到合并状态的平均天数，以及从打开状态到关闭状态的平均天数
+       labels_dict
+       {
+             52950: {
+             'created_time': datetime.datetime(2021, 11, 5, 0, 4, 17),
+             'closed_time': datetime.datetime(2021, 11, 5, 15, 40, 43),
+             'merged_time': None
+             },
+        }
+       返回值
+       {
+         52948: {
+         'close_latency': 19.34282287919078,
+         'merge_latency': 12.824740002929545
+         },
+       }
+       """
+    re_dict = {}
+    # 用于存储之前周改变的行数
+    temp_dict = {}
+    for key in pr_dict.keys():
+        created_time = pr_dict[key]['created_time']
+        closed_time = pr_dict[key]["closed_time"]
+        merged_time = pr_dict[key]["merged_time"]
+        close_day = 0
+        merge_day = 0
+        # 当天合并或者关闭，算1
+        if closed_time is not None:
+            close_day = (closed_time - created_time).days + 1
+        if merged_time is not None:
+            merge_day = (merged_time - created_time).days + 1
+        re_dict[key] = {}
+        if temp_dict.__len__() == 0:
+            re_dict[key]['merge_latency'] = 0
+            re_dict[key]['close_latency'] = 0
+        else:
+            # 关闭的pr天数累计数
+            closed_days_number = 0
+            # 合并的pr天数累计数
+            merged_days_number = 0
+            # 关闭的pr数
+            closed_pr_number = 0
+            # 合并的pr数
+            merged_pr_number = 0
+            # 此处遍历符合条件的pr和评论数，并累加起来，用于后面除
+            for temp_key in temp_dict.keys():
+                temp_closed_time = temp_dict[temp_key]["closed_time"]
+                temp_merged_time = temp_dict[temp_key]["merged_time"]
+                temp_close_day = temp_dict[temp_key]["close_day"]
+                temp_merge_day = temp_dict[temp_key]["merge_day"]
+                if temp_closed_time is not None and temp_closed_time <= created_time:
+                    closed_pr_number = closed_pr_number + 1
+                    closed_days_number = closed_days_number + temp_close_day
+                # 这样也把没有合并的pr给过滤掉了
+                if temp_merged_time is not None and temp_merged_time <= created_time:
+                    merged_pr_number = merged_pr_number + 1
+                    merged_days_number = merged_days_number + temp_merge_day
+            if closed_pr_number == 0:
+                re_dict[key]['close_latency'] = 0
+            else:
+                re_dict[key]['close_latency'] = closed_days_number / closed_pr_number
+
+            if merged_pr_number == 0:
+                re_dict[key]['merge_latency'] = 0
+            else:
+                re_dict[key]['merge_latency'] = merged_days_number / merged_pr_number
+        temp_dict[key] = pr_dict[key]
+        temp_dict[key]["close_day"] = close_day
+        temp_dict[key]["merge_day"] = merge_day
     return re_dict
