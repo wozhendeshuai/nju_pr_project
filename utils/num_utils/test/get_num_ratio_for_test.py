@@ -88,6 +88,6 @@ review_comments_content
 database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
 # 创建游标对象
 cursor = database.cursor()
-test_get_line_weekday_rate()
+test_get_pr_author_accept_rate()
 # 关闭数据库连接
 database.close()

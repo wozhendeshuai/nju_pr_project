@@ -18,6 +18,15 @@ def get_pr_author_rate(pr_dict):
         }
        转为json后计算json的长度
        如果该pr_author还未提交过，我们认为该pr_user_name的接受概率为1，拒绝概率为0
+       返回值
+       {
+             52949: {
+             'self_accept_rate': 1.0,
+             'self_closed_num_rate': 1.0,
+             'self_contribution_rate': 5.17437648763324e-05,
+             'project_accept_rate': 0.7065093656214426
+             },
+       }
        """
     re_dict = {}
     # 用于保存维护比当前遍历的pr先创建的pr
@@ -90,6 +99,14 @@ def get_project_line_rate(pr_dict):
         }
        转为json后计算json的长度
        如果该pr_author还未提交过，我们认为该pr_user_name的接受概率为1，拒绝概率为0
+       返回值
+       {
+             52949: {
+             'deletions_per_week': 63469.40064102564,
+             'additions_per_week': 194976.12820512822,
+             'changes_per_week': 258445.52884615384
+             },
+       }
        """
     re_dict = {}
     # 用于存储之前周改变的行数
@@ -163,6 +180,15 @@ def get_line_weekday_rate(pr_dict):
         }
        转为json后计算json的长度
        如果该pr_author还未提交过，我们认为该pr_user_name的接受概率为1，拒绝概率为0
+
+       返回值
+       {
+            52949: {
+                'per_lines_deleted_week_days': 799.7732574679943,
+                'per_lines_added_week_days': 3677.2375533428167,
+                'per_lines_changed_week_days': 4477.010810810811
+            },
+       }
        """
     re_dict = {}
     # 用于存储之前周改变的行数
