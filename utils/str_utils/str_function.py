@@ -8,19 +8,14 @@ import traceback
 import time
 import json
 
-# 数据操作部分
-# SQL语句书写
-sql = """SELECT pr_number,body,title,comments_content,review_comments_content FROM `pr_self` """
-update_sql = """UPDATE pr_self SET body_word_count=%s,title_length=%s,comments_word_count=%s WHERE pr_number=%s"""
-# 链接数据库
-database = db.connect(host='127.0.0.1', port=3306, user='root', password='asd159357', db='third_pr', charset='utf8mb4')
-# 创建游标对象
-cursor = database.cursor()
-database.ping(reconnect=True)
-
-
 # 计算一个字符串的单词数量(评论中的链接不算在内)
 def wordCount(str) -> int:
+    """
+        计算某个字符串中单词数量，输入参数为字符串
+        “Thanks! Should I create issue for this PR?\n”
+        输出整型数字 8
+        评论中的链接计算为一个单词
+    """
     num = 0
     if str is None or str == '' or str == ' ' or len(str) == 0:
         num = 0
@@ -31,6 +26,12 @@ def wordCount(str) -> int:
 
 # 计算一个list中的单词数量
 def wordCount_list(list):
+    """
+        计算一个字符串list中所有字符串的单词数量之和，输入参数为list
+        ["Thanks! Should I create issue for this PR?\n","Up to you -- we've fixed it internally and will push it out to the git repo soon :).  Thanks for the typo fix!\n"]
+        输出整型数字 33
+        评论中的链接计算为一个单词
+    """
     total = 0
     if len(list) == 0:
         return 0
@@ -45,6 +46,14 @@ def wordCount_list(list):
 
 # 为了获得评论json中所有的body
 def getBody(data):
+    """
+        将comments_content中的json中的多个body存储到一个list中
+        输入参数为json语句
+        [{"id": 155192251, "url": "https://api.github.com/repos/tensorflow/tensorflow/issues/comments/155192251",
+        "body": "Hey webmaven: as mentioned in our [Contribution doc](https://github.com/tensorflow/tensorflow/blob/master/CONTRIBUTING.md), we don't accept pull requests through github yet.
+        However, if you don't mind, I will make these edits internally and update the repository on our next upstream push with credit given to you.\n"}]
+        输出body list
+    """
     if len(data) == 0:
         return []
     for element in data:  # iterate on each element of the list
@@ -53,45 +62,3 @@ def getBody(data):
         bodys = [e['body'] for e in data]
         return bodys
 
-
-try:
-    # 执行SQL语句
-    cursor.execute(sql)
-    # 获取所有记录列表
-    results = cursor.fetchall()
-    for row in results:
-        pr_number = row[0]
-        body = row[1]
-        title = row[2]
-        comments_json = json.loads(row[3])
-        review_comments_json = json.loads(row[4])
-
-        comments = getBody(comments_json)
-        review_comments = getBody(review_comments_json)
-
-        body_word_count = wordCount(body)
-        title_length = wordCount(title)
-        comments_word_count = wordCount_list(comments) + wordCount_list(review_comments)
-        print(comments)
-        print(review_comments)
-        print(body_word_count.__str__() + ' ' + title_length.__str__() + ' ' + comments_word_count.__str__())
-        try:
-            # 将计算数据放入数据库
-            sqlData = (body_word_count, title_length, comments_word_count, pr_number)
-            database.ping(reconnect=True)
-            cursor.execute(update_sql, sqlData)
-            # 提交到数据库执行
-            database.commit()
-            print("第", pr_number, "行数据更新到数据库成功: ")
-        except Exception as e:
-            # 如果发生错误则回滚
-            print("第", pr_number, "行数据插入数据库失败: ")
-            print(e)
-            # traceback.print_exc()
-            database.ping(reconnect=True)
-            database.rollback()
-            break
-except Exception as e:
-    print(e)
-# 打印结果
-# print(results)

@@ -8,21 +8,15 @@ import traceback
 import time
 import json
 
-sql="""SELECT user_id,author_association_with_repo FROM pr_user"""
-update_sql_user="""UPDATE pr_user SET 
-                is_contributor=%s,
-                is_core_member=%s,
-                is_reviewer=%s 
-                WHERE user_id=%s"""
-
-# 链接数据库
-database = db.connect(host='127.0.0.1', port=3306, user='root', password='asd159357', db='third_pr', charset='utf8mb4')
-# 创建游标对象
-cursor = database.cursor()
-database.ping(reconnect=True)
-
+# 判断is_contributor、is_core_member、is_reviewer
 def is_text(author_association):
-    # 判断is_contributor、is_core_member、is_reviewer
+    """
+        计算pr_user表中pr提交者和仓库的关系，是否为contributor、core_member、reviewer
+        输入参数为json类型的author_association
+        {"tensorflow": "CONTRIBUTOR"}
+        输出为list，list[0]-list[2]分别对应变量is_contributor、is_core_member、is_reviewer
+        变量值为0代表不是该关系，1代表是该关系
+    """
     is_contributor = 0
     is_core_member = 0
     is_reviewer = 0
@@ -41,35 +35,3 @@ def is_text(author_association):
     is_list.append(is_reviewer)
     return is_list
 
-try:
-    # 执行SQL语句
-    cursor.execute(sql)
-    # 获取所有记录列表
-    results = cursor.fetchall()
-    for row in results:
-        num = 0
-        user_id = row[0]
-        author_association_json = json.loads(row[1])
-        author_association=author_association_json["tensorflow"]
-        print(author_association)
-
-        is_list=is_text(author_association)
-
-        try:
-           #将计算数据放入数据库
-           sqlData_user=(is_list[0],is_list[1],is_list[2],user_id)
-           database.ping(reconnect=True)
-           cursor.execute(update_sql_user, sqlData_user)
-           # 提交到数据库执行
-           database.commit()
-           print("第", user_id, "行数据更新到数据库成功: ")
-        except Exception as e:
-           # 如果发生错误则回滚
-           print("第", user_id, "行数据插入数据库失败: ")
-           print(e)
-           # traceback.print_exc()
-           database.ping(reconnect=True)
-           database.rollback()
-           break
-except Exception as e:
-    print(e)
