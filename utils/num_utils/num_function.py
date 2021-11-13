@@ -149,7 +149,7 @@ def get_close_num(pr_dict):
                 temp_created_time = temp_dict[temp_key]['created_time']
                 temp_closed_time = ((temp_dict[temp_key]['closed_time'] is not None) and temp_dict[temp_key][
                     'closed_time'] or datetime.now())
-                if temp_user_name == pr_user_name and temp_created_time < created_time < temp_closed_time and temp_closed_time >= closed_time:
+                if temp_user_name == pr_user_name and temp_created_time < temp_closed_time < created_time and temp_closed_time <= closed_time:
                     count = count + 1
         temp_dict[key] = pr_dict[key]
         re_dict[key] = count
@@ -180,7 +180,7 @@ def get_review_num(pr_dict):
             if review_comments_number == 0:
                 re_dict[key] = 0
             else:
-                #计算之前存储中有没有该pr_user_name评审过的
+                # 计算之前存储中有没有该pr_user_name评审过的
                 count = 0
                 for temp_key in temp_dict.keys():
                     temp_set = temp_dict[temp_key]
