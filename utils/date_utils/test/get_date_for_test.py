@@ -98,6 +98,6 @@ pr_sql = """select pr_number,created_at,updated_at,closed_at,merged_at,comments_
 database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
 # 创建游标对象
 cursor = database.cursor()
-test_get_latency_after_response()
+test_wait_time_diff()
 # 关闭数据库连接
 database.close()

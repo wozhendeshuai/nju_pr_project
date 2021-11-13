@@ -10,6 +10,7 @@ def get_label_count(labels_dict):
             52950: '{"0": {"id": 300136587, "url": "https://api.github.com/repos/tensorflow/tensorflow/labels/cla:%20yes", "name": "cla: yes", "color": "009800", "default": false, "node_id": "MDU6TGFiZWwzMDAxMzY1ODc=", "description": null}, "1": {"id": 1169365682, "url": "https://api.github.com/repos/tensorflow/tensorflow/labels/size:L", "name": "size:L", "color": "adafea", "default": false, "node_id": "MDU6TGFiZWwxMTY5MzY1Njgy", "description": "CL Change Size: Large"}}'
        }
        转为json后计算json的长度
+       返回值{pr的id：labels的长度}
        """
     re_dict = {}
     for key in labels_dict.keys():
@@ -28,6 +29,7 @@ def get_workload(pr_dict):
                 'closed_time': None},
             }
        当closed_time为空时，以当前的时间代替，说明还未关闭
+       返回值：{pr的id：数量}
        """
     re_dict = {}
     # 用于保存维护比当前遍历的pr先创建还未关闭的pr
@@ -65,6 +67,7 @@ def get_prev_prs(user_pr_dict):
        {
            52943: {'pr_user_name': 'vict-guo'},
         }
+        返回值：{pr的id：数量}
     """
     re_dict = {}
     temp_dict = {}
@@ -88,6 +91,7 @@ def get_change_num(pr_change_dict):
        {
            16380: {'pr_user_name': 'av8ramit', 'changed_line_num': 4227}
         }
+        返回值：{pr的id：数量}
     """
     re_dict = {}
     temp_dict = {}
@@ -111,6 +115,7 @@ def get_accept_num(pr_dict):
        {
            52946: {'pr_user_name': 'mihaimaruseac', 'merged_at': datetime.datetime(2021, 11, 4, 20, 56, 56)},
         }
+        返回值：{pr的id：数量}
     """
     re_dict = {}
     temp_dict = {}
@@ -135,6 +140,7 @@ def get_close_num(pr_dict):
        {
            52949: {'pr_user_name': 'tlemo', 'created_time': datetime.datetime(2021, 11, 4, 23, 37, 50), 'closed_time': None, 'merged_at': None},
         }
+        返回值：{pr的id：数量}
     """
     re_dict = {}
     temp_dict = {}
@@ -168,6 +174,7 @@ def get_review_num(pr_dict):
             'review_comments_number': 0,
             'review_comments_content': '[]'
         }
+        返回值：{pr的id：数量}
     """
     re_dict = {}
     # 存储这个pr的所有的review名字
@@ -237,6 +244,7 @@ def get_participants_count(pr_dict):
           'review_comments_content': '[]'
           },
         }
+        返回值：{pr的id：数量}
     """
     re_dict = {}
     for key in pr_dict.keys():
