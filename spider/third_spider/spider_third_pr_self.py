@@ -8,10 +8,11 @@ import traceback
 import time
 import json
 
-index = 44852
-
-owner_name = "tensorflow"
-repo_name = "tensorflow"
+# 此部分可修改，用于控制进程，与爬取的仓库
+index = 0
+maxNum = 43660
+owner_name ="rails"#"angular" #"tensorflow"
+repo_name = "rails"#"angular.js"#"tensorflow"
 # https://api.github.com/repos/tensorflow/tensorflow/pulls/872
 # 获取token todo：可以进行选择，不然这样一直是一个会有限制
 access_token = get_token()
@@ -109,9 +110,10 @@ def url_to_json(url, number):
     return re_json
 
 
-while index < 52952:
+while index < maxNum:
     try:
-        print("========================" + "第" + str(index) + "号 pr_number: " + str(index) + "信息保存中==========================")
+        print("========================" + "第" + str(index) + "号 pr_number: " + str(
+            index) + "信息保存中==========================")
         temp_url = pr_url + index.__str__()
         pr_r = requests.get(temp_url, headers=headers)
         print("pr_url: " + temp_url + "  Status Code:", pr_r.status_code)

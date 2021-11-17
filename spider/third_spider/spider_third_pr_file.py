@@ -6,6 +6,10 @@ from utils.exception_handdle import write_file
 import traceback
 import time
 import json
+# 此部分可修改，用于控制进程，与爬取的仓库
+owner_name = "angular"  # "tensorflow"
+repo_name = "angular.js"  # "tensorflow"
+index = 0
 
 access_token = get_token()
 headers = {
@@ -28,10 +32,7 @@ sql = """
     patch_content )
     VALUES( %s,%s,%s, %s,%s, %s,%s, %s,%s, %s )
    """
-select_sql = """
-select pr_number,repo_name,changed_file_num,pr_url
-from pr_self 
-"""
+select_sql = "select pr_number,repo_name,changed_file_num,pr_url from pr_self where repo_name=\'" + repo_name + """\' order by pr_number"""
 # """
 #     select pr_number,repo_name,changed_file_num,pr_url
 # 	from pr_self
@@ -47,7 +48,8 @@ cursor.execute(select_sql)
 data = cursor.fetchall()
 # print(data)
 data_len = data.__len__()
-index = 0
+print(data_len)
+
 while index < data_len:
     # 取出查询的数据
     pr_number = data[index][0]
@@ -64,7 +66,8 @@ while index < data_len:
     page = 1
     try:
         while page <= maxPage:
-            print("========================" + "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页" + "==========================")
+            print("========================" + "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(
+                page) + "页" + "==========================")
             print(pr_number)
             print(repo_name)
             print(file_num)
@@ -96,18 +99,21 @@ while index < data_len:
                     cursor.execute(sql, sqlData)
                     # 提交到数据库执行
                     database.commit()
-                    print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(temp_index) + "个数据插入成功")
+                    print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(
+                        temp_index) + "个数据插入成功")
                     temp_index = temp_index + 1
                 except Exception as e:
                     # 如果发生错误则回滚
-                    print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(temp_index) + "个数据插入数据库失败: " + str(e))
+                    print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(
+                        temp_index) + "个数据插入数据库失败: " + str(e))
                     # 当出现重复key时应当可以继续往下走，取下一条数据
                     if e.args[0] == 1062 or e.args[1].__contains__("Duplicate"):
                         temp_index = temp_index + 1
                         continue
                     filename = repo_name + '_file_exception.csv'
                     write_file(index, "user", (
-                            "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(temp_index) + "个数据插入数据库失败: " + str(e)), filename)
+                            "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(
+                        temp_index) + "个数据插入数据库失败: " + str(e)), filename)
                     print(e)
                     # traceback.print_exc()
                     database.rollback()

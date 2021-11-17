@@ -12,7 +12,10 @@ import json
 然后再加入新的内容
 测试代码在spider/third_spider/test/test.py
 '''
-
+# 此部分可修改，用于控制进程
+index = 2596
+owner_name = "angular"  # "tensorflow"
+repo_name = "angular.js"  # "tensorflow"
 
 # 根据url以及url中蕴含的数来取
 def follow_str(url, number):
@@ -54,14 +57,10 @@ sql = """
     author_association_with_repo)
     VALUES(%s,%s,%s,%s,%s,%s,%s,%s )
    """
-select_pr_self_sql = """
-   	SELECT DISTINCT(pr_user_id),pr_user_name,pr_author_association,repo_name
-	from pr_self
-	order by pr_user_id
-	"""
+select_pr_self_sql = "SELECT DISTINCT(pr_user_id),pr_user_name,pr_author_association,repo_name from pr_self where  repo_name=\'" + repo_name + "\' order by pr_user_id"
 # 查询是否在之前的仓库取数据时，已经爬取该用户的数据
 select_pr_user_sql = """
-   	SELECT  user_id, user_name,author_association_with_repo
+   	SELECT user_id, user_name,author_association_with_repo
 	from pr_user
 	where user_name=%s
 	"""
@@ -77,7 +76,7 @@ cursor.execute(select_pr_self_sql)
 data = cursor.fetchall()
 # print(data)
 data_len = data.__len__()
-index = 0
+
 while index < data_len:
     # 取出查询的数据
     pr_user_id = data[index][0]
