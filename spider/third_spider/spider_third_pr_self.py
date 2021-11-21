@@ -7,9 +7,12 @@ from requests.adapters import HTTPAdapter
 import traceback
 import time
 import json
-
+#test_branch
+#test_branch
+#test_branch
+#test_branch
 # 此部分可修改，用于控制进程，与爬取的仓库
-index = 0
+index = 33135
 maxNum = 43660
 owner_name ="rails"#"angular" #"tensorflow"
 repo_name = "rails"#"angular.js"#"tensorflow"
