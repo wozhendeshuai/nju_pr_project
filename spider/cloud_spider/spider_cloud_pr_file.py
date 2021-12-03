@@ -6,10 +6,11 @@ from utils.exception_handdle import write_file
 import traceback
 import time
 import json
+
 # 此部分可修改，用于控制进程，与爬取的仓库
-owner_name ="spring-projects"#"symfony"#"rails"#"angular" #"tensorflow"
-repo_name ="spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
-index = 1375
+owner_name = "spring-projects"  # "symfony"#"rails"#"angular" #"tensorflow"
+repo_name = "spring-framework"  # "spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
+index = 0
 
 access_token = get_token()
 headers = {
@@ -39,8 +40,8 @@ select_sql = "select pr_number,repo_name,changed_file_num,pr_url from pr_self wh
 # 	order by pr_number
 # 	"""
 
-# 链接数据库
-database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8mb4')
+# 链接云端数据库
+database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second', charset='utf8')
 # 创建游标对象
 cursor = database.cursor()
 # 利用游标对象进行操作

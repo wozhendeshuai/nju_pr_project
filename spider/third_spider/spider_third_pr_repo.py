@@ -9,8 +9,8 @@ import json
 # 此部分可修改，用于控制进程，与爬取的仓库
 index = 0
 num=0
-owner_name ="rails"#"angular" #"tensorflow"
-repo_name = "rails"#"angular.js"#"tensorflow"
+owner_name ="spring-projects"#"symfony"#"rails"#"angular" #"tensorflow"
+repo_name ="spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
 # https://api.github.com/orgs/tensorflow/members?per_page=100&page=3 需要分页查询进而获取所有信息，也可以从页面直接爬取https://github.com/tensorflow
 # https://api.github.com/repos/tensorflow/tensorflow watchers
 # 获取token todo：可以进行选择，不然这样一直是一个会有限制

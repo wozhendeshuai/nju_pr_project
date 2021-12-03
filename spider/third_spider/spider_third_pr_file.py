@@ -7,8 +7,8 @@ import traceback
 import time
 import json
 # 此部分可修改，用于控制进程，与爬取的仓库
-owner_name = "angular"  # "tensorflow"
-repo_name = "angular.js"  # "tensorflow"
+owner_name ="spring-projects"#"symfony"#"rails"#"angular" #"tensorflow"
+repo_name ="spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
 index = 0
 
 access_token = get_token()

@@ -12,7 +12,7 @@ import json
 #test_branch
 #test_branch
 # 此部分可修改，用于控制进程，与爬取的仓库
-index = 0
+index = 22779
 maxNum = 28000
 owner_name ="spring-projects"#"symfony"#"rails"#"angular" #"tensorflow"
 repo_name ="spring-framework"#"spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"

@@ -12,10 +12,10 @@ import json
 #test_branch
 #test_branch
 # 此部分可修改，用于控制进程，与爬取的仓库
-index = 33135
-maxNum = 43660
-owner_name ="rails"#"angular" #"tensorflow"
-repo_name = "rails"#"angular.js"#"tensorflow"
+index = 0
+maxNum = 28900 #需根据具体的来自定义
+owner_name ="spring-projects"#"symfony"#"rails"#"angular" #"tensorflow"
+repo_name ="spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
 # https://api.github.com/repos/tensorflow/tensorflow/pulls/872
 # 获取token todo：可以进行选择，不然这样一直是一个会有限制
 access_token = get_token()
