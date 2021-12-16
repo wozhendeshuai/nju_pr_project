@@ -14,8 +14,8 @@ import json
 '''
 # 此部分可修改，用于控制进程
 index = 0
-owner_name ="spring-projects"#"symfony"#"rails"#"angular" #"tensorflow"
-repo_name ="spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
+owner_name = "spring-projects"  # "symfony"#"rails"#"angular" #"tensorflow"
+repo_name = "spring-framework"  # "spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
 
 # 根据url以及url中蕴含的数来取
 def follow_str(url, number):
