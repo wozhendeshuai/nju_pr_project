@@ -175,5 +175,5 @@ if __name__ == "__main__":
 
     subCenter, center = kmeans(load_data(file_path), k, randomCenter(load_data(file_path), k))
     plot_show(tempdata,center)
-    save_result("E:\\pythonProject\\nju_pr_project\\data_process\\kmeans_sub", subCenter)
-    save_result("E:\\pythonProject\\nju_pr_project\\data_process\\kmeans_center", center)
+    save_result("/data_process/kmeans_sub", subCenter)
+    save_result("/data_process/kmeans_center", center)
