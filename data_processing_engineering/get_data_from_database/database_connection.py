@@ -18,4 +18,5 @@ def getDataFromSql(sqlOrder):
     sql = sqlOrder
     cursor.execute(sql)
     data = cursor.fetchall()
+    conn.close()
     return data

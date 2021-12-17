@@ -18,8 +18,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # 从数据库获取数据
 raw_data = database_connection.getDataFromSql(
-    "select * from pr_self"
+    "select * from pr_self where repo_name='spring-boot' order by pr_number"
 )
+
 print(len(raw_data))  ##查看PR数量
 
 # 标记有用的PR自身信息的下标
@@ -154,7 +155,7 @@ print(count)
 repo_data = database_connection.getDataFromSql(
     "select repo_id,repo_name\
         ,project_created_at,project_updated_at\
-        ,project_pushed_at from pr_repo"
+        ,project_pushed_at from pr_repo where repo_name='spring-boot'"
 )
 
 proj_age = []
@@ -575,7 +576,7 @@ for i in range(len(X)):
     row_data.append(tmp)
 
 # 保存数据到csv文件
-with open('./nodes_data.csv', 'w', encoding='utf-8', newline='') as f:
+with open('./spring-boot_data.csv', 'w', encoding='utf-8', newline='') as f:
     writer = csv.writer(f, dialect='excel')
     writer.writerow(headers)
     for item in row_data:
