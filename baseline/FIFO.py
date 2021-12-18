@@ -118,7 +118,7 @@ def get_data_by_repo_name(repo_name):
 # 根据已有数据得到FIFO的排序结果
 def fifo(day_data, day):
     fifo_data = []
-    # 得到本日以及本日之前还处于开放状态的pr，并按照先进先出对pr_number进行排序
+    # 得到本日以及本日之前还处于开放状态的pr，并按照先进先出对pr_number进行排序，也就是pr的创建时间先后
     for key in day_data.keys():
         if key > day:
             continue
@@ -133,12 +133,14 @@ def fifo(day_data, day):
     return fifo_data
 
 
+# 对fifo进行调用，同时将数据写入到文件中，方便后续统计
 def fifo_result(true_rate_label_dict, day_data, repo_name):
     ndgc_list = []
     day_list = []
     max_day = None
     min_day = None
     for day in day_data.keys():
+        # 获取每一天还处于open状态的pr列表顺序
         fifo_data = fifo(day_data, day)
         fifo_sort = []
         true_sort = []
