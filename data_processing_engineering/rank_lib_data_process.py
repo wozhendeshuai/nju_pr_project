@@ -114,78 +114,8 @@ def get_data_by_repo_name(repo_name):
     return day_data, response_time, first_response_time_dict
 
 
-# print(response_time)
-# 根据已有数据得到FIFO的排序结果
-def fifo(day_data, day):
-    fifo_data = []
-    # 得到本日以及本日之前还处于开放状态的pr，并按照先进先出对pr_number进行排序，也就是pr的创建时间先后
-    for key in day_data.keys():
-        if key > day:
-            continue
-        else:
-            # 获取当前天的所有PR
-            temp_pr_dict = day_data[key]
-            for pr_key in temp_pr_dict:
-                if temp_pr_dict[pr_key]['closed_time'].date() < day:
-                    continue
-                else:
-                    fifo_data.append(pr_key)
-    return fifo_data
-
-
-# 对fifo进行调用，同时将数据写入到文件中，方便后续统计
-def fifo_result(true_rate_label_dict, day_data, repo_name):
-    ndgc_list = []
-    day_list = []
-    max_day = None
-    min_day = None
-    for day in day_data.keys():
-        # 获取每一天还处于open状态的pr列表顺序
-        fifo_data = fifo(day_data, day)
-        fifo_sort = []
-        true_sort = []
-        # 获取从fifo中获取的每个列表的顺序
-        for pr_number_fifo in fifo_data:
-            fifo_sort.append(true_rate_label_dict[pr_number_fifo])
-            true_sort.append(true_rate_label_dict[pr_number_fifo])
-        true_sort.sort(reverse=True)
-        ndcg_num = ndcg(true_sort, fifo_sort, fifo_sort.__len__())
-        print("=================================日期:", day)
-        print("fifo pr_number排序:", fifo_data)
-        print("fifo_sort:", fifo_sort)
-        print("true_sort:", true_sort)
-        print("ndgc_num:", ndcg_num)
-        if max_day is None or max_day < day:
-            max_day = day
-        if min_day is None or min_day > day:
-            min_day = day
-        day_list.append(day)
-        ndgc_list.append(ndcg_num)
-
-    headers = ['日期',
-               'ndgc'
-               ]
-
-    row_data = []
-    count = 0
-    for i in range(len(day_list)):
-        tmp = []
-        tmp.append(day_list[i])
-        tmp.append(ndgc_list[i])
-        row_data.append(tmp)
-    print(row_data)
-    # 保存数据到csv文件
-    with open("./result/fifo/" + repo_name + "_FIFO_result.csv", 'w', encoding='utf-8', newline='') as f:
-        writer = csv.writer(f, dialect='excel')
-        writer.writerow(headers)
-        for item in row_data:
-            writer.writerow(item)
-    return None
-
-
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     repo_name = "angular.js"#"symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     day_data, response_time, first_response_time_dict = get_data_by_repo_name(repo_name)
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
-    fifo_result(true_rate_label_dict, day_data, repo_name)
