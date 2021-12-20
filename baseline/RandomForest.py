@@ -136,7 +136,7 @@ def prepare_temp_file(temp_data_path, origin_data_path, open_pr_index_list, day)
     file = open(temp_data_path, 'w+')
     for i in range(len(open_pr_index_list)):
         s = getline(origin_data_path, open_pr_index_list[i]+1)
-        s = s.replace("'", '').replace(',', '') + '\n'  # 去除单引号，逗号，每行末尾追加换行符
+        # s = s.replace("'", '').replace(',', '') + '\n'  # 去除单引号，逗号，每行末尾追加换行符
         file.write(s)
     file.close()
     print("保存第 "+str(day)+" 天的临时文件成功")
