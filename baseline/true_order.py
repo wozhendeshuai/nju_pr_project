@@ -1,6 +1,6 @@
 # 根据已有数据得到真实的排序
 def get_true_order_dict(response_time, first_response_time_dict):
-    # 传入一个无序的response,找出该response列表中的五等分点，以及这五等分点对应的值分别是多少
+    # 传入一个无序的response list，以及与response_time_dict对应,找出该response列表中的五等分点，以及这五等分点对应的值分别是多少
     true_rate_label_dict = {}
     response_time.sort()
     # 求五等分点
@@ -14,14 +14,14 @@ def get_true_order_dict(response_time, first_response_time_dict):
         tmp = 0
         key_response_time = first_response_time_dict[key]
         if key_response_time < threshold[0]:
-            tmp = 5
-        elif key_response_time < threshold[1]:
             tmp = 4
-        elif key_response_time < threshold[2]:
+        elif key_response_time < threshold[1]:
             tmp = 3
-        elif key_response_time < threshold[3]:
+        elif key_response_time < threshold[2]:
             tmp = 2
-        else:
+        elif key_response_time < threshold[3]:
             tmp = 1
+        else:
+            tmp = 0
         true_rate_label_dict[key] = tmp
     return true_rate_label_dict
