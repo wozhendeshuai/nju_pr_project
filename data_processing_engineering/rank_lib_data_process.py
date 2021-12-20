@@ -525,7 +525,7 @@ def get_data_by_repo_name(repo_name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     repo_name = "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
-    filename = "./rank_data/" + repo_name + "svm_rank_format_data.txt"
+    filename = "./rank_data/" + repo_name + "_svm_rank_format_data.txt"
     row_data = get_data_by_repo_name(repo_name)
     text_save(filename, row_data)
 '''
