@@ -12,7 +12,7 @@ def ndcg(rel_true, rel_pred, p=None, form="linear"):
         ndcg (float): normalized discounted cumulative gain score [0, 1]
     """
     rel_true = np.sort(rel_true)[::-1]
-    rel_pred = np.sort(rel_pred)[::-1]
+    rel_pred = np.array(rel_pred)
 
     p = min(len(rel_true), min(len(rel_pred), p))
 
@@ -32,3 +32,4 @@ def ndcg(rel_true, rel_pred, p=None, form="linear"):
     return dcg / idcg
 
 
+# print(ndcg([1, 2, 3], [2, 3, 1], 3))
