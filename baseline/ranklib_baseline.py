@@ -39,14 +39,6 @@ total_delete_line_index = 20
 title_index = 21
 body_index = 22
 
-repo_name = "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
-# 文件路径
-jar_path = "E:\\pythonProject\\nju_pr_project\\baseline\\RankLib-2.16.jar"
-origin_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_test_data.txt"
-temp_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_temp_svm_rank_format_data.txt"
-temp_sort_result_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_myScoreFile.txt"
-model_path = "E:\pythonProject\\nju_pr_project\\baseline\\rank_model\\" + repo_name + "_randomforest_model.txt"
-
 
 # 根据所在原始文件中pr_number获取当前测试需要的文件
 # 获取当前文件中pr——number，以及对应的索引位置
@@ -60,7 +52,7 @@ def get_pr_number_from_origin_data_path(origin_data_path):
     return file_pr_dict
 
 
-def get_data_by_repo_name_and_origin_data_path(origin_data_path):
+def get_data_by_repo_name_and_origin_data_path(origin_data_path, repo_name):
     data = dbConnection.getDataFromSql(
         "select * from pr_self where repo_name='" + repo_name + "' and closed_at is not null order by pr_number")
 
@@ -174,7 +166,7 @@ def get_result_list(the_file_path):
 
 
 # 根据已有数据得到排序结果
-def random_forest(day_data, day, pr_number_index_dict):
+def model_forest(day_data, day, pr_number_index_dict, origin_data_path,temp_data_path, temp_sort_result_path, model_path, jar_path):
     re_rank_str = "java -jar " + jar_path + " -load " + model_path + " -rank " + temp_data_path + " -indri " + temp_sort_result_path
     open_pr_list = []
     open_pr_index_list = []
@@ -203,8 +195,8 @@ def random_forest(day_data, day, pr_number_index_dict):
     return sort_result
 
 
-# 对fifo进行调用，同时将数据写入到文件中，方便后续统计
-def random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict):
+# 对模型进行调用，同时将数据写入到文件中，方便后续统计
+def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path,temp_data_path, temp_sort_result_path, model_path, jar_path):
     ndgc_list = []
     day_list = []
     max_day = None
@@ -212,7 +204,7 @@ def random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict):
     for day in day_data.keys():
         print("=================================日期:", day)
         # 获取每一天还处于open状态的pr列表顺序
-        sort_result = random_forest(day_data, day, pr_number_index_dict)
+        sort_result = model_forest(day_data, day, pr_number_index_dict, origin_data_path,temp_data_path, temp_sort_result_path, model_path, jar_path)
         if sort_result.__len__() == 0:
             print("在" + origin_data_path + "无相关pr")
             continue
@@ -246,7 +238,9 @@ def random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict):
         row_data.append(tmp)
     print(row_data)
     # 保存数据到csv文件
-    with open("./result/rankLib/" + repo_name + "_random_forest_result.csv", 'w', encoding='utf-8', newline='') as f:
+    with open(
+            "E:\\pythonProject\\nju_pr_project\\baseline\\result\\ranklib\\" + repo_name + "_" + alg_name + "_result.csv",
+            'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, dialect='excel')
         writer.writerow(headers)
         for item in row_data:
@@ -254,9 +248,42 @@ def random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict):
     return None
 
 
+# 训练模型
+def train_model(alg_name, alg_index, train_data_path, test_data_path, model_path):
+    rank_model_str = "java -jar " + jar_path + " -train " + train_data_path + " -test " + test_data_path + " -ranker " + str(alg_index) + " -metric2t NDCG@10 -metric2T NDCG@10 -save " + model_path
+    recv = os.popen(rank_model_str)
+    print("===============训练模型+" + alg_name + "======================")
+    print("训练的命令是：" + rank_model_str)
+    print(recv.read())
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    day_data, response_time, first_response_time_dict, pr_number_index_dict = get_data_by_repo_name_and_origin_data_path(
-        origin_data_path)
-    true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
-    random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict)
+    repo_name = "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    # ranklib所能调的库
+    alg_dict = {0: "MART",
+                1: "RankNet",
+                2: "RankBoost",
+                3: "AdaRank",
+                4: "Coordinate Ascent",
+                6: "LambdaMART",
+                7: "ListNet",
+                8: "Random Forests"}
+    for alg_index in alg_dict.keys():
+        alg_name = alg_dict.get(alg_index)
+        # 测试模型性能的文件路径
+        jar_path = "E:\\pythonProject\\nju_pr_project\\baseline\\RankLib-2.16.jar"
+        origin_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_test_data.txt"
+        temp_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_temp_svm_rank_format_data.txt"
+        temp_sort_result_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_myScoreFile.txt"
+        model_path = "E:\\pythonProject\\nju_pr_project\\baseline\\rank_model\\" + repo_name + "_" + alg_name + "_model.txt"
+        # 训练模型的文件路径
+        train_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_train_data.txt"
+        test_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_test_data.txt"
+        # 首先运行算法训练模型
+        train_model(alg_name, alg_index, train_data_path, test_data_path, model_path)
+        print(alg_name + "模型训练完成==========")
+        day_data, response_time, first_response_time_dict, pr_number_index_dict = get_data_by_repo_name_and_origin_data_path(
+            origin_data_path, repo_name)
+        true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
+        alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path,temp_data_path, temp_sort_result_path, model_path, jar_path)
