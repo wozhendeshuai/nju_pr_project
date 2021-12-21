@@ -42,18 +42,31 @@ body_index = 22
 repo_name = "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
 # 文件路径
 jar_path = "E:\\pythonProject\\nju_pr_project\\baseline\\RankLib-2.16.jar"
-origin_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_data.txt"
-temp_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "temp_svm_rank_format_data.txt"
+origin_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_test_data.txt"
+temp_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_temp_svm_rank_format_data.txt"
 temp_sort_result_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_myScoreFile.txt"
 model_path = "E:\pythonProject\\nju_pr_project\\baseline\\rank_model\\" + repo_name + "_randomforest_model.txt"
 
 
-def get_data_by_repo_name():
+# 根据所在原始文件中pr_number获取当前测试需要的文件
+# 获取当前文件中pr——number，以及对应的索引位置
+def get_pr_number_from_origin_data_path(origin_data_path):
+    file_pr_dict = {}
+    count = 0
+    for line in open(origin_data_path):
+        line_str = line.partition("# ")
+        file_pr_dict[int(line_str[2])] = count
+        count = count + 1
+    return file_pr_dict
+
+
+def get_data_by_repo_name_and_origin_data_path(origin_data_path):
     data = dbConnection.getDataFromSql(
         "select * from pr_self where repo_name='" + repo_name + "' and closed_at is not null order by pr_number")
 
     print(len(data))  ##查看PR数量
-
+    # 获取所在文件中的prlist
+    file_pr_dict = get_pr_number_from_origin_data_path(origin_data_path)
     # 标记有用的PR自身信息的下标
     useful_features_index = [0,  ##pr_number
                              2,  ##repo_name
@@ -129,17 +142,16 @@ def get_data_by_repo_name():
     response_time = []
     for item in first_response_time_dict.keys():
         response_time.append(first_response_time_dict[item])
-    return day_data, response_time, first_response_time_dict, pr_number_index_dict
+    return day_data, response_time, first_response_time_dict, file_pr_dict
 
 
 def prepare_temp_file(temp_data_path, origin_data_path, open_pr_index_list, day):
     file = open(temp_data_path, 'w+')
     for i in range(len(open_pr_index_list)):
-        s = getline(origin_data_path, open_pr_index_list[i]+1)
-        # s = s.replace("'", '').replace(',', '') + '\n'  # 去除单引号，逗号，每行末尾追加换行符
+        s = getline(origin_data_path, open_pr_index_list[i] + 1)
         file.write(s)
     file.close()
-    print("保存第 "+str(day)+" 天的临时文件成功")
+    print("保存第 " + str(day) + " 天的临时文件成功")
 
 
 # 可显示使用循环, 注意enumerate从0开始计数，而line_number从1开始
@@ -175,11 +187,14 @@ def random_forest(day_data, day, pr_number_index_dict):
             # 获取当前天的所有openPR
             temp_pr_dict = day_data[key]
             for pr_key in temp_pr_dict:
-                if temp_pr_dict[pr_key]['closed_time'].date() < day:
+                if pr_number_index_dict.__contains__(pr_key) is False or temp_pr_dict[pr_key][
+                    'closed_time'].date() < day:
                     continue
                 else:
                     open_pr_list.append(pr_key)
                     open_pr_index_list.append(pr_number_index_dict.get(pr_key))
+    if open_pr_list.__len__() == 0:
+        return sort_result
     prepare_temp_file(temp_data_path, origin_data_path, open_pr_index_list, day)
     recv = os.popen(re_rank_str)
     print("模型计算中：")
@@ -198,6 +213,9 @@ def random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict):
         print("=================================日期:", day)
         # 获取每一天还处于open状态的pr列表顺序
         sort_result = random_forest(day_data, day, pr_number_index_dict)
+        if sort_result.__len__() == 0:
+            print("在"+origin_data_path+"无相关pr")
+            continue
         rank_sort = []
         true_sort = []
         # 获取从fifo中获取的每个列表的顺序
@@ -238,6 +256,7 @@ def random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    day_data, response_time, first_response_time_dict, pr_number_index_dict = get_data_by_repo_name()
+    day_data, response_time, first_response_time_dict, pr_number_index_dict = get_data_by_repo_name_and_origin_data_path(
+        origin_data_path)
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
     random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict)

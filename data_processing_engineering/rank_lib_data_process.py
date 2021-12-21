@@ -50,13 +50,24 @@ title_index = 23
 body_index = 24
 
 
-def text_save(filename, data):  # filename为写入CSV文件的路径，data为要写入数据列表.
-    file = open(filename, 'w+')
-    for i in range(len(data)):
+# all_filename保存的是全集数据，train_filename,保存的是训练数据，test_filename保存的是测试数据，data为要写入数据列表.
+def text_save(all_filename, train_filename, test_filename, data):  # filename为写入CSV文件的路径，data为要写入数据列表.
+    all_file = open(all_filename, 'w+')
+    train_file = open(train_filename, 'w+')
+    test_file = open(test_filename, 'w+')
+    data_len = len(data)
+    train_len = int(data_len * 0.8)
+    for i in range(data_len):
         s = str(data[i]).replace('[', '').replace(']', '')  # 去除[],这两行按数据不同，可以选择
         s = s.replace("'", '').replace(',', '') + '\n'  # 去除单引号，逗号，每行末尾追加换行符
-        file.write(s)
-    file.close()
+        if i <= train_len:
+            train_file.write(s)
+        else:
+            test_file.write(s)
+        all_file.write(s)
+    all_file.close()
+    train_file.close()
+    test_file.close()
     print("保存文件成功")
 
 
@@ -525,9 +536,11 @@ def get_data_by_repo_name(repo_name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     repo_name = "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
-    filename = "./rank_data/" + repo_name + "_svm_rank_format_data.txt"
+    all_filename = "./rank_data/" + repo_name + "_svm_rank_format_data.txt"
+    train_filename = "./rank_data/" + repo_name + "_svm_rank_format_train_data.txt"
+    test_filename = "./rank_data/" + repo_name + "_svm_rank_format_test_data.txt"
     row_data = get_data_by_repo_name(repo_name)
-    text_save(filename, row_data)
+    text_save(all_filename, train_filename, test_filename, row_data)
 '''
   headers = ['Id',
                'author_identity',
