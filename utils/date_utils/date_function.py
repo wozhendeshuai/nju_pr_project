@@ -32,7 +32,8 @@ def project_age(project_dict):
     return re_dict
 
 
-def get_first_content_time(pr_user_name, number, content):
+# 在评论中的时间必须要大于创建的时间
+def get_first_content_time(pr_user_name, number, content, created_time):
     # 找出content里面最早评论的时间
     if number == 0:
         return None
@@ -46,13 +47,16 @@ def get_first_content_time(pr_user_name, number, content):
         else:
             user_name = content_json[index]["user"]["login"]
         comments_time = time_reverse(content_json[index]["created_at"])
+        if comments_time == None:
+            continue
         if pr_user_name == user_name:
             index = index + 1
             continue
-        elif re_time == None:
-            re_time = comments_time
-        elif comments_time < re_time:
-            re_time = comments_time
+        if comments_time > created_time:
+            if re_time == None:
+                re_time = comments_time
+            elif comments_time < re_time:
+                re_time = comments_time
         index = index + 1
     return re_time
 
@@ -88,8 +92,9 @@ def get_waiting_time(pr_dict):
         review_comments_number = pr_dict[key]['review_comments_number']
         review_comments_content = pr_dict[key]['review_comments_content']
         try:
-            first_comments_time = get_first_content_time(pr_user_name, comments_number, comments_content)
-            first_review_time = get_first_content_time(pr_user_name, review_comments_number, review_comments_content)
+            first_comments_time = get_first_content_time(pr_user_name, comments_number, comments_content, created_time)
+            first_review_time = get_first_content_time(pr_user_name, review_comments_number, review_comments_content,
+                                                       created_time)
         except Exception as e:
             print(str(key) + "      ")
             print(e)
@@ -164,8 +169,9 @@ def get_latency_after_response(pr_dict):
         review_comments_number = pr_dict[key]['review_comments_number']
         review_comments_content = pr_dict[key]['review_comments_content']
         try:
-            first_comments_time = get_first_content_time(pr_user_name, comments_number, comments_content)
-            first_review_time = get_first_content_time(pr_user_name, review_comments_number, review_comments_content)
+            first_comments_time = get_first_content_time(pr_user_name, comments_number, comments_content, created_time)
+            first_review_time = get_first_content_time(pr_user_name, review_comments_number, review_comments_content,
+                                                       created_time)
         except Exception as e:
             print(str(key) + "      ")
             print(e)
