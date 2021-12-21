@@ -117,6 +117,41 @@ def get_waiting_time(pr_dict):
     return re_dict
 
 
+def get_close_pr_time(pr_dict):
+    """
+    获取pr中从创建到关闭间隔的时间
+     pr_dict:
+       {
+          52556:
+        {
+            'created_time': datetime.datetime(2021, 10, 18, 23, 58, 22),
+            'updated_time': datetime.datetime(2021, 10, 21, 22, 49, 40),
+            'closed_time': datetime.datetime(2021, 10, 21, 22, 49, 40),
+            'comments_number': 0,
+            'comments_content': '[]',
+            'review_comments_number': 0,
+            'review_comments_content': '[]',
+            'pr_user_name': 'pranve'
+       }
+    }
+    返回的dict为{id：相差的分钟}
+    调用get_first_content_time获取当前content json中最早非本人评论时间，再找出review/comments最早的时间减去创建时间，即为等待时间
+    """
+    re_dict = {}
+    for key in pr_dict.keys():
+        created_time = pr_dict[key]['created_time']
+        # 有的还没有close也没有comments所以这时候需要用现在的时间，代替关闭时间
+        closed_time = ((pr_dict[key]['closed_time'] != None) and pr_dict[key]['closed_time'] or datetime.now())
+        pr_user_name = pr_dict[key]['pr_user_name']
+        comments_number = pr_dict[key]['comments_number']
+        comments_content = pr_dict[key]['comments_content']
+        review_comments_number = pr_dict[key]['review_comments_number']
+        review_comments_content = pr_dict[key]['review_comments_content']
+        final_time = closed_time
+        re_dict[key] = (final_time - created_time).total_seconds() / 60
+    return re_dict
+
+
 def is_weekday_commit(pr_dict):
     """
     获取pr的创建时间

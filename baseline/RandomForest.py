@@ -7,7 +7,7 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 '''
 import data_processing_engineering.get_data_from_database.database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
-from utils.date_utils.date_function import get_waiting_time
+from utils.date_utils.date_function import get_waiting_time, get_close_pr_time
 import csv
 from evaluation_index.ndgc import ndcg
 # Python的标准库linecache模块非常适合这个任务
@@ -136,7 +136,7 @@ def get_data_by_repo_name_and_origin_data_path(origin_data_path):
         pr_number_index_dict[item] = count
         count = count + 1
     first_response_time_dict = dict(first_response_time)
-    first_response_time_dict = get_waiting_time(first_response_time_dict)
+    first_response_time_dict = get_close_pr_time(first_response_time_dict)  # get_waiting_time(first_response_time_dict)
     # print(first_response_time_dict)
     # 响应时间 按照pr_number的顺序进行排列
     response_time = []
@@ -214,7 +214,7 @@ def random_forest_result(true_rate_label_dict, day_data, pr_number_index_dict):
         # 获取每一天还处于open状态的pr列表顺序
         sort_result = random_forest(day_data, day, pr_number_index_dict)
         if sort_result.__len__() == 0:
-            print("在"+origin_data_path+"无相关pr")
+            print("在" + origin_data_path + "无相关pr")
             continue
         rank_sort = []
         true_sort = []

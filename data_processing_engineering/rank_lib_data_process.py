@@ -11,7 +11,7 @@ import csv
 import numpy as np
 import get_data_from_database.database_connection as database_connection
 from utils.date_utils.date_function import is_weekday_commit \
-    , project_age, get_latency_after_response, get_waiting_time
+    , project_age, get_latency_after_response, get_waiting_time, get_close_pr_time
 from utils.num_utils.num_function import get_label_count \
     , get_workload, get_prev_prs, get_change_num \
     , get_accept_num, get_close_num, get_review_num \
@@ -495,7 +495,7 @@ def get_data_by_repo_name(repo_name):
         first_response_time.append((item[pr_number_index], tmp))
 
     first_response_time = dict(first_response_time)
-    first_response_time = get_waiting_time(first_response_time)
+    first_response_time = get_close_pr_time(first_response_time)  # get_waiting_time(first_response_time)
 
     ##响应时间
     Y1 = []
@@ -535,7 +535,7 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
     all_filename = "./rank_data/" + repo_name + "_svm_rank_format_data.txt"
     train_filename = "./rank_data/" + repo_name + "_svm_rank_format_train_data.txt"
     test_filename = "./rank_data/" + repo_name + "_svm_rank_format_test_data.txt"
