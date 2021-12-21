@@ -12,6 +12,7 @@ def ndcg(rel_true, rel_pred, p=None, form="linear"):
         ndcg (float): normalized discounted cumulative gain score [0, 1]
     """
     rel_true = np.sort(rel_true)[::-1]
+    rel_pred = np.sort(rel_pred)[::-1]
 
     p = min(len(rel_true), min(len(rel_pred), p))
 
@@ -19,9 +20,9 @@ def ndcg(rel_true, rel_pred, p=None, form="linear"):
     discount = 1 / (np.log2(np.arange(p) + 2))
 
     if form == "linear":
-        idcg = np.sum(rel_true[:p] * discount)
-        dcg = np.sum(rel_pred[:p] * discount)
-        print(rel_true)
+        idcg = np.sum((rel_true[:p] + 1) * discount)
+        dcg = np.sum((rel_pred[:p] + 1) * discount)
+        # print(rel_true)
     elif form == "exponential" or form == "exp":
         idcg = np.sum([2 ** x - 1 for x in rel_true[:p]] * discount)
         dcg = np.sum([2 ** x - 1 for x in rel_pred[:p]] * discount)
@@ -29,3 +30,5 @@ def ndcg(rel_true, rel_pred, p=None, form="linear"):
         raise ValueError("Only supported for two formula, 'linear' or 'exp'")
 
     return dcg / idcg
+
+
