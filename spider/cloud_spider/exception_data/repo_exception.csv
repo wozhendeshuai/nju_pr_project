@@ -1,0 +1,34 @@
+user, 1, 2021-11-05 17:04:11 , 第1行数据插入数据库失败: repo_name:tensorflow(1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''C++': '109927937', 'Python': '43242139', 'MLIR': '7068461', 'Starlark': '530966' at line 17")
+rails-rails, 0, 2021-11-16 23:22:09 , HTTPSConnectionPool(host='api.github.com', port=443): Max retries exceeded with url: /repos/rails/rails (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000028D654AC470>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))网络连接失败: user_name: railsowner_name: rails
+rails-rails, 0, 2021-11-16 23:23:02 , HTTPSConnectionPool(host='api.github.com', port=443): Max retries exceeded with url: /repos/rails/rails (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x000001ED69C8C400>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))网络连接失败: user_name: railsowner_name: rails
+rails-rails, 0, 2021-11-16 23:24:00 , HTTPSConnectionPool(host='api.github.com', port=443): Max retries exceeded with url: /repos/rails/rails (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x000001E09D6AC470>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))网络连接失败: user_name: railsowner_name: rails
+symfony-symfony, 0, 2021-11-23 07:35:18 , HTTPSConnectionPool(host='api.github.com', port=443): Max retries exceeded with url: /repos/symfony/symfony (Caused by ProxyError('Cannot connect to proxy.', ConnectionResetError(10054, '远程主机强迫关闭了一个现有的连接。', None, 10054, None)))网络连接失败: user_name: symfonyowner_name: symfony
+user, 1, 2021-12-01 23:39:16 , 第1行数据插入数据库失败: repo_name:spring-boot(1062, "Duplicate entry '6296790' for key 'PRIMARY'")
+openzipkin-zipkin, 0, 2021-12-22 23:24:14 , HTTPSConnectionPool(host='api.github.com', port=443): Max retries exceeded with url: /repos/zipkin/openzipkin (Caused by ProxyError('Cannot connect to proxy.', ConnectionResetError(10054, '远程主机强迫关闭了一个现有的连接。', None, 10054, None)))网络连接失败: user_name: openzipkinowner_name: zipkin
+user, 0, 2021-12-22 23:24:21 , 第0行连接有问题: repo_name:openzipkin
+user, 0, 2021-12-22 23:24:22 , 第0行连接有问题: repo_name:openzipkin
+user, 0, 2021-12-22 23:24:23 , 第0行连接有问题: repo_name:openzipkin
+user, 0, 2021-12-22 23:24:25 , 第0行连接有问题: repo_name:openzipkin
+user, 0, 2021-12-22 23:24:26 , 第0行连接有问题: repo_name:openzipkin
+user, 0, 2021-12-22 23:24:27 , 第0行连接有问题: repo_name:openzipkin
+user, 0, 2021-12-22 23:24:28 , 第0行连接有问题: repo_name:openzipkin
+user, 0, 2021-12-22 23:24:29 , 第0行连接有问题: repo_name:openzipkin
+user, 0, 2021-12-22 23:24:48 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:24:49 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:24:50 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:24:51 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:24:52 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:24:53 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:24:54 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:25:55 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:25:56 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:25:57 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:25:58 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:25:59 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:26:00 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:26:01 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:26:02 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:26:03 , 第0行连接有问题: repo_name:zipkin
+user, 0, 2021-12-22 23:29:32 , 第0行连接有问题: repo_name:zipkin
+zipkin-openzipkin, 0, 2021-12-22 23:34:19 , Invalid header value b'token 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\n'网络连接失败: user_name: zipkinowner_name: openzipkin
+zipkin-openzipkin, 0, 2021-12-22 23:34:29 , Invalid header value b'token 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\n'网络连接失败: user_name: zipkinowner_name: openzipkin

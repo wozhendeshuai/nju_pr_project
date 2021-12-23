@@ -1,0 +1,2 @@
+node, 0, 2021-10-19 16:50:12 , index_id: 0 pr_number: 1not enough arguments for format string
+node, 0, 2021-10-19 16:51:48 , index_id: 0 pr_number: 1(1292, "Incorrect datetime value: '2014-11-27T16:48:42Z' for column 'first_comment_time' at row 1")

@@ -1,0 +1,7 @@
+ipython, 7939, 2021-10-13 15:52:49 , (1366, "Incorrect string value: '\\xF0\\x9F\\x92\\xA9 #...' for column 'pr_body' at row 1")
+ipython, 9944, 2021-10-13 16:25:36 , (1366, "Incorrect string value: '\\xF0\\x9F\\x98\\x84 \\x0A...' for column 'pr_body' at row 1")
+ipython, 10707, 2021-10-13 16:38:29 , (1366, "Incorrect string value: '\\xF0\\x9F\\x98\\x89 ' for column 'pr_body' at row 1")
+ipython, 11805, 2021-10-13 16:55:11 , (1366, "Incorrect string value: '\\xF0\\x9F\\x98\\xA2)\\x0D...' for column 'pr_body' at row 1")
+ipython, 12604, 2021-10-13 17:07:37 , (1366, "Incorrect string value: '\\xF0\\x9F\\x98\\x81\\x0D\\x0A...' for column 'pr_body' at row 1")
+ipython, 13148, 2021-10-13 17:20:18 , (1366, "Incorrect string value: '\\xF0\\x9F\\x8E\\xB6 B...' for column 'pr_body' at row 1")
+ipython, 13187, 2021-10-13 17:20:55 , (1062, "Duplicate entry '13186' for key 'ipython_pr_test.PRIMARY'")
