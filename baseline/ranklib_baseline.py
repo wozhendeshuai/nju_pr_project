@@ -166,7 +166,8 @@ def get_result_list(the_file_path):
 
 
 # 根据已有数据得到排序结果
-def model_forest(day_data, day, pr_number_index_dict, origin_data_path,temp_data_path, temp_sort_result_path, model_path, jar_path):
+def model_forest(day_data, day, pr_number_index_dict, origin_data_path, temp_data_path, temp_sort_result_path,
+                 model_path, jar_path):
     re_rank_str = "java -jar " + jar_path + " -load " + model_path + " -rank " + temp_data_path + " -indri " + temp_sort_result_path
     open_pr_list = []
     open_pr_index_list = []
@@ -196,7 +197,8 @@ def model_forest(day_data, day, pr_number_index_dict, origin_data_path,temp_data
 
 
 # 对模型进行调用，同时将数据写入到文件中，方便后续统计
-def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path,temp_data_path, temp_sort_result_path, model_path, jar_path):
+def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
+                     temp_sort_result_path, model_path, jar_path):
     ndgc_list = []
     day_list = []
     max_day = None
@@ -204,7 +206,8 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
     for day in day_data.keys():
         print("=================================日期:", day)
         # 获取每一天还处于open状态的pr列表顺序
-        sort_result = model_forest(day_data, day, pr_number_index_dict, origin_data_path,temp_data_path, temp_sort_result_path, model_path, jar_path)
+        sort_result = model_forest(day_data, day, pr_number_index_dict, origin_data_path, temp_data_path,
+                                   temp_sort_result_path, model_path, jar_path)
         if sort_result.__len__() == 0:
             print("在" + origin_data_path + "无相关pr")
             continue
@@ -250,7 +253,8 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
 
 # 训练模型
 def train_model(alg_name, alg_index, train_data_path, test_data_path, model_path):
-    rank_model_str = "java -jar " + jar_path + " -train " + train_data_path + " -test " + test_data_path + " -ranker " + str(alg_index) + " -metric2t NDCG@10 -metric2T NDCG@10 -save " + model_path
+    rank_model_str = "java -jar " + jar_path + " -train " + train_data_path + " -test " + test_data_path + " -ranker " + str(
+        alg_index) + " -metric2t NDCG@10 -metric2T NDCG@10 -save " + model_path
     recv = os.popen(rank_model_str)
     print("===============训练模型+" + alg_name + "======================")
     print("训练的命令是：" + rank_model_str)
@@ -265,10 +269,10 @@ if __name__ == '__main__':
                 1: "RankNet",
                 2: "RankBoost",
                 3: "AdaRank",
-                4: "Coordinate Ascent",
+                4: "Coordinate_Ascent",
                 6: "LambdaMART",
                 7: "ListNet",
-                8: "Random Forests"}
+                8: "Random_Forests"}
     for alg_index in alg_dict.keys():
         alg_name = alg_dict.get(alg_index)
         # 测试模型性能的文件路径
@@ -286,4 +290,5 @@ if __name__ == '__main__':
         day_data, response_time, first_response_time_dict, pr_number_index_dict = get_data_by_repo_name_and_origin_data_path(
             origin_data_path, repo_name)
         true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
-        alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path,temp_data_path, temp_sort_result_path, model_path, jar_path)
+        alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
+                         temp_sort_result_path, model_path, jar_path)
