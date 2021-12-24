@@ -69,7 +69,9 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
                 # 遍历整个100行大json，然后逐一放入数据库中即可
                 temp_file_len = files_json.__len__()
                 temp_index = 0
-
+                # 当某个页面没有了数据之后，其后面的页面也没有数据
+                if temp_file_len == 0:
+                    break
                 while temp_index < temp_file_len:
                     try:
                         sqlData = (
