@@ -1,0 +1,5 @@
+user, 14310, 2021-11-22 15:28:54 , 第14310号 pr_number: 22043 第11页的第78个数据插入数据库失败: (1366, "Incorrect string value: '\\xF0\\x9F\\x8D\\xA3.e...' for column 'changed_file_name' at row 1")
+user, 15940, 2021-11-22 16:03:35 , 第15940号 pr_number: 24509 第6页的第75个数据插入数据库失败: (1366, "Incorrect string value: '\\xF0\\x9F\\x8D\\xA3.e...' for column 'changed_file_name' at row 1")
+user, 15999, 2021-11-22 16:05:24 , 第15999号 pr_number: 24591 第1页的第0个数据插入数据库失败: (1366, "Incorrect string value: '\\xF0\\x9F\\x8D\\xA3.e...' for column 'changed_file_name' at row 1")
+user, 16208, 2021-11-22 16:09:25 , 第16208号 pr_number: 24867 第6页的第53个数据插入数据库失败: (1366, "Incorrect string value: '\\xF0\\x9F\\x8D\\xA3.e...' for column 'changed_file_name' at row 1")
+user, 21473, 2021-11-22 17:57:10 , 第21473号 pr_number: 33047 对应的失败: HTTPSConnectionPool(host='api.github.com', port=443): Max retries exceeded with url: /repos/rails/rails/pulls/33047/files?per_page=100&page=1 (Caused by ProxyError('Cannot connect to proxy.', ConnectionResetError(10054, '远程主机强迫关闭了一个现有的连接。', None, 10054, None)))

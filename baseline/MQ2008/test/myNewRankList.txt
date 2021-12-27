@@ -1,0 +1,12 @@
+1 Q0 1A 1 76.71571 indri
+1 Q0 1B 2 -33.33958 indri
+1 Q0 1C 3 -100.81525 indri
+1 Q0 1D 4 -100.85189 indri
+2 Q0 2B 1 52.28341 indri
+2 Q0 2A 2 -51.28343 indri
+2 Q0 2D 3 -51.28343 indri
+2 Q0 2C 4 -51.38342 indri
+3 Q0 3C 1 100.45126 indri
+3 Q0 3B 2 32.34494 indri
+3 Q0 3A 3 -33.33958 indri
+3 Q0 3D 4 -100.65133 indri
