@@ -11,10 +11,24 @@ import time
 import json
 
 # 链接数据库
-database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
+database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second', charset='utf8')
 # 创建游标对象
 cursor = database.cursor()
-repolist = ["symfony", "rails", "angular.js", "tensorflow"]
+repolist = ["symfony",
+            "rails",
+            "angular.js",
+            "tensorflow",
+            "zendframework",
+            "spring-framework",
+            "kuma",
+            "laravel",
+            "yii2",
+            "zipkin",
+            "spring-boot",
+            "terraform",
+            "vxquery",
+            "zeppelin",
+            "lucene-solr"]
 for repo_name in repolist:
     pr_sql = "select  pr_number, created_at, updated_at, closed_at, merged_at from pr_self where repo_name='" + repo_name + "'"
     cursor.execute(pr_sql)
@@ -25,6 +39,10 @@ for repo_name in repolist:
     pr_closed_dict = {}
     pr_merged_dict = {}
     pr_dict = {}
+    # 记录最早的创建时间
+    early_create_date = None
+    # 记录最晚的关闭时间
+    later_close_date = None
     while index < data.__len__():
         pr_number = data[index][0]
         created_at = data[index][1].date()
@@ -34,6 +52,10 @@ for repo_name in repolist:
         pr_dict[pr_number]["created_at"] = created_at
         pr_dict[pr_number]["closed_at"] = closed_at
         pr_dict[pr_number]["merged_at"] = merged_at
+        if early_create_date is None or early_create_date > created_at:
+            early_create_date = created_at
+        if later_close_date is None or (closed_at is not None and later_close_date < closed_at):
+            later_close_date = closed_at
         if pr_created_dict.__contains__(created_at):
             pr_created_dict[created_at] = pr_created_dict[created_at] + 1
         else:
@@ -81,10 +103,25 @@ for repo_name in repolist:
         pr_merged_count = pr_merged_count + pr_merged_dict[temp]
     for temp in pr_open_dict.keys():
         pr_open_count = pr_open_count + pr_open_dict[temp]
+    if early_create_date is None or later_close_date is None or pr_created_dict.__len__() == 0 or pr_closed_dict.__len__() == 0 or pr_merged_dict.__len__() == 0 or pr_open_dict.__len__() == 0:
+        print(repo_name + " 平均每天创建的pr数量：" +
+              str(pr_created_dict.__len__()) +
+              " 平均每天关闭的pr数量：" + str(pr_closed_dict.__len__()) +
+              " 平均每天合并的PR数量：" + str(pr_merged_dict.__len__()) +
+              "平均每天处于打开状态PR的数量" + str(pr_open_dict.__len__()+"early_create_date"
+                                      +str(early_create_date)+"later_close_date"+str(later_close_date)))
+        continue
+    day_len = (later_close_date-early_create_date).days
     print(repo_name + " 平均每天创建的pr数量：" +
           str(pr_created_count / pr_created_dict.__len__()) +
           " 平均每天关闭的pr数量：" + str(pr_closed_count / pr_closed_dict.__len__()) +
           " 平均每天合并的PR数量：" + str(pr_merged_count / pr_merged_dict.__len__()) +
           "平均每天处于打开状态PR的数量" + str(pr_open_count / pr_open_dict.__len__()))
+    print(repo_name + " day_len平均每天创建的pr数量：" +
+          str(pr_created_count / day_len) +
+          " day_len平均每天关闭的pr数量：" + str(pr_closed_count / day_len) +
+          " day_len平均每天合并的PR数量：" + str(pr_merged_count / day_len) +
+          " day_len平均每天处于打开状态PR的数量" + str(pr_open_count / day_len))
+
 # 关闭数据库连接
 database.close()
