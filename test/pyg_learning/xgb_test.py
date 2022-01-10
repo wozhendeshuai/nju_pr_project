@@ -21,8 +21,8 @@ test_dmatrix = DMatrix(x_test)
 
 train_dmatrix.set_group(group_train)
 # valid_dmatrix.set_group(group_valid)
-ranktype="pairwise"
-params = {'objective': 'rank:'+ranktype, 'eta': 0.1, 'gamma': 1.0,
+ranktype="map"#"ndcg"#"pairwise"
+params = {'objective': 'rank:'+ranktype, 'eta': 0.01, 'gamma': 0,
           'min_child_weight': 0.1, 'max_depth': 6}
 xgb_model = xgb.train(params, train_dmatrix, num_boost_round=4,
                       evals=[(train_dmatrix, 'validation')])
