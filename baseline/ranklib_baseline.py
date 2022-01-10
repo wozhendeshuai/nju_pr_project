@@ -3,13 +3,15 @@
 然后将这个时刻还处于open状态的pr作为输入X。
 FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上述pr列表进行排序。FIFOY
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
-将FIFOY，与TRUEY进行比较，通过NDGC进行比较，判断排序效果
+将FIFOY，与TRUEY进行比较，通过NDcg进行比较，判断排序效果
 '''
 import data_processing_engineering.get_data_from_database.database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
+from evaluation_index.Kendall_tau_distance import kendall_tau_distance
+from evaluation_index.mrr import mrr
 from utils.date_utils.date_function import get_waiting_time, get_close_pr_time
 import csv
-from evaluation_index.ndgc import ndcg
+from evaluation_index.ndcg import ndcg
 # Python的标准库linecache模块非常适合这个任务
 import linecache
 import os
@@ -199,8 +201,10 @@ def model_forest(day_data, day, pr_number_index_dict, origin_data_path, temp_dat
 # 对模型进行调用，同时将数据写入到文件中，方便后续统计
 def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
                      temp_sort_result_path, model_path, jar_path):
-    ndgc_list = []
+    ndcg_list = []
     day_list = []
+    mrr_list = []
+    kendall_list = []
     max_day = None
     min_day = None
     for day in day_data.keys():
@@ -219,25 +223,36 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
             true_sort.append(true_rate_label_dict[pr_number_result])
         true_sort.sort(reverse=True)
         ndcg_num = ndcg(true_sort, rank_sort, rank_sort.__len__())
+        mrr_num = mrr(true_sort, rank_sort)
+        kendall_num = kendall_tau_distance(true_sort, rank_sort)
         print("pr_number排序:", sort_result)
         print("rank_sort:", rank_sort)
         print("true_sort:", true_sort)
-        print("ndgc_num:", ndcg_num)
+        print("ndcg_num:", ndcg_num)
+        print("mrr_num:", mrr_num)
+        print("kendall_num:", kendall_num)
         if max_day is None or max_day < day:
             max_day = day
         if min_day is None or min_day > day:
             min_day = day
         day_list.append(day)
-        ndgc_list.append(ndcg_num)
+        ndcg_list.append(ndcg_num)
+        mrr_list.append(mrr_num)
+        kendall_list.append(kendall_num)
+
 
     headers = ['日期',
-               'ndgc'
+               'ndcg',
+               'mrr',
+               'kendall_tau_distance'
                ]
     row_data = []
     for i in range(len(day_list)):
         tmp = []
         tmp.append(day_list[i])
-        tmp.append(ndgc_list[i])
+        tmp.append(ndcg_list[i])
+        tmp.append(mrr_list[i])
+        tmp.append(kendall_list[i])
         row_data.append(tmp)
     print(row_data)
     # 保存数据到csv文件

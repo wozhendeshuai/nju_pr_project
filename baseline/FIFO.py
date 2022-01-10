@@ -7,9 +7,11 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 '''
 import data_processing_engineering.get_data_from_database.database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
+from evaluation_index.Kendall_tau_distance import kendall_tau_distance
+from evaluation_index.mrr import mrr
 from utils.date_utils.date_function import get_waiting_time
 import csv
-from evaluation_index.ndgc import ndcg
+from evaluation_index.ndcg import ndcg
 
 # 增加代码的可读性
 pr_number_index = 0
@@ -135,7 +137,9 @@ def fifo(day_data, day):
 
 # 对fifo进行调用，同时将数据写入到文件中，方便后续统计
 def fifo_result(true_rate_label_dict, day_data, repo_name):
-    ndgc_list = []
+    ndcg_list = []
+    mrr_list = []
+    kendall_list = []
     day_list = []
     max_day = None
     min_day = None
@@ -150,20 +154,28 @@ def fifo_result(true_rate_label_dict, day_data, repo_name):
             true_sort.append(true_rate_label_dict[pr_number_fifo])
         true_sort.sort(reverse=True)
         ndcg_num = ndcg(true_sort, fifo_sort, fifo_sort.__len__())
+        mrr_num = mrr(true_sort, fifo_sort)
+        kendall_num = kendall_tau_distance(true_sort, fifo_sort)
         print("=================================日期:", day)
         print("fifo pr_number排序:", fifo_data)
         print("fifo_sort:", fifo_sort)
         print("true_sort:", true_sort)
-        print("ndgc_num:", ndcg_num)
+        print("ndcg_num:", ndcg_num)
+        print("mrr_num:", mrr_num)
+        print("kendall_num:", kendall_num)
         if max_day is None or max_day < day:
             max_day = day
         if min_day is None or min_day > day:
             min_day = day
         day_list.append(day)
-        ndgc_list.append(ndcg_num)
+        ndcg_list.append(ndcg_num)
+        mrr_list.append(mrr_num)
+        kendall_list.append(kendall_num)
 
     headers = ['日期',
-               'ndgc'
+               'ndgc',
+               'mrr',
+               'kendall_tau_distance'
                ]
 
     row_data = []
@@ -171,7 +183,9 @@ def fifo_result(true_rate_label_dict, day_data, repo_name):
     for i in range(len(day_list)):
         tmp = []
         tmp.append(day_list[i])
-        tmp.append(ndgc_list[i])
+        tmp.append(ndcg_list[i])
+        tmp.append(mrr_list[i])
+        tmp.append(kendall_list[i])
         row_data.append(tmp)
     print(row_data)
     # 保存数据到csv文件
@@ -185,7 +199,7 @@ def fifo_result(true_rate_label_dict, day_data, repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "angular.js"#"symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     day_data, response_time, first_response_time_dict = get_data_by_repo_name(repo_name)
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
     fifo_result(true_rate_label_dict, day_data, repo_name)

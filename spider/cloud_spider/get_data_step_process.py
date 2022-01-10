@@ -7,10 +7,10 @@ from utils.access_token import get_token
 if __name__ == '__main__':
     # 此部分可修改，用于控制进程
     index = 0
-    max_pr_num = 107220
-   # "openzipkin/zipkin"
-    owner_name ="kubernetes"#"mdn"#"openzipkin"#"laravel" #"apache"#  # "spring-projects"  # "symfony"#"rails"#"angular" #"tensorflow"
-    repo_name ="kubernetes"#"kuma"#"zipkin"#"laravel" #"lucene-solr"#  # "spring-framework"  # "spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
+    max_pr_num = 117100
+    #/incubator-heron "openzipkin/zipkin"
+    owner_name ="Homebrew"#"apache"#"Ipython" #"apache"  # "Katello"#"kubernetes"#"mdn"#"openzipkin"#"laravel" #"apache"#  # "spring-projects"  # "symfony"#"rails"#"angular" #"tensorflow"
+    repo_name = "homebrew-cask"#"incubator-heron"#"Ipython"#"kafka"  # "Katello"#"kubernetes"#"kuma"#"zipkin"#"laravel" #"lucene-solr"#  # "spring-framework"  # "spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
 
     access_token = get_token()
     headers = {
@@ -18,18 +18,18 @@ if __name__ == '__main__':
     }
 
     # get_repo_info(index, max_pr_num, owner_name, repo_name, headers)
-    print(owner_name+": repo "+repo_name+"—===============================仓库信息存储完毕=======================")
-    print(owner_name+": repo "+repo_name+"—===============================仓库信息存储完毕=======================")
-    print(owner_name+": repo "+repo_name+"—===============================仓库信息存储完毕=======================")
-    # get_pr_self_info(107182, max_pr_num, owner_name, repo_name, headers)
-    print(owner_name+": pr_self "+repo_name+"—===============================pr_self信息存储完毕=======================")
-    print(owner_name+": pr_self "+repo_name+"—===============================pr_self信息存储完毕=======================")
-    print(owner_name+": pr_self "+repo_name+"—===============================pr_self信息存储完毕=======================")
-    #get_pr_file_info(57875, max_pr_num, owner_name, repo_name, headers)
-    print(owner_name+": pr_file "+repo_name+"—===============================pr_file信息存储完毕=======================")
-    print(owner_name+": pr_file "+repo_name+"—===============================pr_file信息存储完毕=======================")
-    print(owner_name+": pr_file "+repo_name+"—===============================pr_file信息存储完毕=======================")
-    get_pr_user_info(1792, max_pr_num, owner_name, repo_name, headers)
-    print(owner_name+": pr_user "+repo_name+"—===============================pr_user信息存储完毕=======================")
-    print(owner_name+": pr_user "+repo_name+"—===============================pr_user信息存储完毕=======================")
-    print(owner_name+": pr_user "+repo_name+"—===============================pr_user信息存储完毕=======================")
+    print(owner_name + ": repo " + repo_name + "—===============================仓库信息存储完毕=======================")
+    print(owner_name + ": repo " + repo_name + "—===============================仓库信息存储完毕=======================")
+    print(owner_name + ": repo " + repo_name + "—===============================仓库信息存储完毕=======================")
+    get_pr_self_info(48512, max_pr_num, owner_name, repo_name, headers)
+    print(owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
+    print(owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
+    print(owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
+    get_pr_file_info(index, max_pr_num, owner_name, repo_name, headers)
+    print( owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
+    print(owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
+    print( owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
+    get_pr_user_info(index, max_pr_num, owner_name, repo_name, headers)
+    print( owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
+    print( owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
+    print(owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
