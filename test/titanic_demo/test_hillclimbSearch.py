@@ -114,17 +114,20 @@ best_model = BayesianModel(best_model.edges())
 best_model.fit(train, estimator=BayesianEstimator, prior_type="BDeu")  # default equivalent_sample_size=5
 predict_data = test.drop(columns=['Survived'], axis=1)
 y_pred = best_model.predict(predict_data)
+for key in best_model.nodes:
+    print(key)
+
 print(y_pred)
 # (y_pred['Survived']==test['Survived']).sum()/len(test)#测试集精度
 # 预测原test集并保存csv
 # %%
-kaggle_test = full.drop(columns=['Embarked', 'Name', 'Parch', 'PassengerId', 'SibSp', 'Ticket', 'Title'])
-kaggle_test = kaggle_test[kaggle_test['Survived'].isna()]
-kaggle_test = kaggle_test.drop(columns=['Survived'], axis=1)
-kaggle_test_pred = best_model.predict(kaggle_test)
+# kaggle_test = full.drop(columns=['Embarked', 'Name', 'Parch', 'PassengerId', 'SibSp', 'Ticket', 'Title'])
+# kaggle_test = kaggle_test[kaggle_test['Survived'].isna()]
+# kaggle_test = kaggle_test.drop(columns=['Survived'], axis=1)
 # kaggle_test_pred = best_model.predict(kaggle_test)
-# %%
-kaggle_test_pred = kaggle_test_pred.reindex(columns=['PassengerId', 'Survived'])
-kaggle_test_pred['PassengerId'] = np.linspace(892, 1309, 1309 - 892 + 1, dtype=np.int)
-kaggle_test_pred
-kaggle_test_pred.to_csv('./kaggle_test_pred.csv', index=0)
+# # kaggle_test_pred = best_model.predict(kaggle_test)
+# # %%
+# kaggle_test_pred = kaggle_test_pred.reindex(columns=['PassengerId', 'Survived'])
+# kaggle_test_pred['PassengerId'] = np.linspace(892, 1309, 1309 - 892 + 1, dtype=np.int)
+# kaggle_test_pred
+# kaggle_test_pred.to_csv('./kaggle_test_pred.csv', index=0)

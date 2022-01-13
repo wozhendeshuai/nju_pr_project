@@ -278,7 +278,7 @@ def train_model(alg_name, alg_index, train_data_path, test_data_path, model_path
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     # ranklib所能调的库
     alg_dict = {0: "MART",
                 1: "RankNet",

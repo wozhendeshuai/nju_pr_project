@@ -18,12 +18,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # 从数据库获取数据
 raw_data = database_connection.getDataFromSql(
-    "select * from pr_self where repo_name='spring-boot' order by pr_number"
+    "select * from pr_self"
 )
-
 print(len(raw_data))  ##查看PR数量
 
-# 标记有用的PR自身信息的下标
 useful_features_index = [0,  ##pr_number
                          2,  ##repo_name
                          3,  ##pr_user_id
@@ -49,8 +47,7 @@ useful_features_index = [0,  ##pr_number
                          7,  ##body
                          ]
 
-##保留有用的属性特征
-selected_data = []
+selected_data = []  ##保留有用的属性特征
 for item in raw_data:
     tmp = []
     for i in useful_features_index:
@@ -59,7 +56,6 @@ for item in raw_data:
 
 process_data = []
 count = 0
-# 从有用的特征中获取所有的数据，并将可以直接转换为数字的数据进行初步转换
 for item in selected_data:
     tmp = []
     ##pr_number
@@ -151,21 +147,54 @@ for item in selected_data:
 
 print(count)
 
+# 增加代码的可读性
+pr_number_index = 0
+repo_name_index = 1
+pr_user_id_index = 2
+pr_author_association_index = 3
+labels_index = 4
+created_at_index = 5
+closed_at_index = 6
+merged_at_index = 7
+merged_index = 8
+mergeable_state_index = 9
+assignees_content_index = 10
+comments_number_index = 11
+comments_content_index = 12
+review_comments_number_index = 13
+review_comments_content_index = 14
+commit_number_index = 15
+changed_file_num_index = 16
+total_add_line_index = 17
+total_delete_line_index = 18
+pr_user_name_index = 19
+pr_id_index = 20
+updated_at_index = 21
+content_index = 22
+title_index = 23
+body_index = 24
+
 ##获得仓库年龄
 repo_data = database_connection.getDataFromSql(
     "select repo_id,repo_name\
         ,project_created_at,project_updated_at\
-        ,project_pushed_at from pr_repo where repo_name='spring-boot'"
+        ,project_pushed_at from pr_repo"
 )
+
+repo_id_index = 0
+repo_data_name_index = 1
+project_created_at_index = 2
+project_updated_at_index = 3
+project_pushed_at_index = 4
 
 proj_age = []
 for item in repo_data:
     tmp = []
-    tmp.append(('created_time', item[2]))
-    tmp.append(('updated_time', item[3]))
-    tmp.append(('pushed_time', item[4]))
+    tmp.append(('created_time', item[project_created_at_index]))
+    tmp.append(('updated_time', item[project_updated_at_index]))
+    tmp.append(('pushed_time', item[project_pushed_at_index]))
     tmp = dict(tmp)
-    proj_age.append((item[0], tmp))
+    proj_age.append((item[repo_id_index], tmp))
 
 proj_age = dict(proj_age)
 proj_age = project_age(proj_age)
@@ -173,20 +202,20 @@ proj_age = project_age(proj_age)
 Proj_age = []
 for item in process_data:
     for i in repo_data:
-        if item[1] == i[1]:
-            Proj_age.append(proj_age[i[0]])
+        if item[repo_name_index] == i[repo_data_name_index]:
+            Proj_age.append(proj_age[i[repo_id_index]])
 
 ##是否为工作日
 is_weekday = []
 for item in process_data:
-    is_weekday.append((item[20], item[5]))
+    is_weekday.append((item[pr_id_index], item[created_at_index]))
 is_weekday = dict(is_weekday)
 is_weekday = is_weekday_commit(is_weekday)
 
 ###获取PR的label数
 label_dict = []
 for item in process_data:
-    label_dict.append((item[20], item[22]))
+    label_dict.append((item[pr_id_index], item[content_index]))
 label_dict = dict(label_dict)
 label_dict = get_label_count(label_dict)
 
@@ -194,10 +223,10 @@ label_dict = get_label_count(label_dict)
 workload = []
 for item in process_data:
     tmp = []
-    tmp.append(('created_time', item[5]))
-    tmp.append(('closed_time', item[6]))
+    tmp.append(('created_time', item[created_at_index]))
+    tmp.append(('closed_time', item[closed_at_index]))
     tmp = dict(tmp)
-    workload.append((item[20], tmp))
+    workload.append((item[pr_id_index], tmp))
 
 workload = dict(workload)
 workload = get_workload(workload)
@@ -207,9 +236,9 @@ workload = get_workload(workload)
 pre_prs = []
 for item in process_data:
     tmp = []
-    tmp.append(('pr_user_name', item[19]))
+    tmp.append(('pr_user_name', item[pr_user_name_index]))
     tmp = dict(tmp)
-    pre_prs.append((item[20], tmp))
+    pre_prs.append((item[pr_id_index], tmp))
 
 pre_prs = dict(pre_prs)
 pre_prs = get_prev_prs(pre_prs)
@@ -218,10 +247,10 @@ pre_prs = get_prev_prs(pre_prs)
 change_num = []
 for item in process_data:
     tmp = []
-    tmp.append(('pr_user_name', item[19]))
-    tmp.append(('changed_line_num', item[17] + item[18]))
+    tmp.append(('pr_user_name', item[pr_user_name_index]))
+    tmp.append(('changed_line_num', item[total_add_line_index] + item[total_delete_line_index]))
     tmp = dict(tmp)
-    change_num.append((item[20], tmp))
+    change_num.append((item[pr_id_index], tmp))
 
 change_num = dict(change_num)
 change_num = get_change_num(change_num)
@@ -230,10 +259,10 @@ change_num = get_change_num(change_num)
 accept_num = []
 for item in process_data:
     tmp = []
-    tmp.append(('pr_user_name', item[19]))
-    tmp.append(('merged_at', item[7]))
+    tmp.append(('pr_user_name', item[pr_user_name_index]))
+    tmp.append(('merged_at', item[merged_at_index]))
     tmp = dict(tmp)
-    accept_num.append((item[20], tmp))
+    accept_num.append((item[pr_id_index], tmp))
 
 accept_num = dict(accept_num)
 accept_num = get_accept_num(accept_num)
@@ -243,12 +272,12 @@ close_num = []
 
 for item in process_data:
     tmp = []
-    tmp.append(('pr_user_name', item[19]))
-    tmp.append(('created_time', item[5]))
-    tmp.append(('closed_time', item[6]))
-    tmp.append(('merged_at', item[7]))
+    tmp.append(('pr_user_name', item[pr_user_name_index]))
+    tmp.append(('created_time', item[created_at_index]))
+    tmp.append(('closed_time', item[closed_at_index]))
+    tmp.append(('merged_at', item[merged_at_index]))
     tmp = dict(tmp)
-    close_num.append((item[20], tmp))
+    close_num.append((item[pr_id_index], tmp))
 
 close_num = dict(close_num)
 close_num = get_close_num(close_num)
@@ -258,13 +287,13 @@ review_num = []
 
 for item in process_data:
     tmp = []
-    tmp.append(('pr_user_name', item[19]))
-    tmp.append(('created_time', item[5]))
-    tmp.append(('closed_time', item[6]))
-    tmp.append(('review_comments_number', item[13]))
-    tmp.append(('review_comments_content', item[14]))
+    tmp.append(('pr_user_name', item[pr_user_name_index]))
+    tmp.append(('created_time', item[created_at_index]))
+    tmp.append(('closed_time', item[closed_at_index]))
+    tmp.append(('review_comments_number', item[review_comments_number_index]))
+    tmp.append(('review_comments_content', item[review_comments_content_index]))
     tmp = dict(tmp)
-    review_num.append((item[20], tmp))
+    review_num.append((item[pr_id_index], tmp))
 
 review_num = dict(review_num)
 review_num = get_review_num(review_num)
@@ -273,36 +302,36 @@ review_num = get_review_num(review_num)
 participants_count = []
 for item in process_data:
     tmp = []
-    tmp.append(('pr_user_name', item[19]))
-    tmp.append(('created_time', item[5]))
-    tmp.append(('closed_time', item[6]))
-    tmp.append(('comments_number', item[11]))
-    tmp.append(('comments_content', item[12]))
-    tmp.append(('review_comments_number', item[13]))
-    tmp.append(('review_comments_content', item[14]))
+    tmp.append(('pr_user_name', item[pr_user_name_index]))
+    tmp.append(('created_time', item[created_at_index]))
+    tmp.append(('closed_time', item[closed_at_index]))
+    tmp.append(('comments_number', item[comments_number_index]))
+    tmp.append(('comments_content', item[comments_content_index]))
+    tmp.append(('review_comments_number', item[review_comments_number_index]))
+    tmp.append(('review_comments_content', item[review_comments_content_index]))
     tmp = dict(tmp)
-    participants_count.append((item[20], tmp))
+    participants_count.append((item[pr_id_index], tmp))
 
 participants_count = dict(participants_count)
 participants_count = get_participants_count(participants_count)
 
 title_words = []
 for item in process_data:
-    title_words.append(wordCount(item[23]))
+    title_words.append(wordCount(item[title_index]))
 
 body_words = []
 for item in process_data:
-    body_words.append(wordCount(item[24]))
+    body_words.append(wordCount(item[body_index]))
 
 key_words = ['bug', 'document', 'feature', 'improve', 'refactor']
 has_key_words = []
 for item in process_data:
     tmp = []
-    if item[24] is None:
+    if item[body_index] is None:
         tmp = [0, 0, 0, 0, 0]
     else:
         for k in key_words:
-            if k in item[24]:
+            if k in item[body_index]:
                 tmp.append(1)
             else:
                 tmp.append(0)
@@ -310,22 +339,23 @@ for item in process_data:
 
 #  获取pr作者在代码仓的总提交成功率,接受概率，总的贡献给率，代码仓的贡献率
 
+
 pr_data = []
 for item in process_data:
     tmp = []
-    tmp.append(('pr_user_name', item[19]))
-    tmp.append(('created_time', item[5]))
-    tmp.append(('closed_time', item[6]))
-    tmp.append(('comments_number', item[11]))
-    tmp.append(('comments_content', item[12]))
-    tmp.append(('review_comments_number', item[13]))
-    tmp.append(('review_comments_content', item[14]))
-    tmp.append(('total_add_line', item[17]))
-    tmp.append(('total_delete_line', item[18]))
-    tmp.append(('commit_number', item[15]))
-    tmp.append(('merged_time', item[7]))
+    tmp.append(('pr_user_name', item[pr_user_name_index]))
+    tmp.append(('created_time', item[created_at_index]))
+    tmp.append(('closed_time', item[closed_at_index]))
+    tmp.append(('comments_number', item[comments_number_index]))
+    tmp.append(('comments_content', item[comments_content_index]))
+    tmp.append(('review_comments_number', item[review_comments_number_index]))
+    tmp.append(('review_comments_content', item[review_comments_content_index]))
+    tmp.append(('total_add_line', item[total_add_line_index]))
+    tmp.append(('total_delete_line', item[total_delete_line_index]))
+    tmp.append(('commit_number', item[commit_number_index]))
+    tmp.append(('merged_time', item[merged_at_index]))
     tmp = dict(tmp)
-    pr_data.append((item[20], tmp))
+    pr_data.append((item[pr_id_index], tmp))
 
 pr_data = dict(pr_data)
 
@@ -414,12 +444,12 @@ X_successive = []  ##连续类型值
 # ,item[16] 修改文件数,item[17] 增加代码行数,item[18] 删除代码行数
 
 for item in process_data:
-    X_dispersed.append([item[3], item[4], item[9]
-                           , item[10]])
+    X_dispersed.append([item[pr_author_association_index], item[labels_index], item[mergeable_state_index]
+                           , item[assignees_content_index]])
 
 for item in process_data:
-    X_successive.append([item[11], item[13], item[15]
-                            , item[16], item[17], item[18]])
+    X_successive.append([item[comments_number_index], item[review_comments_number_index], item[commit_number_index]
+                            , item[changed_file_num_index], item[total_add_line_index], item[total_delete_line_index]])
 
 for i in range(len(X_dispersed)):
     X_dispersed[i].append(pr_author_rate[i]['self_accept_rate'])
@@ -429,7 +459,7 @@ for i in range(len(X_dispersed)):
     X_dispersed[i].append(is_weekday[i])
 
 for i in range(len(X_successive)):
-    # X_successive[i].append(Proj_age[i])    
+    # X_successive[i].append(Proj_age[i])
     X_successive[i].append(label_dict[i])
     X_successive[i].append(workload[i])
     X_successive[i].append(pre_prs[i])
@@ -482,18 +512,19 @@ for i in range(len(X_dispersed)):
 first_response_time = []
 for item in process_data:
     tmp = []
-    tmp.append(('created_time', item[5]))
-    tmp.append(('updated_time', item[21]))
-    tmp.append(('closed_time', item[6]))
-    tmp.append(('comments_number', item[11]))
-    tmp.append(('comments_content', item[12]))
-    tmp.append(('review_comments_number', item[13]))
-    tmp.append(('review_comments_content', item[14]))
-    tmp.append(('pr_user_name', item[19]))
+    tmp.append(('created_time', item[created_at_index]))
+    tmp.append(('updated_time', item[updated_at_index]))
+    tmp.append(('closed_time', item[closed_at_index]))
+    tmp.append(('comments_number', item[comments_number_index]))
+    tmp.append(('comments_content', item[comments_content_index]))
+    tmp.append(('review_comments_number', item[review_comments_number_index]))
+    tmp.append(('review_comments_content', item[review_comments_content_index]))
+    tmp.append(('pr_user_name', item[pr_user_name_index]))
     tmp = dict(tmp)
-    first_response_time.append((item[20], tmp))
+    first_response_time.append((item[pr_id_index], tmp))
 
 first_response_time = dict(first_response_time)
+
 first_response_time = get_waiting_time(first_response_time)
 
 ##响应时间
@@ -514,6 +545,10 @@ for item in process_data:
 Y = []
 for i in range(0, len(Y_1)):
     Y.append([Y_1[i], Y_2[i]])
+
+import csv
+import torch
+import pandas as pd
 
 headers = ['Id',
            'author_identity',
