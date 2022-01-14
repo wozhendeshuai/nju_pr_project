@@ -31,4 +31,4 @@ def kendall_tau_distance(rel_true, rel_pred):
     return different_num / to_1
 
 
-print(kendall_tau_distance([4], [3]))
+

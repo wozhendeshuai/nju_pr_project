@@ -21,7 +21,7 @@ if __name__ == '__main__':
     print(owner_name + ": repo " + repo_name + "—===============================仓库信息存储完毕=======================")
     print(owner_name + ": repo " + repo_name + "—===============================仓库信息存储完毕=======================")
     print(owner_name + ": repo " + repo_name + "—===============================仓库信息存储完毕=======================")
-    get_pr_self_info(75304, max_pr_num, owner_name, repo_name, headers)
+    get_pr_self_info(103963, max_pr_num, owner_name, repo_name, headers)
     print(owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
     print(owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
     print(owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
