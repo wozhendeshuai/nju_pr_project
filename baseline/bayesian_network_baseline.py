@@ -328,7 +328,7 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
     train_dataset.dropna(inplace=True)
     train_dataset['priorities_number'] = train_dataset['priorities_number'].astype(int)
     print(train_dataset.head())
-    directory = "E:\\pythonProject\\nju_pr_project\\test\\titanic_demo\\picture"
+    directory = "E:\\pythonProject\\nju_pr_project\\baseline\\result\\bayesian_network\\photo\\"
 
     hc = HillClimbSearch(train_dataset)  # HillClimbSearch(train, scoring_method=BicScore(train))
     best_model = hc.estimate(scoring_method="k2score", max_indegree=4, max_iter=int(1e4))
@@ -338,7 +338,9 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
     best_model.fit(train_dataset, estimator=BayesianEstimator, prior_type="BDeu")  # default equivalent_sample_size=5
     for key in best_model.nodes:
         print(key)
-    best_model.save(filename=repo_name + "_BayesianModel.bif", filetype="bif")
+    best_model.save(
+        filename="E:\\pythonProject\\nju_pr_project\\baseline\\result\\bayesian_network\\model\\" + repo_name + "_BayesianModel.bif",
+        filetype="bif")
     # best_model=BayesianNetwork.load(filename=repo_name+"_BayesianModel.bif", filetype="bif")
     print("===============结束训练模型+" + alg_name + "======================")
 
@@ -354,11 +356,26 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
     temp_set = set(predict_data.columns) - set(best_model.nodes())
     # 去除不在模型中的节点
     for key in temp_set:
-        temp_data = predict_data.drop(columns=key, axis=1)
-    y_pred = best_model.predict(temp_data, n_jobs=1)
+        temp_data = temp_data.drop(columns=key, axis=1)
+    y_pred = None
+    for row_index in range(temp_data.__len__()):
+        try:
+            y_pred_temp = best_model.predict(temp_data.loc[[row_index]], n_jobs=1)
+        except Exception as e:
+            # 如果发生错误则回滚
+            print("第", row_index, "行数据预测失败原因是: ", e)
+            y_pred_temp = 0
+        if y_pred is None:
+            y_pred = y_pred_temp
+        else:
+            y_pred = y_pred.append(y_pred_temp,ignore_index=True)
+
+    # y_pred = best_model.predict(temp_data, n_jobs=1)
 
     print(y_pred)
-    y_pred.to_csv("./"+repo_name+"_bayesian_network_result.csv", index=0)
+    y_pred.to_csv(
+        "E:\\pythonProject\\nju_pr_project\\baseline\\result\\bayesian_network\\result\\" + repo_name + "_bayesian_network_result.csv",
+        index=0)
     test_pr_number = pd.read_csv(test_data_path)
     pr_number_series = test_pr_number.get("pr_number")
     y_pred_series = y_pred.get("priorities_number")
@@ -371,7 +388,7 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "zipkin"  # "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "salt"  # "zipkin"  # "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     # ranklib所能调的库
     alg_name = "bayesian_network"
     # 测试模型性能的文件路径

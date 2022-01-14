@@ -1,5 +1,4 @@
-
-def showBN(model, save=False, filename=None,directory=None):
+def showBN(model, save=False, filename=None, directory=None):
     '''传入BayesianModel对象，调用graphviz绘制结构图，jupyter中可直接显示'''
     from graphviz import Digraph
     node_attr = dict(
@@ -16,6 +15,6 @@ def showBN(model, save=False, filename=None,directory=None):
     for a, b in edges:
         dot.edge(a, b)
     if save:
-        dot.view(cleanup=True, filename=filename)
+        dot.view(cleanup=True, filename=filename, directory=directory)
 
     return dot
