@@ -364,11 +364,11 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
         except Exception as e:
             # 如果发生错误则回滚
             print("第", row_index, "行数据预测失败原因是: ", e)
-            y_pred_temp = 0
+            y_pred_temp = pd.DataFrame({"priorities_number": [0]})
         if y_pred is None:
             y_pred = y_pred_temp
         else:
-            y_pred = y_pred.append(y_pred_temp,ignore_index=True)
+            y_pred = y_pred.append(y_pred_temp, ignore_index=True)
 
     # y_pred = best_model.predict(temp_data, n_jobs=1)
 
