@@ -240,7 +240,6 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
         mrr_list.append(mrr_num)
         kendall_list.append(kendall_num)
 
-
     headers = ['日期',
                'ndcg',
                'mrr',
@@ -268,8 +267,8 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
 
 # 训练模型
 def train_model(alg_name, alg_index, train_data_path, test_data_path, model_path):
-    rank_model_str = "java -jar " + jar_path + " -train " + train_data_path + " -test " + test_data_path + " -ranker " + str(
-        alg_index) + " -metric2t NDCG@10 -metric2T NDCG@10 -save " + model_path
+    rank_model_str = "java -jar " + jar_path + " -train " + train_data_path + " -test " + test_data_path + " -ranker " + str(alg_index) \
+                     + " -metric2t NDCG@10 -metric2T NDCG@10 -lr 0.01 -save " + model_path
     recv = os.popen(rank_model_str)
     print("===============训练模型+" + alg_name + "======================")
     print("训练的命令是：" + rank_model_str)
@@ -278,16 +277,18 @@ def train_model(alg_name, alg_index, train_data_path, test_data_path, model_path
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "salt"#"zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "salt"  # "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     # ranklib所能调的库
-    alg_dict = {#0: "MART",
-                #1: "RankNet",
-                #2: "RankBoost",
-                #3: "AdaRank",
-                #4: "Coordinate_Ascent",
-                # 6: "LambdaMART",
-                # 7: "ListNet",
-                8: "Random_Forests"}
+    alg_dict = {
+        # 0: "MART",
+        1: "RankNet",
+        2: "RankBoost",
+        3: "AdaRank",
+        # 4: "Coordinate_Ascent",
+        6: "LambdaMART",
+        # 7: "ListNet",
+        # 8: "Random_Forests"
+    }
     for alg_index in alg_dict.keys():
         alg_name = alg_dict.get(alg_index)
         # 测试模型性能的文件路径

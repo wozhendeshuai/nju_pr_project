@@ -14,6 +14,7 @@ from utils.num_utils.num_function import get_label_count \
     , get_workload, get_prev_prs, get_change_num \
     , get_accept_num, get_close_num, get_review_num \
     , get_participants_count
+from utils.path_exist import path_exists_or_create
 from utils.str_utils.str_function import wordCount
 from utils.num_utils.num_ratio_function import get_pr_author_rate \
     , get_project_line_rate, get_line_weekday_rate, get_project_line_churn_rate \
@@ -608,9 +609,11 @@ def get_data_by_repo_name(repo_name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     repo_name = "salt"#"zipkin"  # "angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
-    all_filename = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_bayes_rank_format_data.csv"
-    train_filename = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_bayes_rank_format_train_data.csv"
-    test_filename = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_bayes_rank_format_test_data.csv"
+    file_path = "./bayesnet_data/" + repo_name + "/"
+    path_exists_or_create(file_path)
+    all_filename = file_path + repo_name + "_bayes_rank_format_data.csv"
+    train_filename = file_path + repo_name + "_bayes_rank_format_train_data.csv"
+    test_filename = file_path + repo_name + "_bayes_rank_format_test_data.csv"
     row_data = get_data_by_repo_name(repo_name)
     headers = ['pr_number',
                'priorities_number',
