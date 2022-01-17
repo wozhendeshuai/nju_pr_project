@@ -20,6 +20,8 @@ from xgboost import DMatrix
 from sklearn.datasets import load_svmlight_file
 
 # 增加代码的可读性
+from utils.path_exist import path_exists_or_create
+
 pr_number_index = 0
 repo_name_index = 1
 pr_user_id_index = 2
@@ -307,7 +309,7 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
         row_data.append(tmp)
     print(row_data)
     # 保存数据到csv文件
-    with open(result_path,'w', encoding='utf-8', newline='') as f:
+    with open(result_path, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, dialect='excel')
         writer.writerow(headers)
         for item in row_data:
@@ -350,25 +352,35 @@ def train_model(alg_name, rank_type, model_path, train_data_path, train_data_gro
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "salt"#"zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "salt"  # "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     # ranklib所能调的库
     alg_name = "xgboost"
     rank_style = "pairwise"
     # 测试模型性能的文件路径
-    origin_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_test_data.txt"
-    temp_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_temp_svm_rank_format_data.txt"
-    xgboost_temp_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_xgboost_temp_svm_rank_format_data.txt"
-    xgboost_temp_group_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_xgboost_temp_svm_rank_format_data_group.txt"
-    temp_sort_result_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_" + rank_style + "_myScoreFile.txt"
-    model_path = "E:\\pythonProject\\nju_pr_project\\baseline\\rank_model\\" + repo_name + "_" + alg_name + "_" + rank_style + "_model.txt"
-    result_path = "E:\\pythonProject\\nju_pr_project\\baseline\\result\\xgboost\\" + repo_name + "_" + alg_name + "_result.csv"
+    file_path = "../data_processing_engineering/rank_data/" + repo_name + "/"
+    path_exists_or_create(file_path)
+    origin_data_path = file_path + repo_name + "_svm_rank_format_test_data.txt"
+    temp_data_path = file_path + repo_name + "_temp_svm_rank_format_data.txt"
+    xgboost_file_path = "../data_processing_engineering/xgboost_data/" + repo_name + "/"
+    path_exists_or_create(xgboost_file_path)
+    xgboost_temp_data_path = xgboost_file_path + repo_name + "_xgboost_temp_svm_rank_format_data.txt"
+    xgboost_temp_group_data_path = xgboost_file_path + repo_name + "_xgboost_temp_svm_rank_format_data_group.txt"
+    temp_sort_result_path = xgboost_file_path + repo_name + "_" + rank_style + "_myScoreFile.txt"
+
+    xgboost_model_path = "./rank_model/" + repo_name + "/"
+    path_exists_or_create(xgboost_model_path)
+    model_path = xgboost_model_path + repo_name + "_" + alg_name + "_" + rank_style + "_model.txt"
+
+    xgboost_result_path = "./result/xgboost/" + repo_name + "/"
+    path_exists_or_create(xgboost_result_path)
+    result_path = xgboost_result_path + repo_name + "_" + alg_name + "_result.csv"
     # 训练模型的文件路径
-    train_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_train_data.txt"
-    test_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_test_data.txt"
-    xgboost_train_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_xgboost_svm_rank_format_train_data.txt"
-    xgboost_train_data_group_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_xgboost_svm_rank_format_train_group_data.txt"
-    xgboost_test_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_xgboost_svm_rank_format_test_data.txt"
-    xgboost_test_data_group_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_xgboost_svm_rank_format_test_group_data.txt"
+    train_data_path = file_path + repo_name + "_svm_rank_format_train_data.txt"
+    test_data_path = file_path + repo_name + "_svm_rank_format_test_data.txt"
+    xgboost_train_data_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_train_data.txt"
+    xgboost_train_data_group_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_train_group_data.txt"
+    xgboost_test_data_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_test_data.txt"
+    xgboost_test_data_group_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_test_group_data.txt"
     prepare_xgboostData(train_data_path, xgboost_train_data_path, xgboost_train_data_group_path)
     prepare_xgboostData(test_data_path, xgboost_test_data_path, xgboost_test_data_group_path)
     # 首先运行算法训练模型

@@ -29,7 +29,7 @@ if __name__ == '__main__':
     print( owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
     print(owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
     print( owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
-    get_pr_user_info(1656, max_pr_num, owner_name, repo_name, headers)
+    get_pr_user_info(3249, max_pr_num, owner_name, repo_name, headers)
     print( owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
     print( owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
     print(owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")

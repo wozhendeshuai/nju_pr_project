@@ -14,6 +14,8 @@ import csv
 from evaluation_index.ndcg import ndcg
 
 # 增加代码的可读性
+from utils.path_exist import path_exists_or_create
+
 pr_number_index = 0
 repo_name_index = 1
 pr_user_id_index = 2
@@ -189,7 +191,9 @@ def fifo_result(true_rate_label_dict, day_data, repo_name):
         row_data.append(tmp)
     print(row_data)
     # 保存数据到csv文件
-    with open("./result/fifo/" + repo_name + "_FIFO_result.csv", 'w', encoding='utf-8', newline='') as f:
+    file_path = "./result/fifo/"
+    path_exists_or_create(file_path)
+    with open(file_path + repo_name + "_FIFO_result.csv", 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, dialect='excel')
         writer.writerow(headers)
         for item in row_data:
@@ -199,7 +203,7 @@ def fifo_result(true_rate_label_dict, day_data, repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="salt"#"zipkin"# "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "salt"  # "zipkin"# "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     day_data, response_time, first_response_time_dict = get_data_by_repo_name(repo_name)
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
     fifo_result(true_rate_label_dict, day_data, repo_name)

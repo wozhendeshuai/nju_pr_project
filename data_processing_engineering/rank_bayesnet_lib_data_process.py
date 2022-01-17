@@ -609,7 +609,7 @@ def get_data_by_repo_name(repo_name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     repo_name = "salt"#"zipkin"  # "angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
-    file_path = "./bayesnet_data/" + repo_name + "/"
+    file_path = "./bayesian_data/" + repo_name + "/"
     path_exists_or_create(file_path)
     all_filename = file_path + repo_name + "_bayes_rank_format_data.csv"
     train_filename = file_path + repo_name + "_bayes_rank_format_train_data.csv"

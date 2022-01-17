@@ -24,6 +24,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # import seaborn as sns
+from utils.path_exist import path_exists_or_create
 from utils.print_photo import showBN
 from pgmpy.models import BayesianNetwork, BayesianModel
 from pgmpy.estimators import BayesianEstimator
@@ -328,7 +329,9 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
     train_dataset.dropna(inplace=True)
     train_dataset['priorities_number'] = train_dataset['priorities_number'].astype(int)
     print(train_dataset.head())
-    directory = "E:\\pythonProject\\nju_pr_project\\baseline\\result\\bayesian_network\\photo\\"
+    bayesian_model_path = "./rank_model/bayesian_network/" + repo_name + "/"
+    directory = bayesian_model_path + "photo/"
+    path_exists_or_create(directory)
 
     hc = HillClimbSearch(train_dataset)  # HillClimbSearch(train, scoring_method=BicScore(train))
     best_model = hc.estimate(scoring_method="k2score", max_indegree=4, max_iter=int(1e4))
@@ -338,9 +341,9 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
     best_model.fit(train_dataset, estimator=BayesianEstimator, prior_type="BDeu")  # default equivalent_sample_size=5
     for key in best_model.nodes:
         print(key)
-    best_model.save(
-        filename="E:\\pythonProject\\nju_pr_project\\baseline\\result\\bayesian_network\\model\\" + repo_name + "_BayesianModel.bif",
-        filetype="bif")
+    model_directory = bayesian_model_path + "model/"
+    path_exists_or_create(model_directory)
+    best_model.save(filename=model_directory + repo_name + "_BayesianModel.bif",filetype="bif")
     # best_model=BayesianNetwork.load(filename=repo_name+"_BayesianModel.bif", filetype="bif")
     print("===============结束训练模型+" + alg_name + "======================")
 
@@ -373,9 +376,9 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
     # y_pred = best_model.predict(temp_data, n_jobs=1)
 
     print(y_pred)
-    y_pred.to_csv(
-        "E:\\pythonProject\\nju_pr_project\\baseline\\result\\bayesian_network\\result\\" + repo_name + "_bayesian_network_result.csv",
-        index=0)
+    result_directory = bayesian_model_path + "result/"
+    path_exists_or_create(result_directory)
+    y_pred.to_csv(result_directory + repo_name + "_bayesian_network_result.csv", index=0)
     test_pr_number = pd.read_csv(test_data_path)
     pr_number_series = test_pr_number.get("pr_number")
     y_pred_series = y_pred.get("priorities_number")
@@ -392,11 +395,15 @@ if __name__ == '__main__':
     # ranklib所能调的库
     alg_name = "bayesian_network"
     # 测试模型性能的文件路径
-    origin_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_bayes_rank_format_test_data.csv"
-    result_path = "E:\\pythonProject\\nju_pr_project\\baseline\\result\\bayesian_network\\" + repo_name + "_" + alg_name + "_result.csv"
+    file_path = "../data_processing_engineering/bayesian_data/" + repo_name + "/"
+    path_exists_or_create(file_path)
+    origin_data_path = file_path + repo_name + "_bayes_rank_format_test_data.csv"
+    bayesian_result_path = "./result/bayesian_network/" + repo_name + "/"
+    path_exists_or_create(bayesian_result_path)
+    result_path = bayesian_result_path + repo_name + "_" + alg_name + "_result.csv"
     # 训练模型的文件路径
-    train_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_bayes_rank_format_train_data.csv"
-    test_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_bayes_rank_format_test_data.csv"
+    train_data_path = file_path + repo_name + "_bayes_rank_format_train_data.csv"
+    test_data_path = file_path + repo_name + "_bayes_rank_format_test_data.csv"
 
     # 首先运行算法训练模型,并得到其在测试集上的结果
     result_rate_in_dict = train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)

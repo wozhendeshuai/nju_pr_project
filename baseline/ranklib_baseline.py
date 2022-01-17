@@ -17,6 +17,8 @@ import linecache
 import os
 
 # 增加代码的可读性
+from utils.path_exist import path_exists_or_create
+
 pr_number_index = 0
 repo_name_index = 1
 pr_user_id_index = 2
@@ -200,7 +202,7 @@ def model_forest(day_data, day, pr_number_index_dict, origin_data_path, temp_dat
 
 # 对模型进行调用，同时将数据写入到文件中，方便后续统计
 def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
-                     temp_sort_result_path, model_path, jar_path):
+                     temp_sort_result_path, model_path, jar_path,repo_name):
     ndcg_list = []
     day_list = []
     mrr_list = []
@@ -255,8 +257,9 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
         row_data.append(tmp)
     print(row_data)
     # 保存数据到csv文件
-    with open(
-            "E:\\pythonProject\\nju_pr_project\\baseline\\result\\ranklib\\" + repo_name + "_" + alg_name + "_result.csv",
+    result_path="./result/ranklib/"+repo_name+"/"
+    path_exists_or_create(result_path)
+    with open(result_path+ repo_name + "_" + alg_name + "_result.csv",
             'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, dialect='excel')
         writer.writerow(headers)
@@ -267,7 +270,8 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
 
 # 训练模型
 def train_model(alg_name, alg_index, train_data_path, test_data_path, model_path):
-    rank_model_str = "java -jar " + jar_path + " -train " + train_data_path + " -test " + test_data_path + " -ranker " + str(alg_index) \
+    rank_model_str = "java -jar " + jar_path + " -train " + train_data_path + " -test " + test_data_path + " -ranker " + str(
+        alg_index) \
                      + " -metric2t NDCG@10 -metric2T NDCG@10 -lr 0.01 -save " + model_path
     recv = os.popen(rank_model_str)
     print("===============训练模型+" + alg_name + "======================")
@@ -280,7 +284,7 @@ if __name__ == '__main__':
     repo_name = "salt"  # "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     # ranklib所能调的库
     alg_dict = {
-        # 0: "MART",
+        0: "MART",
         1: "RankNet",
         2: "RankBoost",
         3: "AdaRank",
@@ -292,14 +296,19 @@ if __name__ == '__main__':
     for alg_index in alg_dict.keys():
         alg_name = alg_dict.get(alg_index)
         # 测试模型性能的文件路径
-        jar_path = "E:\\pythonProject\\nju_pr_project\\baseline\\RankLib-2.16.jar"
-        origin_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_test_data.txt"
-        temp_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_temp_svm_rank_format_data.txt"
-        temp_sort_result_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_myScoreFile.txt"
-        model_path = "E:\\pythonProject\\nju_pr_project\\baseline\\rank_model\\" + repo_name + "_" + alg_name + "_model.txt"
+        jar_path = "./RankLib-2.16.jar"
+        file_path = "../data_processing_engineering/rank_data/" + repo_name + "/"
+        path_exists_or_create(file_path)
+        origin_data_path = file_path + repo_name + "_svm_rank_format_test_data.txt"
+        temp_data_path = file_path + repo_name + "_temp_svm_rank_format_data.txt"
+        temp_sort_result_path = file_path + repo_name + "_myScoreFile.txt"
+
+        model_path = "./rank_model/" + repo_name + "/"
+        path_exists_or_create(model_path)
+        model_path = model_path + repo_name + "_" + alg_name + "_model.txt"
         # 训练模型的文件路径
-        train_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_train_data.txt"
-        test_data_path = "E:\\pythonProject\\nju_pr_project\\data_processing_engineering\\rank_data\\" + repo_name + "_svm_rank_format_test_data.txt"
+        train_data_path =file_path + repo_name + "_svm_rank_format_train_data.txt"
+        test_data_path = file_path + repo_name + "_svm_rank_format_test_data.txt"
         # 首先运行算法训练模型
         train_model(alg_name, alg_index, train_data_path, test_data_path, model_path)
         print(alg_name + "模型训练完成==========")
@@ -307,4 +316,4 @@ if __name__ == '__main__':
             origin_data_path, repo_name)
         true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
         alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
-                         temp_sort_result_path, model_path, jar_path)
+                         temp_sort_result_path, model_path, jar_path,repo_name)
