@@ -28,8 +28,9 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
     # 	"""
 
     # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second', charset='utf8')
-    #database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
+    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
+                          charset='utf8')
+    # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
     # 利用游标对象进行操作
@@ -38,6 +39,20 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
     # print(data)
     data_len = data.__len__()
     print(data_len)
+    # 自动找到最大的pr_number
+    select_max_index = """select * from pr_file where repo_name= %s order by pr_number desc limit 10"""
+    cursor.execute(select_max_index, [repo_name])
+    had_data = cursor.fetchall()
+    if had_data.__len__() != 0:
+        print(had_data[0])
+        pr_temp_number = had_data[0][0]
+        select_now_index_in_pr_self = """select count(*) from pr_self where repo_name=%s and pr_number < %s """
+        cursor.execute(select_now_index_in_pr_self, [repo_name, pr_temp_number])
+        index_temp_data = cursor.fetchall()
+        if index_temp_data.__len__() != 0:
+            index = index_temp_data[0][0]
+            print("=====目前 now pr_file ，这个pr_number为：" + str(pr_temp_number) + "在 pr_self 中的index为：" + str(index))
+            index = index - 2
 
     while index < data_len:
         # 取出查询的数据
@@ -113,7 +128,8 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
 
         except Exception as e:
             filename = repo_name + '_file_exception.csv'
-            write_file(index, "user", ("第" + str(index) + "号 pr_number: " + str(pr_number) + " 对应的失败: " + str(e)), filename)
+            write_file(index, "user", ("第" + str(index) + "号 pr_number: " + str(pr_number) + " 对应的失败: " + str(e)),
+                       filename)
             print(e)
             break
         index = index + 1

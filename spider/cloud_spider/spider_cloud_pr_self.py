@@ -93,11 +93,20 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
         )VALUES(%s,%s,%s,%s, %s,%s,%s,%s, %s,%s, %s,%s, %s,%s, %s, %s,%s,%s,%s, %s,%s,%s,%s, %s, %s,%s,%s,%s,%s)"""
 
     # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',charset='utf8')
+    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
+                          charset='utf8')
     # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
     database.ping(reconnect=True)
+    # 自动找到最大的pr_number
+    select_max_index = """select * from pr_self where repo_name= %s order by pr_number desc limit 10"""
+    cursor.execute(select_max_index, [repo_name])
+    had_data = cursor.fetchall()
+    if had_data.__len__() != 0:
+        print(had_data[0])
+        index = had_data[0][0] - 1
+        print("pr_self============目前已到index为=============" + str(index))
 
     while index < max_num:
         try:

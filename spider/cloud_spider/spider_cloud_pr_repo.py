@@ -63,7 +63,14 @@ def get_repo_info(index, num, owner_name, repo_name,headers):
     # 利用游标对象进行操作
     cursor.execute('select version()')
     data = cursor.fetchone()
-
+#找到目前是否已存该代码仓相关信息
+    select_max_index = """select * from pr_repo where repo_name= %s"""
+    cursor.execute(select_max_index, [repo_name])
+    had_data = cursor.fetchall()
+    if had_data.__len__() != 0:
+        print(had_data)
+        database.close()
+        return
     while index < 1:
         try:
             repo_r = requests.get(repo_url, headers=headers)
