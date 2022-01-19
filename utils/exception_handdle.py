@@ -4,8 +4,12 @@ import time
 
 
 # 将异常写到文件中
+from utils.path_exist import path_exists_or_create
+
+
 def write_file(pr_number, project_name, exception, filename):
     current_path = os.getcwd() + '\\exception_data\\'  # 获取当前路径
+    path_exists_or_create(current_path)
     #  print(current_path)
     path = current_path + filename  # 在当前路径创建名为test的文本文件
     now_time = time.strftime('%Y-%m-%d %H:%M:%S ', time.localtime(time.time()))  # 获取当前时间

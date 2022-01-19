@@ -2,11 +2,7 @@ import os
 import sys
 import time
 
-from spider.project_spider.spider_pr_file_for_java import get_pr_file_info
-from spider.project_spider.spider_pr_repo_for_java import get_repo_info
-from spider.project_spider.spider_pr_self_for_java import get_pr_self_info
-from spider.project_spider.spider_pr_user_for_java import get_pr_user_info
-from utils.access_token import get_token
+
 
 if __name__ == '__main__':
     # print(os.path)
@@ -18,9 +14,13 @@ if __name__ == '__main__':
     sys.path.append(path_temp)
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： " + path_temp)
 
+    from spider.project_spider.spider_pr_self_for_java import get_pr_self_info
+
+    from utils.access_token import get_token
+
     # 此部分可修改，用于控制进程
     index = 0
-    max_pr_num = sys.argv[1]
+    max_pr_num = int(sys.argv[1])
     # helix-editor/helix
     owner_name = sys.argv[2]
     repo_name = sys.argv[3]
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     access_token = get_token()
 
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          " 当前的max_pr_num为： " + max_pr_num,
+          " 当前的max_pr_num为： " + str(max_pr_num),
           " 当前的owner_name为： " + owner_name,
           " 当前的repo_name为： " + repo_name,
           " 当前的access_token为： " + access_token)

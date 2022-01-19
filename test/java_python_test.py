@@ -25,7 +25,7 @@ if __name__ == '__main__':
     repoName=sys.argv[3]
     for i in range(sys.argv.__len__()):
         print(maxPRNum,ownerName,repoName,i)
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"哈哈哈哈哈哈这次看看字符集咋样啊啊啊啊")
         time.sleep((i+1)*2)
     print(sys.argv[1])
     # print(wordCount(sys.argv[1]))
