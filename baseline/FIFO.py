@@ -203,7 +203,7 @@ def fifo_result(true_rate_label_dict, day_data, repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "salt"  # "zipkin"# "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "Katello" #"salt"  # "zipkin"# "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     day_data, response_time, first_response_time_dict = get_data_by_repo_name(repo_name)
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
     fifo_result(true_rate_label_dict, day_data, repo_name)
