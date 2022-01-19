@@ -1,5 +1,7 @@
 import pymysql as db
 import requests
+
+from spider.project_spider.database_operation import get_database_connection
 from utils.time_utils import time_reverse
 from utils.access_token import get_token
 from utils.exception_handdle import write_file
@@ -55,8 +57,8 @@ def get_repo_info(index, num, owner_name, repo_name,headers):
         contributor_num,
         forks_count)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) """
 
-    # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',charset='utf8')
+
+    database = get_database_connection()
     # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
@@ -156,7 +158,7 @@ def get_repo_info(index, num, owner_name, repo_name,headers):
             cursor.execute(sql, sqlData)
             # 提交到数据库执行
             database.commit()
-            print("第", index, "行数据插入数据库成功: ", repo_name)
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"第", index, "行数据插入数据库成功: ", repo_name)
         except Exception as e:
             # 如果发生错误则回滚
             print("第", index, "行数据插入数据库失败: ", "repo_name:", repo_name)

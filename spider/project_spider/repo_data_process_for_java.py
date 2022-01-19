@@ -44,27 +44,3 @@ if __name__ == '__main__':
           owner_name + ": repo " + repo_name + "—===============================仓库信息存储完毕=======================")
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
           owner_name + ": repo " + repo_name + "—===============================仓库信息存储完毕=======================")
-
-    get_pr_self_info(index, max_pr_num, owner_name, repo_name, headers)
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
-
-    get_pr_file_info(index, max_pr_num, owner_name, repo_name, headers)
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_file " + repo_name + "—===============================pr_file信息存储完毕=======================")
-
-    get_pr_user_info(index, max_pr_num, owner_name, repo_name, headers)
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")

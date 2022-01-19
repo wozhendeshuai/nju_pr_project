@@ -1,5 +1,8 @@
-import pymysql as db
+import time
+
 import requests
+
+from spider.project_spider.database_operation import get_database_connection
 from utils.exception_handdle import write_file
 
 
@@ -27,9 +30,8 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
     # 	order by pr_number
     # 	"""
 
-    # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
-                          charset='utf8')
+
+    database = get_database_connection()
     # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
@@ -51,7 +53,7 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
         index_temp_data = cursor.fetchall()
         if index_temp_data.__len__() != 0:
             index = index_temp_data[0][0]
-            print("=====目前 now pr_file ，这个pr_number为：" + str(pr_temp_number) + "在 pr_self 中的index为：" + str(index))
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"=====目前 now pr_file ，这个pr_number为：" + str(pr_temp_number) + "在 pr_self 中的index为：" + str(index))
             index = index - 2
 
     while index < data_len:
@@ -70,8 +72,8 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
         page = 1
         try:
             while page <= maxPage:
-                print("========================" + "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(
-                    page) + "页" + "==========================")
+                print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"=========" + "第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(
+                    page) + "页" + "==============")
                 print(pr_number)
                 print(repo_name)
                 print(file_num)
@@ -135,3 +137,6 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
         index = index + 1
     # 关闭数据库连接
     database.close()
+
+
+

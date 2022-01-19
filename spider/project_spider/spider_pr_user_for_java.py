@@ -1,5 +1,9 @@
+import time
+
 import pymysql as db
 import requests
+
+from spider.project_spider.database_operation import get_database_connection
 from utils.exception_handdle import write_file
 import traceback
 import json
@@ -56,8 +60,8 @@ def get_pr_user_info(index, maxNum, owner_name, repo_name, headers):
     # 用于更新author_association_with_repo数据
     updata_sql = "UPDATE pr_user SET author_association_with_repo = %s WHERE user_id = %s"
     pr_user_url = "https://api.github.com/users/"
-    # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',charset='utf8')
+
+    database = get_database_connection()
     # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
@@ -73,8 +77,8 @@ def get_pr_user_info(index, maxNum, owner_name, repo_name, headers):
         pr_user_name = data[index][1]
         author_association_with_repo = data[index][2]
         repo_name = data[index][3]
-        print("========================" + "第" + str(index) + "号 user: " + str(
-            pr_user_name) + "==========================")
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"=========" + "第" + str(index) + "号 user: " + str(
+            pr_user_name) + "==========")
         print(pr_user_id)
         print(pr_user_name)
         print(author_association_with_repo)

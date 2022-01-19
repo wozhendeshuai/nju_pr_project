@@ -1,5 +1,7 @@
 import pymysql as db
 import requests
+
+from spider.project_spider.database_operation import get_database_connection
 from utils.time_utils import time_reverse
 from utils.exception_handdle import write_file
 import time
@@ -92,9 +94,8 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
         total_delete_line
         )VALUES(%s,%s,%s,%s, %s,%s,%s,%s, %s,%s, %s,%s, %s,%s, %s, %s,%s,%s,%s, %s,%s,%s,%s, %s, %s,%s,%s,%s,%s)"""
 
-    # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
-                          charset='utf8')
+
+    database = get_database_connection()
     # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
@@ -106,11 +107,11 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
     if had_data.__len__() != 0:
         print(had_data[0])
         index = had_data[0][0] - 1
-        print("pr_self============目前已到index为=============" + str(index))
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"pr_self============目前已到index为=============" + str(index))
 
     while index < max_num:
         try:
-            print("========================" + "第" + str(index) + "号 pr_number: " + str(
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"========================" + "第" + str(index) + "号 pr_number: " + str(
                 index) + "信息保存中==========================")
             temp_url = pr_url + index.__str__()
             pr_r = requests.get(temp_url, headers=headers)
