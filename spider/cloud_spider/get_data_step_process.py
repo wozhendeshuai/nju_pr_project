@@ -7,10 +7,10 @@ from utils.access_token import get_token
 if __name__ == '__main__':
     # 此部分可修改，用于控制进程
     index = 0
-    max_pr_num = 700
-    #helix-editor/helix hibernate/hibernate-orm/incubator-heron "openzipkin/zipkin"
-    owner_name ="apache"#"helix-editor"#"hibernate"#"Homebrew"#"apache"#"Ipython" #"apache"  # "Katello"#"kubernetes"#"mdn"#"openzipkin"#"laravel" #"apache"#  # "spring-projects"  # "symfony"#"rails"#"angular" #"tensorflow"
-    repo_name ="guacamole-client" #"helix"#"hibernate-orm"#"homebrew-cask"#"incubator-heron"#"Ipython"#"kafka"  # "Katello"#"kubernetes"#"kuma"#"zipkin"#"laravel" #"lucene-solr"#  # "spring-framework"  # "spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
+    max_pr_num = 15400
+
+    owner_name ="django"#"apache"#"apache"#"apache"#"apache"#"helix-editor"#"hibernate"#"Homebrew"#"apache"#"Ipython" #"apache"  # "Katello"#"kubernetes"#"mdn"#"openzipkin"#"laravel" #"apache"#  # "spring-projects"  # "symfony"#"rails"#"angular" #"tensorflow"
+    repo_name ="django"#"dubbo"#"flume"#"groovy"#"guacamole-client" #"helix"#"hibernate-orm"#"homebrew-cask"#"incubator-heron"#"Ipython"#"kafka"  # "Katello"#"kubernetes"#"kuma"#"zipkin"#"laravel" #"lucene-solr"#  # "spring-framework"  # "spring-boot" #"symfony"#"rails"#"angular.js"#"tensorflow"
 
     access_token = get_token()
     headers = {
