@@ -1,0 +1,12 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/bayesian_network/terraform/terraform_bayesian_network_result.csv,0.8339404502445362,0.1240158323974234,0.20721167834005158
+./result/fifo/terraform_FIFO_result.csv,0.8684163042500807,0.036263872980501766,0.4643370386294515
+./result/xgboost/terraform/terraform_xgboost_result.csv,0.9040421066840867,0.23737001822259546,0.14607079201444012
+./result/ranklib/terraform/terraform_MART_result.csv,0.9111241411226009,0.2777990272595378,0.15864585706866036
+./result/ranklib/terraform/terraform_RankNet_result.csv,0.8097578737479678,0.08816615246637508,0.25043566185148225
+./result/ranklib/terraform/terraform_RankBoost_result.csv,0.8785384636863987,0.17568571651458773,0.1658834681073098
+./result/ranklib/terraform/terraform_AdaRank_result.csv,0.8810346618174173,0.22637988876561171,0.16604423932594445
+./result/ranklib/terraform/terraform_Coordinate_Ascent_result.csv,0.8293149005461053,0.11770004521572179,0.2336396201170109
+./result/ranklib/terraform/terraform_LambdaMART_result.csv,0.8894729643267012,0.2303873311238014,0.17130632549292682
+./result/ranklib/terraform/terraform_ListNet_result.csv,0.8651871211243626,0.1682181171716323,0.19299689428765646
+./result/ranklib/terraform/terraform_Random_Forests_result.csv,0.9169182722842585,0.28342195733247577,0.15233046555075255

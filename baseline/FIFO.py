@@ -3,7 +3,7 @@
 然后将这个时刻还处于open状态的pr作为输入X。
 FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上述pr列表进行排序。FIFOY
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
-将FIFOY，与TRUEY进行比较，通过NDGC进行比较，判断排序效果
+将FIFOY，与TRUEY进行比较，通过NDCG进行比较，判断排序效果
 '''
 import data_processing_engineering.get_data_from_database.database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
@@ -175,7 +175,7 @@ def fifo_result(true_rate_label_dict, day_data, repo_name):
         kendall_list.append(kendall_num)
 
     headers = ['日期',
-               'ndgc',
+               'ndcg',
                'mrr',
                'kendall_tau_distance'
                ]
