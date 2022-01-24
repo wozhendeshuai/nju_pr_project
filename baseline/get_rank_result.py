@@ -32,7 +32,7 @@ def get_mean(file_path):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "terraform"  # "salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
+    repo_name = "guacamole-client"#"helix"#"terraform"  # "salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
     file_path_tmp = []
     bayesian_network_file_path = "./result/bayesian_network/" + repo_name + "/" + repo_name + "_bayesian_network_result.csv"
     fifo_file_path = "./result/fifo/" + repo_name + "_FIFO_result.csv"
