@@ -136,10 +136,6 @@ def model_result(open_data_path,
 
 # Press the green button in the gutter to run the script.
 def save_result_to_sql(data_time, repo_name, alg_name, sort_result):
-    # 从数据库获取数据
-    select_sql = "select * from alg_sort_result where repo_name='" + repo_name + "' and  sort_day='" + data_time + "' and alg_name='" + alg_name + "'"
-    print(select_sql)
-    raw_data = dbConnection.getDataFromSql(select_sql, "project_sort_db")
     ##连接数据库
     conn = pymysql.connect(
         host="127.0.0.1",
@@ -149,6 +145,12 @@ def save_result_to_sql(data_time, repo_name, alg_name, sort_result):
         database="project_sort_db"  # 要连接的数据库名称
     )
     cursor = conn.cursor()  # 游标
+    # 从数据库获取数据
+    select_sql = "select * from alg_sort_result where repo_name='" + repo_name + "' and  sort_day='" + data_time + "' and alg_name='" + alg_name + "'"
+    print(select_sql)
+    cursor.execute(select_sql)
+    raw_data=cursor.fetchall()
+
     # 若今天还未插入数据则，走插入逻辑
     if raw_data.__len__() == 0:
         for pr_number_index in range(sort_result.__len__()):
