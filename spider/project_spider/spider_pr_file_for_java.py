@@ -115,8 +115,9 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
                         print("第" + str(index) + "号 pr_number: " + str(pr_number) + " 第" + str(page) + "页的第" + str(
                             temp_index) + "个数据插入数据库失败: " + str(e))
                         # 当出现重复key时应当可以继续往下走，取下一条数据
+                        temp_index = temp_index + 1
                         if e.args[0] == 1062 or e.args[1].__contains__("Duplicate"):
-                            temp_index = temp_index + 1
+
                             continue
                         filename = repo_name + '_file_exception.csv'
                         write_file(index, "user", (
