@@ -125,7 +125,7 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
                         print(e)
                         # traceback.print_exc()
                         database.rollback()
-                        break
+                        continue
                 page = page + 1
 
         except Exception as e:
@@ -133,7 +133,7 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
             write_file(index, "user", ("第" + str(index) + "号 pr_number: " + str(pr_number) + " 对应的失败: " + str(e)),
                        filename)
             print(e)
-            break
+            continue
         index = index + 1
     # 关闭数据库连接
     database.close()

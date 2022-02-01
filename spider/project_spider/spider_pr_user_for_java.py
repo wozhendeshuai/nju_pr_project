@@ -124,8 +124,8 @@ def get_pr_user_info(index, maxNum, owner_name, repo_name, headers):
                     # 如果发生错误则回滚
                     print("第" + str(index) + "号 user: " + str(pr_user_name) + "数据插入数据库失败: " + str(e))
                     # 当出现重复key时应当可以继续往下走，取下一条数据
+                    index = index + 1
                     if e.args[0] == 1062 or e.args[1].__contains__("Duplicate"):
-                        index = index + 1
                         continue
                     filename = 'pr_user_exception.csv'
                     write_file(index, "user",
@@ -134,7 +134,7 @@ def get_pr_user_info(index, maxNum, owner_name, repo_name, headers):
                     print(e)
                     traceback.print_exc()
                     database.rollback()
-                    break
+                    continue
             elif pr_user_data.__len__() == 1:
                 user_id = pr_user_data[0][0]
                 user_name = pr_user_data[0][1]
@@ -157,7 +157,7 @@ def get_pr_user_info(index, maxNum, owner_name, repo_name, headers):
             print(e)
             # traceback.print_exc()
             database.rollback()
-            break
+            continue
 
         index = index + 1
 

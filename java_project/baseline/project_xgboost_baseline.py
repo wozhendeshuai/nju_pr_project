@@ -1,3 +1,4 @@
+import time
 
 import java_project.data_processing_engineering.project_database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
@@ -346,35 +347,37 @@ def train_model(alg_name, rank_type, model_path, train_data_path, train_data_gro
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="helix"#"tensorflow"#"opencv"# "phoenix"#"guacamole-client"# "helix"#"terraform"  # "Ipython"#"kuma"#"incubator-heron"#"Katello"#"salt"  # "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "helix"  # "tensorflow"#"opencv"# "phoenix"#"guacamole-client"# "helix"#"terraform"  # "Ipython"#"kuma"#"incubator-heron"#"Katello"#"salt"  # "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     # ranklib所能调的库
     alg_name = "xgboost"
     rank_style = "pairwise"
+    data_time = time.strftime("%Y-%m-%d", time.localtime())
     # 测试模型性能的文件路径
-    file_path = "../data_processing_engineering/rank_data/" + repo_name + "/"
+    file_path = "../data_processing_engineering/rank_data/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(file_path)
-    origin_data_path = file_path + repo_name + "_svm_rank_format_test_data.txt"
-    temp_data_path = file_path + repo_name + "_temp_svm_rank_format_data.txt"
-    xgboost_file_path = "../data_processing_engineering/xgboost_data/" + repo_name + "/"
+    origin_data_path = file_path + repo_name + "_svm_rank_format_test_data_" + data_time + ".txt"
+    temp_data_path = file_path + repo_name + "_temp_svm_rank_format_data_" + data_time + ".txt"
+    xgboost_file_path = "../data_processing_engineering/xgboost_data/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(xgboost_file_path)
-    xgboost_temp_data_path = xgboost_file_path + repo_name + "_xgboost_temp_svm_rank_format_data.txt"
-    xgboost_temp_group_data_path = xgboost_file_path + repo_name + "_xgboost_temp_svm_rank_format_data_group.txt"
-    temp_sort_result_path = xgboost_file_path + repo_name + "_" + rank_style + "_myScoreFile.txt"
+    xgboost_temp_data_path = xgboost_file_path + repo_name + "_xgboost_temp_svm_rank_format_data_" + data_time + ".txt"
+    xgboost_temp_group_data_path = xgboost_file_path + repo_name + "_xgboost_temp_svm_rank_format_data_group_" + data_time + ".txt"
+    temp_sort_result_path = xgboost_file_path + repo_name + "_" + rank_style + "_myScoreFile_" + data_time + ".txt"
 
-    xgboost_model_path = "./rank_model/" + repo_name + "/"
+    xgboost_model_path = "./rank_model/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(xgboost_model_path)
-    model_path = xgboost_model_path + repo_name + "_" + alg_name + "_" + rank_style + "_model.txt"
+    model_path = xgboost_model_path + repo_name + "_" + alg_name + "_" + rank_style + "_model_" + data_time + ".txt"
 
-    xgboost_result_path = "./result/xgboost/" + repo_name + "/"
+    xgboost_result_path = "./result/xgboost/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(xgboost_result_path)
-    result_path = xgboost_result_path + repo_name + "_" + alg_name + "_result.csv"
+    result_path = xgboost_result_path + repo_name + "_" + alg_name + "_result_" + data_time + ".csv"
     # 训练模型的文件路径
-    train_data_path = file_path + repo_name + "_svm_rank_format_train_data.txt"
-    test_data_path = file_path + repo_name + "_svm_rank_format_test_data.txt"
-    xgboost_train_data_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_train_data.txt"
-    xgboost_train_data_group_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_train_group_data.txt"
-    xgboost_test_data_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_test_data.txt"
-    xgboost_test_data_group_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_test_group_data.txt"
+    train_data_path = file_path + repo_name + "_svm_rank_format_train_data_" + data_time + ".txt"
+    test_data_path = file_path + repo_name + "_svm_rank_format_test_data_" + data_time + ".txt"
+    xgboost_train_data_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_train_data_" + data_time + ".txt"
+    xgboost_train_data_group_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_train_group_data_" + data_time + ".txt"
+    xgboost_test_data_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_test_data_" + data_time + ".txt"
+    xgboost_test_data_group_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_test_group_data_" + data_time + ".txt"
+
     prepare_xgboostData(train_data_path, xgboost_train_data_path, xgboost_train_data_group_path)
     prepare_xgboostData(test_data_path, xgboost_test_data_path, xgboost_test_data_group_path)
     # 首先运行算法训练模型

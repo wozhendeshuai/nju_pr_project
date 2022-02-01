@@ -207,8 +207,9 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
             # 如果发生错误则回滚
             print("第", index, "行数据插入数据库失败: ", "repo_name:", repo_name)
             filename = repo_name + '_exception.csv'
+            index = index + 1
             if e.args[0] == 1062 or e.args[1].__contains__("Duplicate"):
-                index = index + 1
+
                 continue
             write_file(index, "user",
                        ("第" + str(index) + "行数据插入数据库失败: " + "repo_name:" + repo_name + " " + str(e)),
@@ -217,6 +218,6 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
             # traceback.print_exc()
             database.ping(reconnect=True)
             database.rollback()
-            break
+            continue
     # 关闭数据库连接
     database.close()

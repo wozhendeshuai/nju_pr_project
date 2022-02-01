@@ -5,6 +5,8 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
 将FIFOY，与TRUEY进行比较，通过NDGC进行比较，判断排序效果
 '''
+import time
+
 import java_project.data_processing_engineering.project_database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
 import numpy as np
@@ -533,13 +535,14 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="helix"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
-    file_path = "./rank_data/" + repo_name + "/"
+    repo_name ="helix"
+    data_time = time.strftime("%Y-%m-%d", time.localtime())#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
+    file_path = "./rank_data/" + repo_name + "/"+data_time + "/"
     path_exists_or_create(file_path)
 
-    all_filename = file_path + repo_name + "_svm_rank_format_data.txt"
-    train_filename = file_path + repo_name + "_svm_rank_format_train_data.txt"
-    test_filename = file_path + repo_name + "_svm_rank_format_test_data.txt"
+    all_filename = file_path + repo_name + "_svm_rank_format_data_"+data_time+".txt"
+    train_filename = file_path + repo_name + "_svm_rank_format_train_data_"+data_time+".txt"
+    test_filename = file_path + repo_name + "_svm_rank_format_test_data_"+data_time+".txt"
     row_data = get_data_by_repo_name(repo_name)
     text_save(all_filename, train_filename, test_filename, row_data)
 '''

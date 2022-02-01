@@ -5,8 +5,11 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
 将FIFOY，与TRUEY进行比较，通过NDGC进行比较，判断排序效果
 '''
+import time
+
 import java_project.data_processing_engineering.project_database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
+import numpy as np
 from utils.date_utils.date_function import is_weekday_commit \
     , project_age, get_close_pr_time
 from utils.num_utils.num_function import get_label_count \
@@ -15,8 +18,9 @@ from utils.num_utils.num_function import get_label_count \
     , get_participants_count
 from utils.path_exist import path_exists_or_create
 from utils.str_utils.str_function import wordCount
-import csv
-import time
+from utils.num_utils.num_ratio_function import get_pr_author_rate \
+    , get_project_line_rate, get_line_weekday_rate, get_project_line_churn_rate \
+    , get_commits_average, get_avg_comments, get_avg_latency
 
 # 增加代码的可读性
 pr_number_index = 0
@@ -47,36 +51,22 @@ body_index = 24
 
 
 # all_filename保存的是全集数据，train_filename,保存的是训练数据，test_filename保存的是测试数据，data为要写入数据列表.
-def text_save(all_filename, train_filename, test_filename, data, headers):  # filename为写入CSV文件的路径，data为要写入数据列表.
-    all_file = open(all_filename, 'w', encoding='utf-8', newline='')
-    train_file = open(train_filename, 'w', encoding='utf-8', newline='')
-    test_file = open(test_filename, 'w', encoding='utf-8', newline='')
-    all_file_writer = csv.writer(all_file, dialect='excel')
-    train_file_writer = csv.writer(train_file, dialect='excel')
-    test_file_writer = csv.writer(test_file, dialect="excel")
-    all_file_writer.writerow(headers)
-    train_file_writer.writerow(headers)
-    test_file_writer.writerow(headers)
-
+def text_save(open_filename, data):  # filename为写入CSV文件的路径，data为要写入数据列表.
+    all_file = open(open_filename, 'w+')
     data_len = len(data)
-    train_len = int(data_len * 0.8)
     for i in range(data_len):
-        all_file_writer.writerow(data[i])
-        if i <= train_len:
-            train_file_writer.writerow(data[i])
-        else:
-            test_file_writer.writerow(data[i])
+        s = str(data[i]).replace('[', '').replace(']', '')  # 去除[],这两行按数据不同，可以选择
+        s = s.replace("'", '').replace(',', '') + '\n'  # 去除单引号，逗号，每行末尾追加换行符
+        all_file.write(s)
     all_file.close()
-    train_file.close()
-    test_file.close()
     print("保存文件成功")
 
 
 def get_data_by_repo_name(repo_name):
     # 从数据库获取数据
-    raw_data = dbConnection.getDataFromSql(
-        "select * from pr_self where repo_name='" + repo_name + "' and closed_at is not null order by pr_number")
-
+    sql= "select * from pr_self where repo_name='" + repo_name + "' and state != 'closed' order by pr_number"
+    raw_data = dbConnection.getDataFromSql(sql)
+    print(sql)
     print(len(raw_data))  ##查看PR数量
 
     # 标记有用的PR自身信息的下标
@@ -389,26 +379,26 @@ def get_data_by_repo_name(repo_name):
 
     pr_data = dict(pr_data)
 
-    # #  获取pr作者在代码仓的总提交成功率,接受概率，总的贡献给率，代码仓的贡献率
-    # pr_author_rate = get_pr_author_rate(pr_data)
-    #
-    # # 获取project上一周的平均删除，增加，改变的行的数量
-    # project_line_rate = get_project_line_rate(pr_data)
-    #
-    # # 计算pr根据所在周的周几，判断该周几的平均修改的行数，增加的数量，删除的数量
-    # line_weekday_rate = get_line_weekday_rate(pr_data)
-    #
-    # # 获取pr的平均删除，增加，改变的行的数量,不是一周一个单位了，而是pr的数量
-    # project_line_churn_rate = get_project_line_churn_rate(pr_data)
-    #
-    # # 根据当前pr创建的时间，计算所有pr的平均提交数量
-    # commits_average = get_commits_average(pr_data)
-    #
-    # # 根据当前pr创建的时间，计算所有pr的平均评论数，以及合并的pr的平均评论数
-    # avg_comments = get_avg_comments(pr_data)
-    #
-    # # 计算pr的合并时间，计算，从pr的打开状态到合并状态的平均天数，以及从打开状态到关闭状态的平均天数
-    # avg_latency = get_avg_latency(pr_data)
+    #  获取pr作者在代码仓的总提交成功率,接受概率，总的贡献给率，代码仓的贡献率
+    pr_author_rate = get_pr_author_rate(pr_data)
+
+    # 获取project上一周的平均删除，增加，改变的行的数量
+    project_line_rate = get_project_line_rate(pr_data)
+
+    # 计算pr根据所在周的周几，判断该周几的平均修改的行数，增加的数量，删除的数量
+    line_weekday_rate = get_line_weekday_rate(pr_data)
+
+    # 获取pr的平均删除，增加，改变的行的数量,不是一周一个单位了，而是pr的数量
+    project_line_churn_rate = get_project_line_churn_rate(pr_data)
+
+    # 根据当前pr创建的时间，计算所有pr的平均提交数量
+    commits_average = get_commits_average(pr_data)
+
+    # 根据当前pr创建的时间，计算所有pr的平均评论数，以及合并的pr的平均评论数
+    avg_comments = get_avg_comments(pr_data)
+
+    # 计算pr的合并时间，计算，从pr的打开状态到合并状态的平均天数，以及从打开状态到关闭状态的平均天数
+    avg_latency = get_avg_latency(pr_data)
 
     X_dispersed = []  ##离散类型值
     X_successive = []  ##连续类型值
@@ -418,130 +408,58 @@ def get_data_by_repo_name(repo_name):
             [item[pr_number_index], item[pr_author_association_index], item[labels_index], item[mergeable_state_index]
                 , item[assignees_content_index]])
 
-    comments_number_tmp = []
-    comments_number_dict = {}
-    review_comments_number_tmp = []
-    review_comments_number_dict = {}
-    commit_number_tmp = []
-    commit_number_dict = {}
-    changed_file_num_tmp = []
-    changed_file_num_dict = {}
-    total_add_line_tmp = []
-    total_add_line_dict = {}
-    total_delete_line_tmp = []
-    total_delete_line_dict = {}
-
     for item in process_data:
-        # 将下面数据全部5等分，方便贝叶斯计算
-        comments_number_tmp.append(item[comments_number_index])
-        comments_number_dict[item[pr_number_index]] = item[comments_number_index]
-        review_comments_number_tmp.append(item[review_comments_number_index])
-        review_comments_number_dict[item[pr_number_index]] = item[review_comments_number_index]
-        commit_number_tmp.append(item[commit_number_index])
-        commit_number_dict[item[pr_number_index]] = item[commit_number_index]
-        changed_file_num_tmp.append(item[changed_file_num_index])
-        changed_file_num_dict[item[pr_number_index]] = item[changed_file_num_index]
-        total_add_line_tmp.append(item[total_add_line_index])
-        total_add_line_dict[item[pr_number_index]] = item[total_add_line_index]
-        total_delete_line_tmp.append(item[total_delete_line_index])
-        total_delete_line_dict[item[pr_number_index]] = item[total_delete_line_index]
-        # X_successive.append([item[comments_number_index], item[review_comments_number_index], item[commit_number_index]
-        #                         , item[changed_file_num_index], item[total_add_line_index],
-        #                      item[total_delete_line_index]])
-    # 将下面数据全部5等分，方便贝叶斯计算
-    true_comments_number_dict = get_true_order_dict(comments_number_tmp, comments_number_dict)
-    true_review_comments_number_dict = get_true_order_dict(review_comments_number_tmp, review_comments_number_dict)
-    true_commit_number_dict = get_true_order_dict(commit_number_tmp, commit_number_dict)
-    true_changed_file_num_dict = get_true_order_dict(changed_file_num_tmp, changed_file_num_dict)
-    true_total_add_line_dict = get_true_order_dict(total_add_line_tmp, total_add_line_dict)
-    true_total_delete_line_dict = get_true_order_dict(total_delete_line_tmp, total_delete_line_dict)
+        X_successive.append([item[comments_number_index], item[review_comments_number_index], item[commit_number_index]
+                                , item[changed_file_num_index], item[total_add_line_index],
+                             item[total_delete_line_index]])
 
-    for key_temp in true_comments_number_dict.keys():
-        X_successive.append([true_comments_number_dict.get(key_temp), true_review_comments_number_dict.get(key_temp),
-                             true_commit_number_dict.get(key_temp)
-                                , true_changed_file_num_dict.get(key_temp), true_total_add_line_dict.get(key_temp),
-                             true_total_delete_line_dict.get(key_temp)])
     for i in range(len(X_dispersed)):
-        # X_dispersed[i].append(pr_author_rate[i]['self_accept_rate'])
-        # X_dispersed[i].append(pr_author_rate[i]['self_closed_num_rate'])
-        # X_dispersed[i].append(pr_author_rate[i]['self_contribution_rate'])
-        # X_dispersed[i].append(pr_author_rate[i]['project_accept_rate'])
+        X_dispersed[i].append(pr_author_rate[i]['self_accept_rate'])
+        X_dispersed[i].append(pr_author_rate[i]['self_closed_num_rate'])
+        X_dispersed[i].append(pr_author_rate[i]['self_contribution_rate'])
+        X_dispersed[i].append(pr_author_rate[i]['project_accept_rate'])
         X_dispersed[i].append(is_weekday[i])
-    label_count_tmp = []
-    workload_tmp = []
-    pre_prs_tmp = []
-    change_num_tmp = []
-    accept_num_tmp = []
-    close_num_tmp = []
-    review_num_tmp = []
-    participants_count_tmp = []
-    title_words_tmp = []
-    title_words_dict = {}
-    body_words_tmp = []
-    body_words_dict = {}
-    for i in range(len(X_successive)):
-        label_count_tmp.append(label_dict[i])
-        workload_tmp.append(workload[i])
-        pre_prs_tmp.append(pre_prs[i])
-        change_num_tmp.append(change_num[i])
-        accept_num_tmp.append(accept_num[i])
-        close_num_tmp.append(close_num[i])
-        review_num_tmp.append(review_num[i])
-        participants_count_tmp.append(participants_count[i])
-        title_words_tmp.append(title_words[i])
-        title_words_dict[i] = title_words[i]
-        body_words_tmp.append(body_words[i])
-        body_words_dict[i] = body_words[i]
-    true_label_count_dict = get_true_order_dict(label_count_tmp, label_dict)
-    true_workload_dict = get_true_order_dict(workload_tmp, workload)
-    true_pre_prs_dict = get_true_order_dict(pre_prs_tmp, pre_prs)
-    true_change_num_dict = get_true_order_dict(change_num_tmp, change_num)
-    true_accept_num_dict = get_true_order_dict(accept_num_tmp, accept_num)
-    true_close_num_dict = get_true_order_dict(close_num_tmp, close_num)
-    true_review_num_dict = get_true_order_dict(review_num_tmp, review_num)
-    true_participants_count_dict = get_true_order_dict(participants_count_tmp, participants_count)
-    true_title_words_dict = get_true_order_dict(title_words_tmp, title_words_dict)
-    true_body_words_dict = get_true_order_dict(body_words_tmp, body_words_dict)
 
     for i in range(len(X_successive)):
-        X_successive[i].append(true_label_count_dict[i])
-        X_successive[i].append(true_workload_dict[i])
-        X_successive[i].append(true_pre_prs_dict[i])
-        X_successive[i].append(true_change_num_dict[i])
-        X_successive[i].append(true_accept_num_dict[i])
-        X_successive[i].append(true_close_num_dict[i])
-        X_successive[i].append(true_review_num_dict[i])
-        X_successive[i].append(true_participants_count_dict[i])
-        X_successive[i].append(true_title_words_dict[i])
-        X_successive[i].append(true_body_words_dict[i])
+        # X_successive[i].append(Proj_age[i])
+        X_successive[i].append(label_dict[i])
+        X_successive[i].append(workload[i])
+        X_successive[i].append(pre_prs[i])
+        X_successive[i].append(change_num[i])
+        X_successive[i].append(accept_num[i])
+        X_successive[i].append(close_num[i])
+        X_successive[i].append(review_num[i])
+        X_successive[i].append(participants_count[i])
+        X_successive[i].append(title_words[i])
+        X_successive[i].append(body_words[i])
         for k in has_key_words[i]:
             X_successive[i].append(k)
 
-        # X_successive[i].append(project_line_rate[i]['deletions_per_week'])
-        # X_successive[i].append(project_line_rate[i]['additions_per_week'])
-        # X_successive[i].append(project_line_rate[i]['changes_per_week'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_deleted_week_days'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_added_week_days'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_changed_week_days'])
-        # X_successive[i].append(project_line_churn_rate[i]['deletions_per_pr'])
-        # X_successive[i].append(project_line_churn_rate[i]['additions_per_pr'])
-        # X_successive[i].append(project_line_churn_rate[i]['changes_per_pr'])
-        # X_successive[i].append(commits_average[i])
-        # X_successive[i].append(avg_comments[i]['comments_per_closed_pr'])
-        # X_successive[i].append(avg_comments[i]['comments_per_merged_pr'])
-        # X_successive[i].append(avg_latency[i]['close_latency'])
-        # X_successive[i].append(avg_latency[i]['merge_latency'])
-    #
-    # ###归一化
-    # X_successive = np.array(X_successive)
-    # mins = X_successive.min(0)  # 返回data矩阵中每一列中最小的元素，返回一个列表
-    # maxs = X_successive.max(0)  # 返回data矩阵中每一列中最大的元素，返回一个列表
-    # ranges = maxs - mins  # 最大值列表 - 最小值列表 = 差值列表
-    # normData = np.zeros(np.shape(X_successive))  # 生成一个与 data矩阵同规格的normData全0矩阵，用于装归一化后的数据
-    # row = X_successive.shape[0]  # 返回 data矩阵的行数
-    # normData = X_successive - np.tile(mins, (row, 1))  # data矩阵每一列数据都减去每一列的最小值
-    # normData = normData / np.tile(ranges, (row, 1))
-    # X_successive = normData.tolist()
+        X_successive[i].append(project_line_rate[i]['deletions_per_week'])
+        X_successive[i].append(project_line_rate[i]['additions_per_week'])
+        X_successive[i].append(project_line_rate[i]['changes_per_week'])
+        X_successive[i].append(line_weekday_rate[i]['per_lines_deleted_week_days'])
+        X_successive[i].append(line_weekday_rate[i]['per_lines_added_week_days'])
+        X_successive[i].append(line_weekday_rate[i]['per_lines_changed_week_days'])
+        X_successive[i].append(project_line_churn_rate[i]['deletions_per_pr'])
+        X_successive[i].append(project_line_churn_rate[i]['additions_per_pr'])
+        X_successive[i].append(project_line_churn_rate[i]['changes_per_pr'])
+        X_successive[i].append(commits_average[i])
+        X_successive[i].append(avg_comments[i]['comments_per_closed_pr'])
+        X_successive[i].append(avg_comments[i]['comments_per_merged_pr'])
+        X_successive[i].append(avg_latency[i]['close_latency'])
+        X_successive[i].append(avg_latency[i]['merge_latency'])
+
+    ###归一化
+    X_successive = np.array(X_successive)
+    mins = X_successive.min(0)  # 返回data矩阵中每一列中最小的元素，返回一个列表
+    maxs = X_successive.max(0)  # 返回data矩阵中每一列中最大的元素，返回一个列表
+    ranges = maxs - mins  # 最大值列表 - 最小值列表 = 差值列表
+    normData = np.zeros(np.shape(X_successive))  # 生成一个与 data矩阵同规格的normData全0矩阵，用于装归一化后的数据
+    row = X_successive.shape[0]  # 返回 data矩阵的行数
+    normData = X_successive - np.tile(mins, (row, 1))  # data矩阵每一列数据都减去每一列的最小值
+    normData = normData / np.tile(ranges, (row, 1))
+    X_successive = normData.tolist()
 
     X = []
     for i in range(len(X_dispersed)):
@@ -577,55 +495,64 @@ def get_data_by_repo_name(repo_name):
     # 这里计算每个prNumber对应的真实速度编号
     true_rate_label_dict = get_true_order_dict(Y1, first_response_time)
 
-    # ####响应时间
-    # Y_1 = []
-    # for item in Y1:
-    #     Y_1.append(item)
-    # ##是否被合并  (70%)
-    # Y_2 = []
-    # for item in process_data:
-    #     Y_2.append(item[8])
-    #
-    # ##最终的输出label [快/慢响应，是/否合并]
-    # Y = []
-    # for i in range(0, len(Y_1)):
-    #     Y.append([Y_1[i], Y_2[i]])
+    ####响应时间
+    Y_1 = []
+    for item in Y1:
+        Y_1.append(item)
+    ##是否被合并  (70%)
+    Y_2 = []
+    for item in process_data:
+        Y_2.append(item[8])
+
+    ##最终的输出label [快/慢响应，是/否合并]
+    Y = []
+    for i in range(0, len(Y_1)):
+        Y.append([Y_1[i], Y_2[i]])
 
     row_data = []
 
     for key_item in true_rate_label_dict.keys():
         tmp = []
-        tmp.append(str(key_item))
         tmp.append(true_rate_label_dict.get(key_item))
+        tmp.append("qid:1")
+        count = 1
         for x in X_dict.get(key_item):
-            tmp.append(str(x))
+            tmp.append(count.__str__() + ":" + str(x))
+            count += 1
+        tmp.append("# " + str(key_item))
         row_data.append(tmp)
     return row_data
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "helix"  #
+    repo_name = "helix"  # "tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
     data_time = time.strftime("%Y-%m-%d", time.localtime())
-    file_path = "./bayesian_data/" + repo_name + "/" + data_time + "/"
+    file_path = "./rank_data/open/" + repo_name + "/"+data_time+"/"
     path_exists_or_create(file_path)
-    all_filename = file_path + repo_name + "_bayes_rank_format_data_"+data_time+".csv"
-    train_filename = file_path + repo_name + "_bayes_rank_format_train_data_"+data_time+".csv"
-    test_filename = file_path + repo_name + "_bayes_rank_format_test_data_"+data_time+".csv"
+
+    open_filename = file_path + repo_name + "_open_svm_rank_format_data_"+data_time+".txt"
+
     row_data = get_data_by_repo_name(repo_name)
-    headers = ['pr_number',
-               'priorities_number',
+    text_save(open_filename, row_data)
+'''
+# 表头全集
+  headers = ['Id',
                'author_identity',
                'has_labels',
                'mergable_state',
                'has_assignees_content',
-               'is_weekday',
                'comment_num',
                'review_comment_num',
                'commit_num',
                'file_changed_num',
                'total_add_line',
                'total_delete_line',
+               'self_accept_rate',
+               'self_closed_num_rate',
+               'self_contribution_rate',
+               'project_accept_rate',
+               'is_weekday',
                'label_count',
                'workload',
                'pre_prs',
@@ -641,23 +568,20 @@ if __name__ == '__main__':
                'has_feature',
                'has_improve',
                'has_refactor',
-               # 'deletions_per_week',
-               # 'additions_per_week',
-               # 'changes_per_week',
-               # 'per_lines_deleted_week_days',
-               # 'per_lines_added_week_days',
-               # 'per_lines_changed_week_days',
-               # 'deletions_per_pr',
-               # 'additions_per_pr',
-               # 'changes_per_pr',
-               # 'commits_average',
-               # 'comments_per_closed_pr',
-               # 'comments_per_merged_pr',
-               # 'close_latency',
-               # 'merge_latency'
-               # 'self_accept_rate',
-               # 'self_closed_num_rate',
-               # 'self_contribution_rate',
-               # 'project_accept_rate',
-               ]
-    text_save(all_filename, train_filename, test_filename, row_data, headers)
+               'deletions_per_week',
+               'additions_per_week',
+               'changes_per_week',
+               'per_lines_deleted_week_days',
+               'per_lines_added_week_days',
+               'per_lines_changed_week_days',
+               'deletions_per_pr',
+               'additions_per_pr',
+               'changes_per_pr',
+               'commits_average',
+               'comments_per_closed_pr',
+               'comments_per_merged_pr',
+               'close_latency',
+               'merge_latency',
+               'response_speed',
+               'if_merged']
+'''
