@@ -1,5 +1,7 @@
 import time
 
+import pymysql
+
 import java_project.data_processing_engineering.project_database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
 from evaluation_index.Kendall_tau_distance import kendall_tau_distance
@@ -248,7 +250,7 @@ def model_result(day_data, day, pr_number_index_dict, origin_data_path, temp_dat
 # 对模型进行调用，同时将数据写入到文件中，方便后续统计
 def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
                      temp_sort_result_path, model_path, xgboost_temp_data_path, xgboost_temp_group_data_path,
-                     result_path):
+                     result_path,data_time,repo_name,alg_name):
     ndcg_list = []
     day_list = []
     mrr_list = []
@@ -294,6 +296,15 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
                'mrr',
                'kendall_tau_distance'
                ]
+    ##连接数据库将模型结果数据插入到表中
+    conn = pymysql.connect(
+        host="127.0.0.1",
+        port=3306,  # 端口号
+        user="root",  # 数据库用户
+        password="root",  # 数据库密码
+        database="project_sort_db"  # 要连接的数据库名称
+    )
+    cursor = conn.cursor()  # 游标
     row_data = []
     for i in range(len(day_list)):
         tmp = []
@@ -302,6 +313,16 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
         tmp.append(mrr_list[i])
         tmp.append(kendall_list[i])
         row_data.append(tmp)
+        insert_sql = """
+                insert into alg_test_eval(train_day,repo_name, alg_name,test_day,ndcg,mrr,kendall_tau_distance)
+                VALUES( %s,%s,%s, %s,%s, %s,%s )
+               """
+        sqlData=(data_time,repo_name,alg_name,day_list[i],ndcg_list[i],mrr_list[i],kendall_list[i])
+        # 执行sql语句
+        cursor.execute(insert_sql, sqlData)
+        # 提交到数据库执行
+        conn.commit()
+        print(sqlData, "数据插入成功")
     print(row_data)
     # 保存数据到csv文件
     with open(result_path, 'w', encoding='utf-8', newline='') as f:
@@ -309,6 +330,7 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
         writer.writerow(headers)
         for item in row_data:
             writer.writerow(item)
+    conn.close()
     return None
 
 
@@ -389,4 +411,4 @@ if __name__ == '__main__':
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
     alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
                      temp_sort_result_path, model_path, xgboost_temp_data_path, xgboost_temp_group_data_path,
-                     result_path)
+                     result_path,data_time,repo_name,alg_name+":"+rank_style)

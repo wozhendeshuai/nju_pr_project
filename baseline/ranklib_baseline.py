@@ -285,9 +285,9 @@ if __name__ == '__main__':
     # ranklib所能调的库
     alg_dict = {
         #0: "MART",
-        1: "RankNet",
-        2: "RankBoost",
-        3: "AdaRank",
+        #1: "RankNet",
+        #2: "RankBoost",
+        #3: "AdaRank",
         4: "Coordinate_Ascent",
         6: "LambdaMART",
         7: "ListNet",

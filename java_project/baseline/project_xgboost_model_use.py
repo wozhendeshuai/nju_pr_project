@@ -192,6 +192,7 @@ def save_result_to_sql(data_time, repo_name, alg_name, sort_result):
             pr_number_temp = delete_pr_numbers[temp_index]
             delete_sql_data = (data_time, repo_name, alg_name, pr_number_temp)
             delete_result_to_db(conn,cursor,delete_sql_data)
+    conn.close()
 
 
 # 更新语句
