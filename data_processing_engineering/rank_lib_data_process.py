@@ -534,7 +534,7 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="react"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
+    repo_name ="dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
     file_path = "./rank_data/" + repo_name + "/"
     path_exists_or_create(file_path)
 

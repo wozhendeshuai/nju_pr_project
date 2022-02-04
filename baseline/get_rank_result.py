@@ -32,14 +32,8 @@ def get_mean(file_path):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "tensorflow"#"opencv"#"phoenix"#"guacamole-client"#"helix"#"terraform"  # "salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
+    repo_name = "react"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"#"helix"#"terraform"  # "salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
     file_path_tmp = []
-    bayesian_network_file_path = "./result/bayesian_network/" + repo_name + "/" + repo_name + "_bayesian_network_result.csv"
-    fifo_file_path = "./result/fifo/" + repo_name + "_FIFO_result.csv"
-    xgboost_file_path = "./result/xgboost/" + repo_name + "/" + repo_name + "_xgboost_result.csv"
-    file_path_tmp.append(bayesian_network_file_path)
-    file_path_tmp.append(fifo_file_path)
-    file_path_tmp.append(xgboost_file_path)
     alg_dict = {
         0: "MART",
         1: "RankNet",
@@ -54,6 +48,14 @@ if __name__ == '__main__':
         alg_name = alg_dict.get(alg_index)
         ranklib_file_path = "./result/ranklib/" + repo_name + "/" + repo_name + "_" + alg_name + "_result.csv"
         file_path_tmp.append(ranklib_file_path)
+    bayesian_network_file_path = "./result/bayesian_network/" + repo_name + "/" + repo_name + "_bayesian_network_result.csv"
+    fifo_file_path = "./result/fifo/" + repo_name + "_FIFO_result.csv"
+    xgboost_file_path = "./result/xgboost/" + repo_name + "/" + repo_name + "_xgboost_result.csv"
+
+    file_path_tmp.append(xgboost_file_path)
+    file_path_tmp.append(bayesian_network_file_path)
+    file_path_tmp.append(fifo_file_path)
+
     row_data = []
     for index in range(file_path_tmp.__len__()):
         tmp = []
