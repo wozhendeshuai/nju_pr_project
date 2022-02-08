@@ -1,0 +1,211 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007fffe6b2ff38, pid=10500, tid=17916
+#
+# JRE version:  (11.0.7+8) (build )
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (11.0.7+8-LTS, mixed mode, tiered, compressed oops, g1 gc, windows-amd64)
+# Problematic frame:
+# V  [jvm.dll+0x2eff38]
+#
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: ./RankLib-2.16.jar -load ./rank_model/yii2/yii2_ListNet_model.txt -rank ../data_processing_engineering/rank_data/yii2/yii2_temp_svm_rank_format_data.txt -indri ../data_processing_engineering/rank_data/yii2/yii2_myScoreFile.txt
+
+Host: AMD Ryzen 7 4800H with Radeon Graphics         , 16 cores, 15G,  Windows 10 , 64 bit Build 22000 (10.0.22000.434)
+Time: Mon Feb  7 13:39:59 2022 中国标准时间 elapsed time: 0 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000001fb617c7800):  JavaThread "Unknown thread" [_thread_in_vm, id=17916, stack(0x0000002138200000,0x0000002138300000)]
+
+Stack: [0x0000002138200000,0x0000002138300000],  sp=0x00000021382fee68,  free space=1019k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x2eff38]
+V  [jvm.dll+0x2efa5f]
+V  [jvm.dll+0x5f5dfa]
+V  [jvm.dll+0x5f6086]
+V  [jvm.dll+0x5f5a14]
+V  [jvm.dll+0x203ddd]
+V  [jvm.dll+0x7792b7]
+V  [jvm.dll+0x739578]
+C  0x000001fb617c7800
+
+
+siginfo: EXCEPTION_ACCESS_VIOLATION (0xc0000005), reading address 0xffffffffffffffff
+
+
+Registers:
+RAX=0x000001fb5f5c3390, RBX=0x0000000000000000, RCX=0x000001fb617d5080, RDX=0x000000000000f5c4
+RSP=0x00000021382fee68, RBP=0x000000000000f5c4, RSI=0x0000000000000008, RDI=0x00000021382ff078
+R8 =0x0000000000000003, R9 =0x000000000000f5c4, R10=0x000001fb617d5080, R11=0x00000021382ff0f0
+R12=0x0000000000000000, R13=0x000001fb617c7e20, R14=0x000001fb617d5080, R15=0x0000000000000001
+RIP=0x00007fffe6b2ff38, EFLAGS=0x0000000000010202
+
+Top of Stack: (sp=0x00000021382fee68)
+0x00000021382fee68:   00000021382fee70 000001fb02000002
+0x00000021382fee78:   00007ff84186964d 0000000000290004
+0x00000021382fee88:   0000000000000040 000001fb617d4330
+0x00000021382fee98:   0000000000000000 000001fb00000002
+0x00000021382feea8:   00007ff841868c6a 0000000000000000
+0x00000021382feeb8:   000001fb5f3f0fc0 0000000000000001
+0x00000021382feec8:   0000000000001f88 0000000000000000
+0x00000021382feed8:   0000000000001f90 0000000000000000
+0x00000021382feee8:   0000000000000179 0000000000000000
+0x00000021382feef8:   000001fb5f5a0000 00007ff8418691ec
+0x00000021382fef08:   000001fb5f5a0000 0000000000000002
+0x00000021382fef18:   00000021382ff058 00000021382ff078
+0x00000021382fef28:   000000000000f5c4 00007fffe6b2f9fd
+0x00000021382fef38:   00000021382ff058 0000000000000002
+0x00000021382fef48:   000001fb617c7e20 0000000000000000
+0x00000021382fef58:   00000021382ff078 000000000000f5c4 
+
+Instructions: (pc=0x00007fffe6b2ff38)
+0x00007fffe6b2ff18:   48 8b 04 25 58 00 00 00 4c 8b f1 44 8b 05 62 92
+0x00007fffe6b2ff28:   7d 00 48 8b ea be 08 00 00 00 41 bf 01 00 00 00
+0x00007fffe6b2ff38:   0f 29 b4 24 c0 00 00 00 45 33 ed f2 0f 10 35 9d
+0x00007fffe6b2ff48:   9c 57 00 4e 8b 24 c0 49 8b 04 34 48 8b 80 70 02 
+
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x000001fb5f5bdfd0, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x000001fb617df800 GCTaskThread "GC Thread#0" [stack: 0x0000002138300000,0x0000002138400000] [id=15772]
+  0x000001fb61838800 ConcurrentGCThread "G1 Main Marker" [stack: 0x0000002138400000,0x0000002138500000] [id=12080]
+  0x000001fb6183b000 ConcurrentGCThread "G1 Conc#0" [stack: 0x0000002138500000,0x0000002138600000] [id=16436]
+  0x000001fb7f915800 ConcurrentGCThread "G1 Refine#0" [stack: 0x0000002138600000,0x0000002138700000] [id=15400]
+  0x000001fb7f917000 ConcurrentGCThread "G1 Young RemSet Sampling" [stack: 0x0000002138700000,0x0000002138800000] [id=2744]
+
+=>0x000001fb617c7800 (exited) JavaThread "Unknown thread" [_thread_in_vm, id=17916, stack(0x0000002138200000,0x0000002138300000)]
+
+Threads with active compile tasks:
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap address: 0x000000070a000000, size: 3936 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
+Narrow klass base: 0x0000000800000000, Narrow klass shift: 0
+Compressed class space size: 1073741824 Address: 0x0000000800000000
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (0 events):
+No events
+
+
+Dynamic libraries:
+0x00007ff659e70000 - 0x00007ff659eb7000 	D:\Java\jdk-11.0.7\bin\java.exe
+0x00007ff841840000 - 0x00007ff841a49000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ff840610000 - 0x00007ff8406cd000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ff83f060000 - 0x00007ff83f3d4000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ff8403a0000 - 0x00007ff84044e000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ff841590000 - 0x00007ff841633000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ff841080000 - 0x00007ff84111e000 	C:\WINDOWS\System32\sechost.dll
+0x00007ff8413d0000 - 0x00007ff8414f0000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ff840460000 - 0x00007ff84060c000 	C:\WINDOWS\System32\USER32.dll
+0x00007ff83f030000 - 0x00007ff83f056000 	C:\WINDOWS\System32\win32u.dll
+0x00007ff840370000 - 0x00007ff840399000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ff83edd0000 - 0x00007ff83eee2000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ff83ed30000 - 0x00007ff83edcd000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ff83f3e0000 - 0x00007ff83f4f1000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ff82cf80000 - 0x00007ff82d225000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22000.120_none_9d947278b86cc467\COMCTL32.dll
+0x00007ff835830000 - 0x00007ff83583a000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ff841550000 - 0x00007ff841581000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007ff828ab0000 - 0x00007ff828ac6000 	D:\Java\jdk-11.0.7\bin\vcruntime140.dll
+0x00007ff807f60000 - 0x00007ff80800a000 	D:\Java\jdk-11.0.7\bin\msvcp140.dll
+0x00007fffe6840000 - 0x00007fffe73a1000 	D:\Java\jdk-11.0.7\bin\server\jvm.dll
+0x00007ff840450000 - 0x00007ff840458000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ff839380000 - 0x00007ff839389000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ff83fd50000 - 0x00007ff83fdbf000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ff8387c0000 - 0x00007ff8387f3000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ff83dee0000 - 0x00007ff83def8000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+0x00007ff828a90000 - 0x00007ff828aa1000 	D:\Java\jdk-11.0.7\bin\verify.dll
+0x00007ff83c930000 - 0x00007ff83cb51000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ff832e70000 - 0x00007ff832ea1000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ff83eef0000 - 0x00007ff83ef6f000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ff828a60000 - 0x00007ff828a89000 	D:\Java\jdk-11.0.7\bin\java.dll
+0x00007ff83b280000 - 0x00007ff83b28a000 	D:\Java\jdk-11.0.7\bin\jimage.dll
+0x00007ff828970000 - 0x00007ff828986000 	D:\Java\jdk-11.0.7\bin\zip.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;D:\Java\jdk-11.0.7\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22000.120_none_9d947278b86cc467;D:\Java\jdk-11.0.7\bin\server
+
+VM Arguments:
+java_command: ./RankLib-2.16.jar -load ./rank_model/yii2/yii2_ListNet_model.txt -rank ../data_processing_engineering/rank_data/yii2/yii2_temp_svm_rank_format_data.txt -indri ../data_processing_engineering/rank_data/yii2/yii2_myScoreFile.txt
+java_class_path (initial): ./RankLib-2.16.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 12                                        {product} {ergonomic}
+     uint ConcGCThreads                            = 3                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 13                                        {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 1048576                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 257949696                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 4127195136                                {product} {ergonomic}
+   size_t MaxNewSize                               = 2475687936                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 1048576                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 7594288                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122031976                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122031976                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+     bool UseCompressedClassPointers               = true                                 {lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                                 {lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=D:\Java\jdk-11.0.7
+CLASSPATH=D:\Java\apache-jmeter-5.4.1\lib\ext\ApacheJMeter_core.jar;D:\Java\apache-jmeter-5.4.1\lib\jorphan.jar;D:\Java\apache-jmeter-5.4.1\lib/logkit-2.0.jar
+
+;
+PATH=C:\Users\junyujia\AppData\Local\r-miniconda\envs\my_mxnet_env\lib\site-packages\pywin32_system32;C:\Users\junyujia\AppData\Local\r-miniconda\envs\my_mxnet_env;C:\Users\junyujia\AppData\Local\r-miniconda\envs\my_mxnet_env\Library\mingw-w64\bin;C:\Users\junyujia\AppData\Local\r-miniconda\envs\my_mxnet_env\Library\usr\bin;C:\Users\junyujia\AppData\Local\r-miniconda\envs\my_mxnet_env\Library\bin;C:\Users\junyujia\AppData\Local\r-miniconda\envs\my_mxnet_env\Scripts;C:\Users\junyujia\AppData\Local\r-miniconda\envs\my_mxnet_env\bin;C:\Users\junyujia\AppData\Local\r-miniconda\condabin;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;D:\Java\jdk-11.0.7\bin;C:\Program Files\MySQL\MySQL Server 8.0\bin;D:\Java\apache-maven-3.6.3\bin;C:\Program Files\Microsoft SQL Server\130\Tools\Binn;D:\Program Files\nodejs;C:\Program Files\PuTTY;D:\Python\Python38;D:\Program Files\Git\cmd;D:\Program Files\erl9.2\bin;D:\Program Files\erl9.2\bin;D:\Program Files\Graphviz\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;D:\Python\Python38\Scripts;D:\Program Files (x86)\Git\cmd;D:\nodejs\node_global;C:\Users\junyujia\AppData\Local\Programs\Microsoft VS Code\bin;D:\Program Files\JetBrains\IntelliJ IDEA 2021.2.3\bin;.;D:\Program Files\Graphviz\bin;C:\Users\junyujia\AppData\Local\Microsoft\WindowsApps;D:\Python\Python38\Scripts;.;C:\Users\junyujia\AppData\Local\r-miniconda\envs\my_mxnet_env\lib\site-packages\numpy\.libs
+USERNAME=junyujia
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10 , 64 bit Build 22000 (10.0.22000.434)
+
+CPU:total 16 (initial active 16) (16 cores per cpu, 2 threads per core) family 23 model 96 stepping 1, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, mmxext, 3dnowpref, lzcnt, sse4a, ht, tsc, tscinvbit, tscinv, bmi1, bmi2, adx, sha, fma
+
+Memory: 4k page, system-wide physical 15741M (5303M free)
+TotalPageFile size 23165M (AvailPageFile size 8538M)
+current process WorkingSet (physical memory assigned to process): 22M, peak: 22M
+current process commit charge ("private bytes"): 333M, peak: 333M
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (11.0.7+8-LTS) for windows-amd64 JRE (11.0.7+8-LTS), built on Mar 12 2020 02:04:32 by "mach5one" with MS VC++ 15.5 (VS2017)
+
+END.

@@ -31,5 +31,6 @@ def ndcg(rel_true, rel_pred, p=None, form="linear"):
 
     return dcg / idcg
 
+#print(ndcg([2, 1, 0, 0], [0, 1, 2, 0],4,"exp"))
 
 # print(ndcg([1, 2, 3], [2, 3, 1], 3))
