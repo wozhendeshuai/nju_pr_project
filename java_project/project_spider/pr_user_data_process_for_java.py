@@ -13,17 +13,15 @@ if __name__ == '__main__':
     path_temp = os.path.dirname(path_temp)
     sys.path.append(path_temp)
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： " + path_temp)
-
-    from spider.project_spider.spider_pr_self_for_java import get_pr_self_info
-
+    from java_project.project_spider.spider_pr_user_for_java import get_pr_user_info
     from utils.access_token import get_token
 
     # 此部分可修改，用于控制进程
     index = 0
-    max_pr_num = int(sys.argv[1])
+    max_pr_num = 99999#int(sys.argv[1])
     # helix-editor/helix
-    owner_name = sys.argv[2]
-    repo_name = sys.argv[3]
+    owner_name = sys.argv[1]
+    repo_name = sys.argv[2]
     # todo: 以后这里要从外界传入而非直接读文件
     access_token = get_token()
 
@@ -37,13 +35,10 @@ if __name__ == '__main__':
         'Authorization': 'token ' + access_token
     }
 
-    get_pr_self_info(index, max_pr_num, owner_name, repo_name, headers)
+    get_pr_user_info(index, max_pr_num, owner_name, repo_name, headers)
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
+          owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
+          owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-          owner_name + ": pr_self " + repo_name + "—===============================pr_self信息存储完毕=======================")
-
-
-
+          owner_name + ": pr_user " + repo_name + "—===============================pr_user信息存储完毕=======================")

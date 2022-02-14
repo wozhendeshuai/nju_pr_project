@@ -1,7 +1,6 @@
-import pymysql as db
 import requests
 
-from spider.project_spider.database_operation import get_database_connection
+from java_project.project_spider.database_operation import get_database_connection
 from utils.time_utils import time_reverse
 from utils.exception_handdle import write_file
 import time

@@ -13,7 +13,7 @@ if __name__ == '__main__':
     sys.path.append(path_temp)
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： " + path_temp)
 
-    from spider.project_spider.spider_pr_file_for_java import get_pr_file_info
+    from java_project.project_spider.spider_pr_file_for_java import get_pr_file_info
 
     from utils.access_token import get_token
 

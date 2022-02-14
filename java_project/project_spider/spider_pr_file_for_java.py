@@ -2,7 +2,7 @@ import time
 
 import requests
 
-from spider.project_spider.database_operation import get_database_connection
+from java_project.project_spider.database_operation import get_database_connection
 from utils.exception_handdle import write_file
 
 
