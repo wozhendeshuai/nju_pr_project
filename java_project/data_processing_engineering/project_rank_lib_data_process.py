@@ -5,22 +5,12 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
 将FIFOY，与TRUEY进行比较，通过NDGC进行比较，判断排序效果
 '''
+import os
+import sys
 import time
-
-import java_project.data_processing_engineering.project_database_connection as dbConnection
-from baseline.true_order import get_true_order_dict
 import numpy as np
-from utils.date_utils.date_function import is_weekday_commit \
-    , project_age, get_close_pr_time
-from utils.num_utils.num_function import get_label_count \
-    , get_workload, get_prev_prs, get_change_num \
-    , get_accept_num, get_close_num, get_review_num \
-    , get_participants_count
-from utils.path_exist import path_exists_or_create
-from utils.str_utils.str_function import wordCount
-from utils.num_utils.num_ratio_function import get_pr_author_rate \
-    , get_project_line_rate, get_line_weekday_rate, get_project_line_churn_rate \
-    , get_commits_average, get_avg_comments, get_avg_latency
+
+
 
 # 增加代码的可读性
 pr_number_index = 0
@@ -535,7 +525,34 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="helix"
+
+    # print(os.path)
+    path_temp = os.path.dirname(sys.path[0])
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： ", path_temp)
+    sys.path.append(path_temp)
+    # print(path_temp)
+    path_temp = os.path.dirname(path_temp)
+    sys.path.append(path_temp)
+
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： " + path_temp)
+    import java_project.data_processing_engineering.project_database_connection as dbConnection
+    from baseline.true_order import get_true_order_dict
+    from java_project.data_processing_engineering.save_file_path_to_db import save_feature_file_path
+    from utils.date_utils.date_function import is_weekday_commit \
+        , project_age, get_close_pr_time
+    from utils.num_utils.num_function import get_label_count \
+        , get_workload, get_prev_prs, get_change_num \
+        , get_accept_num, get_close_num, get_review_num \
+        , get_participants_count
+    from utils.path_exist import path_exists_or_create
+    from utils.str_utils.str_function import wordCount
+    from utils.num_utils.num_ratio_function import get_pr_author_rate \
+        , get_project_line_rate, get_line_weekday_rate, get_project_line_churn_rate \
+        , get_commits_average, get_avg_comments, get_avg_latency
+
+
+
+    repo_name =sys.argv[1]
     data_time = time.strftime("%Y-%m-%d", time.localtime())#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
     file_path = "./rank_data/" + repo_name + "/"+data_time + "/"
     path_exists_or_create(file_path)
@@ -545,53 +562,13 @@ if __name__ == '__main__':
     test_filename = file_path + repo_name + "_svm_rank_format_test_data_"+data_time+".txt"
     row_data = get_data_by_repo_name(repo_name)
     text_save(all_filename, train_filename, test_filename, row_data)
-'''
-# 表头全集
-  headers = ['Id',
-               'author_identity',
-               'has_labels',
-               'mergable_state',
-               'has_assignees_content',
-               'comment_num',
-               'review_comment_num',
-               'commit_num',
-               'file_changed_num',
-               'total_add_line',
-               'total_delete_line',
-               'self_accept_rate',
-               'self_closed_num_rate',
-               'self_contribution_rate',
-               'project_accept_rate',
-               'is_weekday',
-               'label_count',
-               'workload',
-               'pre_prs',
-               'change_num',
-               'accept_num',
-               'close_num',
-               'review_num',
-               'participants_count',
-               'title_words',
-               'body_words',
-               'has_bug',
-               'has_document',
-               'has_feature',
-               'has_improve',
-               'has_refactor',
-               'deletions_per_week',
-               'additions_per_week',
-               'changes_per_week',
-               'per_lines_deleted_week_days',
-               'per_lines_added_week_days',
-               'per_lines_changed_week_days',
-               'deletions_per_pr',
-               'additions_per_pr',
-               'changes_per_pr',
-               'commits_average',
-               'comments_per_closed_pr',
-               'comments_per_merged_pr',
-               'close_latency',
-               'merge_latency',
-               'response_speed',
-               'if_merged']
-'''
+    # 打印绝对路径
+    abs_all_path = os.path.abspath(all_filename)
+    abs_train_path = os.path.abspath(train_filename)
+    abs_test_path = os.path.abspath(test_filename)
+    print(abs_all_path)
+    print(abs_train_path)
+    print(abs_test_path)
+    save_feature_file_path(abs_all_path, "all", "rank_lib", abs_all_path, repo_name, data_time, "jjyu")
+    save_feature_file_path(abs_train_path, "train", "rank_lib", abs_train_path, repo_name, data_time, "jjyu")
+    save_feature_file_path(abs_test_path, "test", "rank_lib", abs_test_path, repo_name, data_time, "jjyu")

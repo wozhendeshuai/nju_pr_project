@@ -5,16 +5,8 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
 将FIFOY，与TRUEY进行比较，通过NDGC进行比较，判断排序效果
 '''
-import java_project.data_processing_engineering.project_database_connection as dbConnection
-from baseline.true_order import get_true_order_dict
-from utils.date_utils.date_function import is_weekday_commit \
-    , project_age, get_close_pr_time
-from utils.num_utils.num_function import get_label_count \
-    , get_workload, get_prev_prs, get_change_num \
-    , get_accept_num, get_close_num, get_review_num \
-    , get_participants_count
-from utils.path_exist import path_exists_or_create
-from utils.str_utils.str_function import wordCount
+import os
+import sys
 import csv
 import time
 
@@ -605,7 +597,30 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "helix"  #
+
+    # print(os.path)
+    path_temp = os.path.dirname(sys.path[0])
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： ", path_temp)
+    sys.path.append(path_temp)
+    # print(path_temp)
+    path_temp = os.path.dirname(path_temp)
+    sys.path.append(path_temp)
+
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： " + path_temp)
+
+    import java_project.data_processing_engineering.project_database_connection as dbConnection
+    from baseline.true_order import get_true_order_dict
+    from java_project.data_processing_engineering.save_file_path_to_db import save_feature_file_path
+    from utils.date_utils.date_function import is_weekday_commit \
+        , project_age, get_close_pr_time
+    from utils.num_utils.num_function import get_label_count \
+        , get_workload, get_prev_prs, get_change_num \
+        , get_accept_num, get_close_num, get_review_num \
+        , get_participants_count
+    from utils.path_exist import path_exists_or_create
+    from utils.str_utils.str_function import wordCount
+
+    repo_name = sys.argv[1]
     data_time = time.strftime("%Y-%m-%d", time.localtime())
     file_path = "./bayesian_data/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(file_path)
@@ -661,3 +676,14 @@ if __name__ == '__main__':
                # 'project_accept_rate',
                ]
     text_save(all_filename, train_filename, test_filename, row_data, headers)
+
+    # 打印绝对路径
+    abs_all_path = os.path.abspath(all_filename)
+    abs_train_path = os.path.abspath(train_filename)
+    abs_test_path = os.path.abspath(test_filename)
+    print(abs_all_path)
+    print(abs_train_path)
+    print(abs_test_path)
+    save_feature_file_path(abs_all_path, "all", "bayesnet", abs_all_path, repo_name, data_time, "jjyu")
+    save_feature_file_path(abs_train_path, "train", "bayesnet", abs_train_path, repo_name, data_time, "jjyu")
+    save_feature_file_path(abs_test_path, "test", "bayesnet", abs_test_path, repo_name, data_time, "jjyu")
