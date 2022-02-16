@@ -381,26 +381,6 @@ def get_data_by_repo_name(repo_name):
 
     pr_data = dict(pr_data)
 
-    # #  获取pr作者在代码仓的总提交成功率,接受概率，总的贡献给率，代码仓的贡献率
-    # pr_author_rate = get_pr_author_rate(pr_data)
-    #
-    # # 获取project上一周的平均删除，增加，改变的行的数量
-    # project_line_rate = get_project_line_rate(pr_data)
-    #
-    # # 计算pr根据所在周的周几，判断该周几的平均修改的行数，增加的数量，删除的数量
-    # line_weekday_rate = get_line_weekday_rate(pr_data)
-    #
-    # # 获取pr的平均删除，增加，改变的行的数量,不是一周一个单位了，而是pr的数量
-    # project_line_churn_rate = get_project_line_churn_rate(pr_data)
-    #
-    # # 根据当前pr创建的时间，计算所有pr的平均提交数量
-    # commits_average = get_commits_average(pr_data)
-    #
-    # # 根据当前pr创建的时间，计算所有pr的平均评论数，以及合并的pr的平均评论数
-    # avg_comments = get_avg_comments(pr_data)
-    #
-    # # 计算pr的合并时间，计算，从pr的打开状态到合并状态的平均天数，以及从打开状态到关闭状态的平均天数
-    # avg_latency = get_avg_latency(pr_data)
 
     X_dispersed = []  ##离散类型值
     X_successive = []  ##连续类型值
@@ -437,9 +417,7 @@ def get_data_by_repo_name(repo_name):
         total_add_line_dict[item[pr_number_index]] = item[total_add_line_index]
         total_delete_line_tmp.append(item[total_delete_line_index])
         total_delete_line_dict[item[pr_number_index]] = item[total_delete_line_index]
-        # X_successive.append([item[comments_number_index], item[review_comments_number_index], item[commit_number_index]
-        #                         , item[changed_file_num_index], item[total_add_line_index],
-        #                      item[total_delete_line_index]])
+
     # 将下面数据全部5等分，方便贝叶斯计算
     true_comments_number_dict = get_true_order_dict(comments_number_tmp, comments_number_dict)
     true_review_comments_number_dict = get_true_order_dict(review_comments_number_tmp, review_comments_number_dict)
@@ -454,10 +432,6 @@ def get_data_by_repo_name(repo_name):
                                 , true_changed_file_num_dict.get(key_temp), true_total_add_line_dict.get(key_temp),
                              true_total_delete_line_dict.get(key_temp)])
     for i in range(len(X_dispersed)):
-        # X_dispersed[i].append(pr_author_rate[i]['self_accept_rate'])
-        # X_dispersed[i].append(pr_author_rate[i]['self_closed_num_rate'])
-        # X_dispersed[i].append(pr_author_rate[i]['self_contribution_rate'])
-        # X_dispersed[i].append(pr_author_rate[i]['project_accept_rate'])
         X_dispersed[i].append(is_weekday[i])
     label_count_tmp = []
     workload_tmp = []
@@ -509,31 +483,7 @@ def get_data_by_repo_name(repo_name):
         for k in has_key_words[i]:
             X_successive[i].append(k)
 
-        # X_successive[i].append(project_line_rate[i]['deletions_per_week'])
-        # X_successive[i].append(project_line_rate[i]['additions_per_week'])
-        # X_successive[i].append(project_line_rate[i]['changes_per_week'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_deleted_week_days'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_added_week_days'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_changed_week_days'])
-        # X_successive[i].append(project_line_churn_rate[i]['deletions_per_pr'])
-        # X_successive[i].append(project_line_churn_rate[i]['additions_per_pr'])
-        # X_successive[i].append(project_line_churn_rate[i]['changes_per_pr'])
-        # X_successive[i].append(commits_average[i])
-        # X_successive[i].append(avg_comments[i]['comments_per_closed_pr'])
-        # X_successive[i].append(avg_comments[i]['comments_per_merged_pr'])
-        # X_successive[i].append(avg_latency[i]['close_latency'])
-        # X_successive[i].append(avg_latency[i]['merge_latency'])
-    #
-    # ###归一化
-    # X_successive = np.array(X_successive)
-    # mins = X_successive.min(0)  # 返回data矩阵中每一列中最小的元素，返回一个列表
-    # maxs = X_successive.max(0)  # 返回data矩阵中每一列中最大的元素，返回一个列表
-    # ranges = maxs - mins  # 最大值列表 - 最小值列表 = 差值列表
-    # normData = np.zeros(np.shape(X_successive))  # 生成一个与 data矩阵同规格的normData全0矩阵，用于装归一化后的数据
-    # row = X_successive.shape[0]  # 返回 data矩阵的行数
-    # normData = X_successive - np.tile(mins, (row, 1))  # data矩阵每一列数据都减去每一列的最小值
-    # normData = normData / np.tile(ranges, (row, 1))
-    # X_successive = normData.tolist()
+
 
     X = []
     for i in range(len(X_dispersed)):
@@ -568,20 +518,6 @@ def get_data_by_repo_name(repo_name):
         Y1.append(first_response_time[item])
     # 这里计算每个prNumber对应的真实速度编号
     true_rate_label_dict = get_true_order_dict(Y1, first_response_time)
-
-    # ####响应时间
-    # Y_1 = []
-    # for item in Y1:
-    #     Y_1.append(item)
-    # ##是否被合并  (70%)
-    # Y_2 = []
-    # for item in process_data:
-    #     Y_2.append(item[8])
-    #
-    # ##最终的输出label [快/慢响应，是/否合并]
-    # Y = []
-    # for i in range(0, len(Y_1)):
-    #     Y.append([Y_1[i], Y_2[i]])
 
     row_data = []
 
