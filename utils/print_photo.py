@@ -15,6 +15,7 @@ def showBN(model, save=False, filename=None, directory=None):
     for a, b in edges:
         dot.edge(a, b)
     if save:
-        dot.view(cleanup=True, filename=filename, directory=directory)
+        return dot
+        # dot.view(cleanup=True, filename=filename, directory=directory)
 
     return dot

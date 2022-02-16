@@ -448,6 +448,7 @@ def get_data_by_repo_name(repo_name):
     row = X_successive.shape[0]  # 返回 data矩阵的行数
     normData = X_successive - np.tile(mins, (row, 1))  # data矩阵每一列数据都减去每一列的最小值
     normData = normData / np.tile(ranges, (row, 1))
+    normData=np.nan_to_num(normData)
     X_successive = normData.tolist()
 
     X = []
@@ -540,7 +541,7 @@ if __name__ == '__main__':
 
     repo_name = sys.argv[1]
     data_time = time.strftime("%Y-%m-%d", time.localtime())
-    file_path = "./rank_data/open/" + repo_name + "/" + data_time + "/"
+    file_path = "../data_processing_engineering/rank_data/open/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(file_path)
 
     open_filename = file_path + repo_name + "_open_svm_rank_format_data_" + data_time + ".txt"

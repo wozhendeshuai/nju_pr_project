@@ -554,7 +554,7 @@ if __name__ == '__main__':
 
     repo_name =sys.argv[1]
     data_time = time.strftime("%Y-%m-%d", time.localtime())#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
-    file_path = "./rank_data/" + repo_name + "/"+data_time + "/"
+    file_path = "../data_processing_engineering/rank_data/" + repo_name + "/"+data_time + "/"
     path_exists_or_create(file_path)
 
     all_filename = file_path + repo_name + "_svm_rank_format_data_"+data_time+".txt"

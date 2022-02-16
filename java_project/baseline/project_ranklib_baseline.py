@@ -1,6 +1,11 @@
+'''
+获取到所有的PR信息，找出每一个PR创建的时间，以及在该PR创建时间那个时刻仍处于open状态的pr，
+然后将这个时刻还处于open状态的pr作为输入X。
+FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上述pr列表进行排序。FIFOY
+真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
+将FIFOY，与TRUEY进行比较，通过NDcg进行比较，判断排序效果
+'''
 import time
-
-import pymysql
 
 import java_project.data_processing_engineering.project_database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
@@ -13,9 +18,6 @@ from evaluation_index.ndcg import ndcg
 # Python的标准库linecache模块非常适合这个任务
 import linecache
 import os
-import xgboost as xgb
-from xgboost import DMatrix
-from sklearn.datasets import load_svmlight_file
 
 # 增加代码的可读性
 from utils.path_exist import path_exists_or_create
@@ -43,46 +45,6 @@ total_add_line_index = 19
 total_delete_line_index = 20
 title_index = 21
 body_index = 22
-
-
-def save_data(group_data, output_feature, output_group):
-    '''
-    保存xgboost相关数据，将原始数据转换成xgboost需要的数据，输出到文件
-    '''
-    if len(group_data) == 0:
-        return
-
-    output_group.write(str(len(group_data)) + "\n")
-    for data in group_data:
-        # only include nonzero features
-        feats = [p for p in data[2:] if float(p.split(':')[1]) != 0.0]
-        output_feature.write(data[0] + " " + " ".join(feats) + "\n")
-
-
-def prepare_xgboostData(original_data_path, output_feature_path, output_group_path):
-    '''
-    保存xgboost相关数据，将原始数据转换成xgboost需要的数据
-    '''
-    fi = open(original_data_path)
-    output_feature = open(output_feature_path, "w")
-    output_group = open(output_group_path, "w")
-    group_data = []
-    group = ""
-    for line in fi:
-        if not line:
-            break
-        if "#" in line:
-            line = line[:line.index("#")]
-        splits = line.strip().split(" ")
-        if splits[1] != group:
-            save_data(group_data, output_feature, output_group)
-            group_data = []
-        group = splits[1]
-        group_data.append(splits)
-    save_data(group_data, output_feature, output_group)
-    fi.close()
-    output_feature.close()
-    output_group.close()
 
 
 # 根据所在原始文件中pr_number获取当前测试需要的文件
@@ -201,12 +163,37 @@ def getline(the_file_path, line_number):
     return ''
 
 
-# 根据已有数据得到排序结果
-def model_result(day_data, day, pr_number_index_dict, origin_data_path, temp_data_path, temp_sort_result_path,
-                 model_path, xgboost_temp_data_path, xgboost_temp_group_data_path):
-    # 使用模型
-    tar = xgb.Booster(model_file=model_path)
+# 从模型计算出的排序文件获取模型的排序结果
+def get_result_list(the_file_path):
+    result = []
+    for line in open(the_file_path):
+        line_str = line.split(" ")
+        result.append(int(line_str[2]))
+    return result
 
+
+# 计算当前处于open状态的有序列表
+def model_for_openPR(data_time, open_data_path, temp_sort_result_path, model_path, jar_path, alg_name, repo_name):
+    print("===============计算当前处于open状态的有序列表+" + alg_name + "======================")
+
+    re_rank_str = "java -jar " + jar_path + " -load " + model_path + " -rank " + open_data_path + " -indri " + temp_sort_result_path
+    print("训练的命令是：" + re_rank_str)
+
+    sort_result = []
+
+    recv = os.popen(re_rank_str)
+    print("模型计算中：")
+    print(recv.read())
+    sort_result = get_result_list(temp_sort_result_path)
+    print(sort_result)
+    save_result_to_sql(data_time, repo_name, alg_name, sort_result)
+    return sort_result
+
+
+# 根据已有数据得到排序结果
+def model_forest(day_data, day, pr_number_index_dict, origin_data_path, temp_data_path, temp_sort_result_path,
+                 model_path, jar_path):
+    re_rank_str = "java -jar " + jar_path + " -load " + model_path + " -rank " + temp_data_path + " -indri " + temp_sort_result_path
     open_pr_list = []
     open_pr_index_list = []
     sort_result = []
@@ -226,85 +213,17 @@ def model_result(day_data, day, pr_number_index_dict, origin_data_path, temp_dat
                     open_pr_index_list.append(pr_number_index_dict.get(pr_key))
     if open_pr_list.__len__() == 0:
         return sort_result
-    print("模型计算中：")
     prepare_temp_file(temp_data_path, origin_data_path, open_pr_index_list, day)
-    # 将该文件再转换未xgboost支持的文件进行计算
-    prepare_xgboostData(temp_data_path, xgboost_temp_data_path, xgboost_temp_group_data_path)
-    x_test, y_test = load_svmlight_file(xgboost_temp_data_path)
-    test_dmatrix = DMatrix(x_test)
-    # 使用模型预测结果
-    pre = tar.predict(test_dmatrix)
-    pre_result = {}
-    for i in range(open_pr_list.__len__()):
-        pre_result[open_pr_list[i]] = pre[i]
-    pre_list = pre.tolist()
-    pre_list.sort(reverse=True)
-    for index in range(pre_list.__len__()):
-        score = pre_list[index]
-        for key in pre_result.keys():
-            if pre_result.get(key) == score and (sort_result.__len__() == 0 or sort_result.__contains__(key) is False):
-                sort_result.append(key)
-                break
-    return sort_result
-
-
-# 根据所在打开状态文件中pr_number获取当前测试需要的文件
-# 获取当前打开状态文件中pr——number，以及对应的索引位置
-def get_open_pr_number_from_origin_data_path(origin_data_path):
-    file_pr_dict = {}
-    open_pr_list = []
-    count = 0
-    for line in open(origin_data_path):
-        line_str = line.partition("# ")
-        file_pr_dict[int(line_str[2])] = count
-        count = count + 1
-        open_pr_list.append(int(line_str[2]))
-    return open_pr_list, file_pr_dict
-
-
-# 根据打开状态的据得到排序结果
-def open_model_result(open_data_path,
-                      xgboost_temp_open_data_path,
-                      xgboost_temp_open_group_data_path):
-    print("================================计算打开状态PR的优先级排序列表==" + open_data_path + "==========")
-    # 使用模型
-    tar = xgb.Booster(model_file=model_path)
-    open_pr_list, file_pr_dict = get_open_pr_number_from_origin_data_path(open_data_path)
-    print(open_pr_list, file_pr_dict)
+    recv = os.popen(re_rank_str)
     print("模型计算中：")
-    # 将该文件再转换未xgboost支持的文件进行计算
-    prepare_xgboostData(open_data_path, xgboost_temp_open_data_path, xgboost_temp_open_group_data_path)
-    x_test, y_test = load_svmlight_file(xgboost_temp_open_data_path)
-    test_dmatrix = DMatrix(x_test)
-    # 使用模型预测结果
-    pre = tar.predict(test_dmatrix)
-    print("模型计算结果：")
-    print(pre)
-    pre_result = {}
-    for i in range(open_pr_list.__len__()):
-        pre_result[open_pr_list[i]] = pre[i]
-    pre_list = pre.tolist()
-    pre_list.sort(reverse=True)
-
-    sort_result = []
-    sort_result_dict = {}
-    for index in range(pre_list.__len__()):
-        score = pre_list[index]
-        for key in pre_result.keys():
-            if pre_result.get(key) == score and (sort_result.__len__() == 0 or sort_result.__contains__(key) is False):
-                sort_result.append(key)
-                sort_result_dict[key] = score
-                break
-    print(sort_result)
-    print(sort_result_dict)
-    print("结束==========================结束计算打开状态PR的优先级排序列表==" + open_data_path + "=结束=========")
+    print(recv.read())
+    sort_result = get_result_list(temp_sort_result_path)
     return sort_result
 
 
 # 对模型进行调用，同时将数据写入到文件中，方便后续统计
 def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
-                     temp_sort_result_path, model_path, xgboost_temp_data_path, xgboost_temp_group_data_path,
-                     result_path, data_time, repo_name, alg_name):
+                     temp_sort_result_path, model_path, jar_path, repo_name, alg_name, data_time):
     ndcg_list = []
     day_list = []
     mrr_list = []
@@ -314,9 +233,8 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
     for day in day_data.keys():
         print("=================================日期:", day)
         # 获取每一天还处于open状态的pr列表顺序
-        sort_result = model_result(day_data, day, pr_number_index_dict, origin_data_path, temp_data_path,
-                                   temp_sort_result_path, model_path, xgboost_temp_data_path,
-                                   xgboost_temp_group_data_path)
+        sort_result = model_forest(day_data, day, pr_number_index_dict, origin_data_path, temp_data_path,
+                                   temp_sort_result_path, model_path, jar_path)
         if sort_result.__len__() == 0:
             print("在" + origin_data_path + "无相关pr")
             continue
@@ -359,10 +277,12 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
         tmp.append(kendall_list[i])
         row_data.append(tmp)
         save_test_result_to_sql(data_time, repo_name, alg_name, day_list[i], ndcg_list[i], mrr_list[i], kendall_list[i])
-
     print(row_data)
     # 保存数据到csv文件
-    with open(result_path, 'w', encoding='utf-8', newline='') as f:
+    result_path = "./result/ranklib/" + repo_name + "/"
+    path_exists_or_create(result_path)
+    with open(result_path + repo_name + "_" + alg_name + "_result.csv",
+              'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, dialect='excel')
         writer.writerow(headers)
         for item in row_data:
@@ -371,95 +291,62 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
 
 
 # 训练模型
-def train_model(alg_name, rank_type, model_path, train_data_path, train_data_group_path, test_data_path):
+def train_model(alg_name, alg_index, train_data_path, test_data_path, model_path):
+    rank_model_str = "java -jar " + jar_path + " -train " + train_data_path + " -test " + test_data_path + " -ranker " + str(
+        alg_index) \
+                     + " -metric2t NDCG@10 -metric2T NDCG@10 -lr 0.01 -save " + model_path
+    recv = os.popen(rank_model_str)
     print("===============训练模型+" + alg_name + "======================")
-
-    #  This script demonstrate how to do ranking with xgboost.train
-    x_train, y_train = load_svmlight_file(train_data_path)
-    x_test, y_test = load_svmlight_file(test_data_path)
-
-    group_train = []
-    with open(train_data_group_path, "r") as f:
-        data = f.readlines()
-        for line in data:
-            group_train.append(int(line.split("\n")[0]))
-
-    train_dmatrix = DMatrix(x_train, y_train)
-
-    test_dmatrix = DMatrix(x_test)
-
-    train_dmatrix.set_group(group_train)
-
-    params = {'objective': 'rank:' + rank_type, 'eta': 0.1, 'gamma': 1.0,
-              'min_child_weight': 0.1, 'max_depth': 6}
-    xgb_model = xgb.train(params, train_dmatrix, num_boost_round=4,
-                          evals=[(train_dmatrix, 'validation')])
-    xgb_model.save_model(model_path)
-    # 使用模型
-    tar = xgb.Booster(model_file=model_path)
-    pre = tar.predict(test_dmatrix)
-    for temp in pre:
-        print(temp)
-    print("===============结束训练模型+" + alg_name + "======================")
+    print("训练的命令是：" + rank_model_str)
+    print(recv.read())
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     repo_name = "tajo"
-    # ranklib所能调的库
-    alg_name = "xgboost"
-    rank_style = "pairwise"
+
+    alg_name = "MART"
+
     data_time = time.strftime("%Y-%m-%d", time.localtime())
+    # ranklib所能调的库
+    alg_dict = {
+        "MART": 0,
+        "RankNet": 1,
+        "RankBoost": 2,
+        "AdaRank": 3,
+        "Coordinate_Ascent": 4,
+        "LambdaMART": 6,
+        "ListNet": 7,
+        "Random_Forests": 8
+    }
+    alg_index = alg_dict.get(alg_name)
 
     # 测试模型性能的文件路径
+    jar_path = "E:\\IdeaProjects\\pr_priority_cloud_demo\\pr-sorting-engine-9004\\src\\main\\java\\com\\jjyu\\ranklib\\RankLib-2.16.jar"
     file_path = "../data_processing_engineering/rank_data/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(file_path)
     origin_data_path = file_path + repo_name + "_svm_rank_format_test_data_" + data_time + ".txt"
     temp_data_path = file_path + repo_name + "_temp_svm_rank_format_data_" + data_time + ".txt"
+    temp_sort_result_path = file_path + repo_name + "_myScoreFile_" + data_time + ".txt"
+
+    model_path = "./rank_model/" + repo_name + "/" + data_time + "/"
+    path_exists_or_create(model_path)
+    model_path = model_path + repo_name + "_" + alg_name + "_model_" + data_time + ".txt"
     # 训练模型的文件路径
     train_data_path = file_path + repo_name + "_svm_rank_format_train_data_" + data_time + ".txt"
     test_data_path = file_path + repo_name + "_svm_rank_format_test_data_" + data_time + ".txt"
 
-    xgboost_file_path = "../data_processing_engineering/xgboost_data/" + repo_name + "/" + data_time + "/"
-    path_exists_or_create(xgboost_file_path)
-    xgboost_temp_data_path = xgboost_file_path + repo_name + "_xgboost_temp_svm_rank_format_data_" + data_time + ".txt"
-    xgboost_temp_group_data_path = xgboost_file_path + repo_name + "_xgboost_temp_svm_rank_format_data_group_" + data_time + ".txt"
-    temp_sort_result_path = xgboost_file_path + repo_name + "_" + rank_style + "_myScoreFile_" + data_time + ".txt"
-    xgboost_train_data_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_train_data_" + data_time + ".txt"
-    xgboost_train_data_group_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_train_group_data_" + data_time + ".txt"
-    xgboost_test_data_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_test_data_" + data_time + ".txt"
-    xgboost_test_data_group_path = xgboost_file_path + repo_name + "_xgboost_svm_rank_format_test_group_data_" + data_time + ".txt"
-
-    xgboost_model_path = "./rank_model/" + repo_name + "/" + data_time + "/"
-    path_exists_or_create(xgboost_model_path)
-    model_path = xgboost_model_path + repo_name + "_" + alg_name + "_" + rank_style + "_model_" + data_time + ".txt"
-
-    xgboost_result_path = "./result/xgboost/" + repo_name + "/" + data_time + "/"
-    path_exists_or_create(xgboost_result_path)
-    result_path = xgboost_result_path + repo_name + "_" + alg_name + "_result_" + data_time + ".csv"
-
-    prepare_xgboostData(train_data_path, xgboost_train_data_path, xgboost_train_data_group_path)
-    prepare_xgboostData(test_data_path, xgboost_test_data_path, xgboost_test_data_group_path)
+    # 处于open状态PR特征文件
+    open_file_path = "../data_processing_engineering/rank_data/open/" + repo_name + "/" + data_time + "/"
+    path_exists_or_create(open_file_path)
+    open_data_path = open_file_path + repo_name + "_open_svm_rank_format_data_" + data_time + ".txt"
 
     # 首先运行算法训练模型
-    train_model(alg_name, rank_style, model_path, xgboost_train_data_path, xgboost_train_data_group_path,
-                xgboost_test_data_path)
+    train_model(alg_name, alg_index, train_data_path, test_data_path, model_path)
     print(alg_name + "模型训练完成==========")
     day_data, response_time, first_response_time_dict, pr_number_index_dict = get_data_by_repo_name_and_origin_data_path(
         origin_data_path, repo_name)
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
     alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origin_data_path, temp_data_path,
-                     temp_sort_result_path, model_path, xgboost_temp_data_path, xgboost_temp_group_data_path,
-                     result_path, data_time, repo_name, alg_name + ":" + rank_style)
-
-    # 打开PR的文件路径
-    open_file_path = "../data_processing_engineering/rank_data/open/" + repo_name + "/" + data_time + "/"
-    path_exists_or_create(open_file_path)
-    open_data_path = open_file_path + repo_name + "_open_svm_rank_format_data_" + data_time + ".txt"
-    xgboost_open_file_path = "../data_processing_engineering/xgboost_data/open/" + repo_name + "/" + data_time + "/"
-    path_exists_or_create(xgboost_open_file_path)
-    xgboost_temp_open_data_path = xgboost_open_file_path + repo_name + "_xgboost_temp_svm_rank_format_data_" + data_time + ".txt"
-    xgboost_temp_open_group_data_path = xgboost_open_file_path + repo_name + "_xgboost_temp_svm_rank_format_data_group_" + data_time + ".txt"
-    # 首先运行算法训练模型
-    sort_result = open_model_result(open_data_path, xgboost_temp_open_data_path, xgboost_temp_open_group_data_path)
-    save_result_to_sql(data_time, repo_name, alg_name + ":" + rank_style, sort_result)
+                     temp_sort_result_path, model_path, jar_path, repo_name, alg_name, data_time)
+    model_for_openPR(data_time, open_data_path, temp_sort_result_path, model_path, jar_path, alg_name, repo_name)

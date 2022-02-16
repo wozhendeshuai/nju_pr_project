@@ -622,7 +622,7 @@ if __name__ == '__main__':
 
     repo_name = sys.argv[1]
     data_time = time.strftime("%Y-%m-%d", time.localtime())
-    file_path = "./bayesian_data/" + repo_name + "/" + data_time + "/"
+    file_path = "../data_processing_engineering/bayesian_data/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(file_path)
     all_filename = file_path + repo_name + "_bayes_rank_format_data_"+data_time+".csv"
     train_filename = file_path + repo_name + "_bayes_rank_format_train_data_"+data_time+".csv"
