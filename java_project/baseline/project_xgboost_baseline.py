@@ -1,25 +1,14 @@
+import sys
 import time
 
 import pymysql
-
-import java_project.data_processing_engineering.project_database_connection as dbConnection
-from baseline.true_order import get_true_order_dict
-from evaluation_index.Kendall_tau_distance import kendall_tau_distance
-from evaluation_index.mrr import mrr
-from java_project.baseline.save_to_project_sql import save_test_result_to_sql, save_result_to_sql
-from utils.date_utils.date_function import get_waiting_time, get_close_pr_time
-import csv
-from evaluation_index.ndcg import ndcg
-# Python的标准库linecache模块非常适合这个任务
-import linecache
 import os
+import csv
 import xgboost as xgb
 from xgboost import DMatrix
 from sklearn.datasets import load_svmlight_file
 
 # 增加代码的可读性
-from utils.path_exist import path_exists_or_create
-
 pr_number_index = 0
 repo_name_index = 1
 pr_user_id_index = 2
@@ -405,7 +394,23 @@ def train_model(alg_name, rank_type, model_path, train_data_path, train_data_gro
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "tajo"
+    path_temp = os.path.dirname(sys.path[0])
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： ", path_temp)
+    sys.path.append(path_temp)
+    path_temp = os.path.dirname(path_temp)
+    sys.path.append(path_temp)
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： " + path_temp)
+
+    import java_project.data_processing_engineering.project_database_connection as dbConnection
+    from baseline.true_order import get_true_order_dict
+    from evaluation_index.Kendall_tau_distance import kendall_tau_distance
+    from evaluation_index.mrr import mrr
+    from java_project.baseline.save_to_project_sql import save_test_result_to_sql, save_result_to_sql
+    from utils.date_utils.date_function import get_close_pr_time
+    from evaluation_index.ndcg import ndcg
+    from utils.path_exist import path_exists_or_create
+
+    repo_name = sys.argv[1]  # "tajo"
     # ranklib所能调的库
     alg_name = "xgboost"
     rank_style = "pairwise"

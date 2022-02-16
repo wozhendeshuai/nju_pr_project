@@ -5,36 +5,16 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
 将FIFOY，与TRUEY进行比较，通过ndcg进行比较，判断排序效果
 '''
-import time
-
-import java_project.data_processing_engineering.project_database_connection as dbConnection
-from baseline.true_order import get_true_order_dict
-from evaluation_index.Kendall_tau_distance import kendall_tau_distance
-from evaluation_index.mrr import mrr
-from java_project.baseline.save_to_project_sql import save_result_to_sql, save_test_result_to_sql
-from utils.date_utils.date_function import get_waiting_time, get_close_pr_time
-import csv
-from evaluation_index.ndcg import ndcg
-# Python的标准库linecache模块非常适合这个任务
-import linecache
 import os
+import sys
+import time
 import pandas as pd
-import xgboost as xgb
-from xgboost import DMatrix
-from sklearn.datasets import load_svmlight_file
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# import seaborn as sns
-from utils.path_exist import path_exists_or_create
-from utils.print_photo import showBN
-from pgmpy.models import BayesianNetwork, BayesianModel
+import csv
+from pgmpy.models import BayesianModel
 from pgmpy.estimators import BayesianEstimator
 # 用结构学习建立模型
 # %%
 from pgmpy.estimators import HillClimbSearch
-from pgmpy.estimators import K2Score, BicScore
 
 # 增加代码的可读性
 pr_number_index = 0
@@ -260,7 +240,8 @@ def model_result(day_data, day, pr_number_index_dict, result_rate_in_dict):
 
 
 # 对模型进行调用，同时将数据写入到文件中，方便后续统计
-def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, result_rate_in_dict, result_path,data_time, repo_name, alg_name):
+def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, result_rate_in_dict, result_path, data_time,
+                     repo_name, alg_name):
     ndcg_list = []
     day_list = []
     mrr_list = []
@@ -324,7 +305,7 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, resul
 
 
 # 训练模型并得到在测试集上的结果
-def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name, open_filename,data_time):
+def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name, open_filename, data_time):
     module_result = {}
     print("===============训练模型+" + alg_name + "======================")
 
@@ -421,20 +402,21 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name,
     open_pr_number = pd.read_csv(open_filename)
     open_pr_number_series = open_pr_number.get("pr_number")
     y_open_pred_series = y_open_pred.get("priorities_number")
-    open_pr_result={}
+    open_pr_result = {}
     for i in range(y_open_pred_series.__len__()):
         print(str(i) + "   pr_number_series   " + str(open_pr_number_series[i]))
         print(str(i) + "  y_pred    " + str(open_pr_number_series[i]))
         open_pr_result[open_pr_number_series[i]] = y_open_pred_series[i]
     # 得到排好序的pr number序列
-    y_open_pred_series=y_open_pred_series.tolist()
+    y_open_pred_series = y_open_pred_series.tolist()
     y_open_pred_series.sort(reverse=True)
     sort_result = []
 
     for index in range(y_open_pred_series.__len__()):
         score = y_open_pred_series[index]
         for key in open_pr_result.keys():
-            if open_pr_result.get(key) == score and (sort_result.__len__() == 0 or sort_result.__contains__(key) is False):
+            if open_pr_result.get(key) == score and (
+                    sort_result.__len__() == 0 or sort_result.__contains__(key) is False):
                 sort_result.append(key)
                 break
     print(sort_result)
@@ -447,7 +429,27 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name,
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "tajo"
+    # print(os.path)
+    path_temp = os.path.dirname(sys.path[0])
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： ", path_temp)
+    sys.path.append(path_temp)
+    # print(path_temp)
+    path_temp = os.path.dirname(path_temp)
+    sys.path.append(path_temp)
+
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： " + path_temp)
+
+    import java_project.data_processing_engineering.project_database_connection as dbConnection
+    from baseline.true_order import get_true_order_dict
+    from evaluation_index.Kendall_tau_distance import kendall_tau_distance
+    from evaluation_index.mrr import mrr
+    from java_project.baseline.save_to_project_sql import save_result_to_sql, save_test_result_to_sql
+    from utils.date_utils.date_function import get_close_pr_time
+    from evaluation_index.ndcg import ndcg
+    from utils.path_exist import path_exists_or_create
+    from utils.print_photo import showBN
+
+    repo_name = sys.argv[1]  # "tajo"
     # ranklib所能调的库
     alg_name = "bayesian_network"
     data_time = time.strftime("%Y-%m-%d", time.localtime())
@@ -466,11 +468,13 @@ if __name__ == '__main__':
     open_file_path = "../data_processing_engineering/bayesian_data/open/" + repo_name + "/" + data_time + "/"
     open_filename = open_file_path + repo_name + "_open_bayes_rank_format_data_" + data_time + ".csv"
     # 首先运行算法训练模型,并得到其在测试集上的结果
-    result_rate_in_dict = train_model_and_result(alg_name, train_data_path, test_data_path, repo_name, open_filename,data_time)
+    result_rate_in_dict = train_model_and_result(alg_name, train_data_path, test_data_path, repo_name, open_filename,
+                                                 data_time)
     print(alg_name + "模型训练完成==========")
     for key in result_rate_in_dict.keys():
         print(str(key) + "....." + str(result_rate_in_dict.get(key)))
     day_data, response_time, first_response_time_dict, pr_number_index_dict = get_data_by_repo_name_and_origin_data_path(
         origin_data_path, repo_name)
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
-    alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, result_rate_in_dict, result_path,data_time, repo_name, alg_name)
+    alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, result_rate_in_dict, result_path, data_time,
+                     repo_name, alg_name)

@@ -5,22 +5,10 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
 将FIFOY，与TRUEY进行比较，通过NDcg进行比较，判断排序效果
 '''
+import sys
 import time
-
-import java_project.data_processing_engineering.project_database_connection as dbConnection
-from baseline.true_order import get_true_order_dict
-from evaluation_index.Kendall_tau_distance import kendall_tau_distance
-from evaluation_index.mrr import mrr
-from java_project.baseline.save_to_project_sql import save_test_result_to_sql, save_result_to_sql
-from utils.date_utils.date_function import get_waiting_time, get_close_pr_time
-import csv
-from evaluation_index.ndcg import ndcg
-# Python的标准库linecache模块非常适合这个任务
-import linecache
 import os
-
-# 增加代码的可读性
-from utils.path_exist import path_exists_or_create
+import csv
 
 pr_number_index = 0
 repo_name_index = 1
@@ -303,9 +291,28 @@ def train_model(alg_name, alg_index, train_data_path, test_data_path, model_path
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "tajo"
+    # print(os.path)
+    path_temp = os.path.dirname(sys.path[0])
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： ", path_temp)
+    sys.path.append(path_temp)
+    # print(path_temp)
+    path_temp = os.path.dirname(path_temp)
+    sys.path.append(path_temp)
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), " 当前的环境为： " + path_temp)
 
-    alg_name = "MART"
+    import java_project.data_processing_engineering.project_database_connection as dbConnection
+    from baseline.true_order import get_true_order_dict
+    from evaluation_index.Kendall_tau_distance import kendall_tau_distance
+    from evaluation_index.mrr import mrr
+    from java_project.baseline.save_to_project_sql import save_test_result_to_sql, save_result_to_sql
+    from utils.date_utils.date_function import get_close_pr_time
+    from evaluation_index.ndcg import ndcg
+    # 增加代码的可读性
+    from utils.path_exist import path_exists_or_create
+
+    repo_name = sys.argv[1]  # "tajo"
+
+    alg_name = sys.argv[2]  # "MART"
 
     data_time = time.strftime("%Y-%m-%d", time.localtime())
     # ranklib所能调的库
