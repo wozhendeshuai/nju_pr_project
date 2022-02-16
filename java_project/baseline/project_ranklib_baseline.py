@@ -327,7 +327,8 @@ if __name__ == '__main__':
         "Random_Forests": 8
     }
     alg_index = alg_dict.get(alg_name)
-
+    if alg_index is None:
+        raise Exception("无该算法"+alg_name)
     # 测试模型性能的文件路径
     jar_path = "E:\\IdeaProjects\\pr_priority_cloud_demo\\pr-sorting-engine-9004\\src\\main\\java\\com\\jjyu\\ranklib\\RankLib-2.16.jar"
     file_path = "../data_processing_engineering/rank_data/" + repo_name + "/" + data_time + "/"
