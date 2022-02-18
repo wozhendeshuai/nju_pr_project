@@ -14,22 +14,14 @@ import json
 database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second', charset='utf8')
 # 创建游标对象
 cursor = database.cursor()
-repolist = ["symfony",
-            "rails",
-            "angular.js",
-            "tensorflow",
-            "zendframework",
-            "spring-framework",
-            "kuma",
-            "laravel",
-            "yii2",
-            "zipkin",
-            "spring-boot",
-            "terraform",
-            "vxquery",
-            "zeppelin",
-            "lucene-solr"]
-for repo_name in repolist:
+select_sql="select repo_name from pr_repo"
+cursor.execute(select_sql)
+repo_data=cursor.fetchall()
+repo_list=[]
+for i in range(repo_data.__len__()):
+    repo_list.append(repo_data[i][0])
+
+for repo_name in repo_list:
     pr_sql = "select  pr_number, created_at, updated_at, closed_at, merged_at from pr_self where repo_name='" + repo_name + "'"
     cursor.execute(pr_sql)
     data = cursor.fetchall()
