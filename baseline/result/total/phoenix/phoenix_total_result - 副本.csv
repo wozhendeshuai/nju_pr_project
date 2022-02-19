@@ -1,0 +1,12 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/bayesian_network/phoenix/phoenix_bayesian_network_result.csv,0.8746538275814159,0.24731269334538428,0.2551745422727472
+./result/fifo/phoenix_FIFO_result.csv,0.8636213473303116,0.31399884862004335,0.43859412288839467
+./result/xgboost/phoenix/phoenix_xgboost_result.csv,0.864480637664921,0.2318563686368481,0.2889993833803478
+./result/ranklib/phoenix/phoenix_MART_result.csv,0.9206682658633819,0.3910491451529162,0.20190997379685027
+./result/ranklib/phoenix/phoenix_RankNet_result.csv,0.8376740005382569,0.17520724750502664,0.3254995101943521
+./result/ranklib/phoenix/phoenix_RankBoost_result.csv,0.8973575445431388,0.3229171030596959,0.22324372974255988
+./result/ranklib/phoenix/phoenix_AdaRank_result.csv,0.8691785414314123,0.23899159995356972,0.25577052046984067
+./result/ranklib/phoenix/phoenix_Coordinate_Ascent_result.csv,0.9028715963849834,0.35867032111038466,0.22557119615027516
+./result/ranklib/phoenix/phoenix_LambdaMART_result.csv,0.9042854494355771,0.3412408948592875,0.22342080050531676
+./result/ranklib/phoenix/phoenix_ListNet_result.csv,0.8950079073344709,0.31256983541428124,0.21142865710952655
+./result/ranklib/phoenix/phoenix_Random_Forests_result.csv,0.9078725593945224,0.35092508014675966,0.22340350361103567

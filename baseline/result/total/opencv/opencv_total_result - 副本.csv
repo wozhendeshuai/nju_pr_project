@@ -1,0 +1,12 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/bayesian_network/opencv/opencv_bayesian_network_result.csv,0.8461021513580079,0.18280729363272288,0.1675378166994581
+./result/fifo/opencv_FIFO_result.csv,0.7808431822953805,0.03610914650637991,0.48340315890880087
+./result/xgboost/opencv/opencv_xgboost_result.csv,0.9315623345446926,0.4098032363017286,0.11956740248736694
+./result/ranklib/opencv/opencv_MART_result.csv,0.9182989497770417,0.35637663230719563,0.1322569995522608
+./result/ranklib/opencv/opencv_RankNet_result.csv,0.7463924315162642,0.030018086055032638,0.2969764874755111
+./result/ranklib/opencv/opencv_RankBoost_result.csv,0.8498069064552382,0.18776133757700497,0.19209313877631543
+./result/ranklib/opencv/opencv_AdaRank_result.csv,0.7463924315162642,0.030018086055032638,0.2969764874755111
+./result/ranklib/opencv/opencv_Coordinate_Ascent_result.csv,0.9170874667139742,0.3417678323592937,0.13540642914579357
+./result/ranklib/opencv/opencv_LambdaMART_result.csv,0.8993939519274475,0.322511758816382,0.14045903910005184
+./result/ranklib/opencv/opencv_ListNet_result.csv,0.8399953280298801,0.17208001791678468,0.19955207340282366
+./result/ranklib/opencv/opencv_Random_Forests_result.csv,0.9328948263954322,0.430374577113263,0.12680398434216805
