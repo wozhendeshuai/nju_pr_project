@@ -1,0 +1,13 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/ranklib/zipkin/zipkin_MART_result.csv,0.8500557130310925,0.5780203784570597,0.17051551069018314
+./result/ranklib/zipkin/zipkin_RankNet_result.csv,0.6077457839110867,0.35474111041796635,0.41827161193973417
+./result/ranklib/zipkin/zipkin_RankBoost_result.csv,0.6972998696160724,0.44669716503777634,0.3127677271782075
+./result/ranklib/zipkin/zipkin_AdaRank_result.csv,0.6468688081420761,0.3944894988563111,0.34279129410133774
+./result/ranklib/zipkin/zipkin_Coordinate_Ascent_result.csv,0.8112759289065296,0.5429110191118924,0.21445521969539438
+./result/ranklib/zipkin/zipkin_LambdaMART_result.csv,0.8613703957901544,0.590268247036806,0.19166241327813377
+./result/ranklib/zipkin/zipkin_ListNet_result.csv,0.7453889777693333,0.4766427531711374,0.26508409106662384
+./result/ranklib/zipkin/zipkin_Random_Forests_result.csv,0.8674765465857884,0.5972343522561863,0.16687397997441664
+./result/xgboost/zipkin/zipkin_xgboost_result.csv,0.7144423157624544,0.45390413807444385,0.3299060473732962
+./result/bayesian_network/zipkin/zipkin_bayesian_network_result.csv,0.8199187817453519,0.5463453940528176,0.2191594674127425
+./result/fifo/zipkin_FIFO_result.csv,0.6537113835867803,0.36096920134513427,0.48396954263032166
+./result/small_size_first/zipkin_small_size_first_result.csv,0.7039663366241868,0.3563554479372314,0.38702649778534015

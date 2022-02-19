@@ -352,7 +352,7 @@ def train_model(alg_name, rank_type, model_path, train_data_path, train_data_gro
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="yii2"#"dubbo"#"react"#"tensorflow"#"opencv"# "phoenix"#"guacamole-client"# "helix"#"terraform"  # "Ipython"#"kuma"#"incubator-heron"#"Katello"#"salt"  # "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name ="zipkin"#"yii2"#"dubbo"#"react"#"tensorflow"#"opencv"# "phoenix"#"guacamole-client"# "helix"#"terraform"  # "Ipython"#"kuma"#"incubator-heron"#"Katello"#"salt"  # "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     # ranklib所能调的库
     alg_name = "xgboost"
     rank_style = "pairwise"
