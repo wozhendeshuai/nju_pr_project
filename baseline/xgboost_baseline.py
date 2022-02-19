@@ -276,7 +276,7 @@ def alg_model_result(true_rate_label_dict, day_data, pr_number_index_dict, origi
             rank_sort.append(true_rate_label_dict[pr_number_result])
             true_sort.append(true_rate_label_dict[pr_number_result])
         true_sort.sort(reverse=True)
-        ndcg_num = ndcg(true_sort, rank_sort, rank_sort.__len__())
+        ndcg_num = ndcg(true_sort, rank_sort, rank_sort.__len__(),form = "exp")
         mrr_num = mrr(true_sort, rank_sort)
         kendall_num = kendall_tau_distance(true_sort, rank_sort)
         print("pr_number排序:", sort_result)

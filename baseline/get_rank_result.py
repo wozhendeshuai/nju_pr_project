@@ -32,7 +32,7 @@ def get_mean(file_path):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "yii2"#"dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"#"helix"#"terraform"  # "salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
+    repo_name = "yii2"  # "dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"#"helix"#"terraform"  # "salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
     file_path_tmp = []
     alg_dict = {
         0: "MART",
@@ -51,10 +51,11 @@ if __name__ == '__main__':
     bayesian_network_file_path = "./result/bayesian_network/" + repo_name + "/" + repo_name + "_bayesian_network_result.csv"
     fifo_file_path = "./result/fifo/" + repo_name + "_FIFO_result.csv"
     xgboost_file_path = "./result/xgboost/" + repo_name + "/" + repo_name + "_xgboost_result.csv"
-
+    small_file_path = "./result/small_size_first/" + repo_name + "_small_size_first_result.csv"
     file_path_tmp.append(xgboost_file_path)
     file_path_tmp.append(bayesian_network_file_path)
     file_path_tmp.append(fifo_file_path)
+    file_path_tmp.append(small_file_path)
 
     row_data = []
     for index in range(file_path_tmp.__len__()):

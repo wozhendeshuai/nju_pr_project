@@ -155,7 +155,7 @@ def fifo_result(true_rate_label_dict, day_data, repo_name):
             fifo_sort.append(true_rate_label_dict[pr_number_fifo])
             true_sort.append(true_rate_label_dict[pr_number_fifo])
         true_sort.sort(reverse=True)
-        ndcg_num = ndcg(true_sort, fifo_sort, fifo_sort.__len__())
+        ndcg_num = ndcg(true_sort, fifo_sort, fifo_sort.__len__(),form = "exp")
         mrr_num = mrr(true_sort, fifo_sort)
         kendall_num = kendall_tau_distance(true_sort, fifo_sort)
         print("=================================日期:", day)
