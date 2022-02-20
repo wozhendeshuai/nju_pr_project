@@ -1,8 +1,11 @@
+import csv
+
 import pymysql as db
 import requests
 
 from utils.num_utils.num_function import get_label_count, get_workload, get_prev_prs, get_change_num, get_accept_num, \
     get_close_num, get_participants_count, get_review_num
+from utils.path_exist import path_exists_or_create
 from utils.time_utils import time_reverse
 from utils.access_token import get_token
 from utils.exception_handdle import write_file
@@ -20,7 +23,19 @@ repo_data=cursor.fetchall()
 repo_list=[]
 for i in range(repo_data.__len__()):
     repo_list.append(repo_data[i][0])
-
+headers = ['repo_name',
+               'per_day_open',
+               'per_day_close',
+               'per_day_merged',
+               'per_day_created'
+               ]
+file_path = "./result/"
+path_exists_or_create(file_path)
+with open(file_path + "repo_per_collections.csv",
+          'a+', encoding='utf-8', newline='') as f:
+    writer = csv.writer(f, dialect='excel')
+    writer.writerow(headers)
+    f.close()
 for repo_name in repo_list:
     pr_sql = "select  pr_number, created_at, updated_at, closed_at, merged_at from pr_self where repo_name='" + repo_name + "'"
     cursor.execute(pr_sql)
@@ -115,5 +130,15 @@ for repo_name in repo_list:
           " day_len平均每天合并的PR数量：" + str(pr_merged_count / day_len) +
           " day_len平均每天处于打开状态PR的数量" + str(pr_open_count / day_len))
 
+    item_date=[repo_name,
+               pr_open_count / day_len,
+               pr_closed_count / day_len,
+               pr_merged_count / day_len,
+               pr_created_count / day_len]
+
+    with open(file_path + "repo_per_collections.csv",'a+', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f, dialect='excel')
+        writer.writerow(item_date)
+        f.close()
 # 关闭数据库连接
 database.close()
