@@ -7,7 +7,7 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 '''
 import data_processing_engineering.get_data_from_database.database_connection as dbConnection
 from baseline.true_order import get_true_order_dict
-import numpy as np
+
 from utils.date_utils.date_function import is_weekday_commit \
     , project_age, get_latency_after_response, get_waiting_time, get_close_pr_time
 from utils.num_utils.num_function import get_label_count \
@@ -608,7 +608,7 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "zipkin"#"yii2"#"dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "guacamole-client"#"helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello"#"salt"#"zipkin"  # "angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
+    repo_name = "Katello"#"zipkin"#"yii2"#"dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"# "guacamole-client"#"helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello"#"salt"#"zipkin"  # "angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
     file_path = "./bayesian_data/" + repo_name + "/"
     path_exists_or_create(file_path)
     all_filename = file_path + repo_name + "_bayes_rank_format_data.csv"

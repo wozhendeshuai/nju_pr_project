@@ -1,0 +1,13 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/ranklib/Katello/Katello_MART_result.csv,0.6149045194566208,0.26185571537973085,0.211253488196964
+./result/ranklib/Katello/Katello_RankNet_result.csv,0.32444182228715607,0.05054505631222627,0.33663021945141486
+./result/ranklib/Katello/Katello_RankBoost_result.csv,0.49426896077595794,0.14608127380220953,0.2582651306915361
+./result/ranklib/Katello/Katello_AdaRank_result.csv,0.31621948051143034,0.048918790925420216,0.34091434675825005
+./result/ranklib/Katello/Katello_Coordinate_Ascent_result.csv,0.6718333464809589,0.32259761723217223,0.19165286206289833
+./result/ranklib/Katello/Katello_LambdaMART_result.csv,0.6309687800217468,0.29163503029250853,0.207622387206145
+./result/ranklib/Katello/Katello_ListNet_result.csv,0.38395595022052864,0.08442472742311652,0.31099080239218185
+./result/ranklib/Katello/Katello_Random_Forests_result.csv,0.6345257183787847,0.2928184833816026,0.20250081261937078
+./result/xgboost/Katello/Katello_xgboost_result.csv,0.6341152497724348,0.28987991529371776,0.202318167476176
+./result/bayesian_network/Katello/Katello_bayesian_network_result.csv,0.5777972932223429,0.2376065690751243,0.22311319195986457
+./result/fifo/Katello_FIFO_result.csv,0.7079308583153531,0.07282636805859315,0.43140458677466575
+./result/small_size_first/Katello_small_size_first_result.csv,0.7779236775250143,0.12735090862195675,0.38873747046759705

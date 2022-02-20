@@ -215,9 +215,10 @@ def ssf_result(true_rate_label_dict, day_data, repo_name):
     return None
 
 
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "zipkin"#"yii2"  # "dubbo"#"react"#"tensorflow"# "opencv"#"phoenix"#"guacamole-client"# "helix"# "terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"# "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "Katello"#"zipkin"#"yii2"  # "dubbo"#"react"#"tensorflow"# "opencv"#"phoenix"#"guacamole-client"# "helix"# "terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"# "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     day_data, response_time, first_response_time_dict = get_data_by_repo_name(repo_name)
     true_rate_label_dict = get_true_order_dict(response_time, first_response_time_dict)
     ssf_result(true_rate_label_dict, day_data, repo_name)
