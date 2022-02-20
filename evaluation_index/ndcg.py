@@ -24,8 +24,8 @@ def ndcg(rel_true, rel_pred, p=None, form="linear"):
         dcg = np.sum((rel_pred[:p] + 1) * discount)
         # print(rel_true)
     elif form == "exponential" or form == "exp":
-        idcg = np.sum([2 ** x - 1 for x in rel_true[:p]] * discount)
-        dcg = np.sum([2 ** x - 1 for x in rel_pred[:p]] * discount)
+        idcg = np.sum([2 ** x  for x in rel_true[:p]] * discount)
+        dcg = np.sum([2 ** x  for x in rel_pred[:p]] * discount)
     else:
         raise ValueError("Only supported for two formula, 'linear' or 'exp'")
 
