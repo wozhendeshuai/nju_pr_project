@@ -391,7 +391,7 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "Katello"#"zipkin"#"incubator-heron"#"Katello"#"zipkin"#"yii2"#"dubbo"# "react"#"tensorflow"#"opencv"# "phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello"#"salt"  # "zipkin"  # "angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
+    repo_name = "incubator-heron"#"Katello"#"zipkin"#"incubator-heron"
     # ranklib所能调的库
     alg_name = "bayesian_network"
     # 测试模型性能的文件路径

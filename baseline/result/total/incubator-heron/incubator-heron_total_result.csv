@@ -1,0 +1,13 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/ranklib/incubator-heron/incubator-heron_MART_result.csv,0.8999071429859167,0.43450411477306733,0.1591860281101767
+./result/ranklib/incubator-heron/incubator-heron_RankNet_result.csv,0.7734886292127238,0.16028251280285596,0.33224296642120854
+./result/ranklib/incubator-heron/incubator-heron_RankBoost_result.csv,0.8348866449754277,0.281403398993443,0.23758823018893216
+./result/ranklib/incubator-heron/incubator-heron_AdaRank_result.csv,0.7953151156068637,0.22485398326464695,0.31265440427209273
+./result/ranklib/incubator-heron/incubator-heron_Coordinate_Ascent_result.csv,0.8799422513320607,0.3905096919350615,0.1795239900476155
+./result/ranklib/incubator-heron/incubator-heron_LambdaMART_result.csv,0.7734886292127238,0.16028251280285596,0.33224296642120854
+./result/ranklib/incubator-heron/incubator-heron_ListNet_result.csv,0.8967768391087457,0.4280331328545555,0.16203192786217072
+./result/ranklib/incubator-heron/incubator-heron_Random_Forests_result.csv,0.9058946973994985,0.4368592648220676,0.1604567309214169
+./result/xgboost/incubator-heron/incubator-heron_xgboost_result.csv,0.8735730057314375,0.36504451141481153,0.19033550606848232
+./result/bayesian_network/incubator-heron/incubator-heron_bayesian_network_result.csv,0.8046671701683915,0.2244050634975454,0.31650411525454986
+./result/fifo/incubator-heron_FIFO_result.csv,0.6900467577679177,0.13052210405736475,0.43899297811585875
+./result/small_size_first/incubator-heron_small_size_first_result.csv,0.7533003198066623,0.14412702726995003,0.3853400311425241

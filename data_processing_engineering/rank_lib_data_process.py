@@ -534,7 +534,7 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "kuma"#"incubator-heron"#"Katello"#"zipkin"#"yii2"
+    repo_name = "kuma"#"incubator-heron"#"kuma"#"incubator-heron"#"Katello"#"zipkin"#"yii2"
     file_path = "./rank_data/" + repo_name + "/"
     path_exists_or_create(file_path)
 
