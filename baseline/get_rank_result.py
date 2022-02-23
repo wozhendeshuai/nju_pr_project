@@ -32,7 +32,7 @@ def get_mean(file_path):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "Katello"#"dubbo"#"tensorflow"#"opencv"#"terraform"#"phoenix"#"helix"#"Ipython"#"kuma"#"incubator-heron"#"zipkin"#"Katello"
+    repo_name = "netbeans"#"Katello"#"dubbo"#"tensorflow"#"opencv"#"terraform"#"phoenix"#"helix"#"Ipython"#"kuma"#"incubator-heron"#"zipkin"#"Katello"
     file_path_tmp = []
     alg_dict = {
         0: "MART",
