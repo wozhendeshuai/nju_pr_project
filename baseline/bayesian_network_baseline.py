@@ -391,7 +391,7 @@ def train_model_and_result(alg_name, train_data_path, test_data_path, repo_name)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="opencv"#"phoenix"#"helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello"#"zipkin"#"incubator-heron"
+    repo_name ="tensorflow"#"opencv"#"phoenix"#"helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello"#"zipkin"#"incubator-heron"
     # ranklib所能调的库
     alg_name = "bayesian_network"
     # 测试模型性能的文件路径
