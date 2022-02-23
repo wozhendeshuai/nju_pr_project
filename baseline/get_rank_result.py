@@ -32,7 +32,7 @@ def get_mean(file_path):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name = "zipkin"#"Katello"#"zipkin"#"yii2"  # "dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"guacamole-client"#"helix"#"terraform"  # "salt"  # "zipkin"#"angular.js"  # "tensorflow"  # "symfony"# #"spring-boot"#"spring-framework"#"rails"
+    repo_name = "dubbo"#"tensorflow"#"opencv"#"terraform"#"phoenix"#"helix"#"Ipython"#"kuma"#"incubator-heron"#"zipkin"#"Katello"
     file_path_tmp = []
     alg_dict = {
         0: "MART",

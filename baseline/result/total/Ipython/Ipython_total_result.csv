@@ -1,0 +1,13 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/ranklib/Ipython/Ipython_MART_result.csv,0.8736406740979228,0.3404239121580402,0.1663984142093793
+./result/ranklib/Ipython/Ipython_RankNet_result.csv,0.7611221778449229,0.1651383008717832,0.25428282518368633
+./result/ranklib/Ipython/Ipython_RankBoost_result.csv,0.7865001205397468,0.19544683020020215,0.24035032864776482
+./result/ranklib/Ipython/Ipython_AdaRank_result.csv,0.7095313183368538,0.10085348881642041,0.3255416705650067
+./result/ranklib/Ipython/Ipython_Coordinate_Ascent_result.csv,0.8024403392656924,0.20934592689605108,0.23489811161091348
+./result/ranklib/Ipython/Ipython_LambdaMART_result.csv,0.8724375434662774,0.3423089966178006,0.16609825675576367
+./result/ranklib/Ipython/Ipython_ListNet_result.csv,0.8624109241462002,0.3127015834519982,0.1679519227703348
+./result/ranklib/Ipython/Ipython_Random_Forests_result.csv,0.8755522597428365,0.34746725622061536,0.16843385698599533
+./result/xgboost/Ipython/Ipython_xgboost_result.csv,0.8536528146981055,0.3047062305108939,0.1860147623596957
+./result/bayesian_network/Ipython/Ipython_bayesian_network_result.csv,0.8639039452085946,0.3315715182481181,0.16031719341373385
+./result/fifo/Ipython_FIFO_result.csv,0.7473017711448916,0.20232020246034313,0.4392907716450919
+./result/small_size_first/Ipython_small_size_first_result.csv,0.678893261897293,0.09060794342236905,0.47334525066463734
