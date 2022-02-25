@@ -91,7 +91,34 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
         total_add_line,
         total_delete_line
         )VALUES(%s,%s,%s,%s, %s,%s,%s,%s, %s,%s, %s,%s, %s,%s, %s, %s,%s,%s,%s, %s,%s,%s,%s, %s, %s,%s,%s,%s,%s)"""
-
+    update_sql = """update pr_self set
+            pr_user_id=%s,
+            pr_user_name=%s,
+            pr_author_association=%s,
+            title=%s,
+            body=%s,
+            labels=%s,
+            state=%s,
+            created_at=%s,
+            updated_at=%s,
+            closed_at=%s,
+            merged_at=%s,
+            merged=%s,
+            mergeable=%s,
+            mergeable_state=%s,
+            merge_commit_sha=%s,
+            assignees_content=%s,
+            requested_reviewers_content=%s,
+            comments_number=%s,
+            comments_content=%s,
+            review_comments_number=%s,
+            review_comments_content=%s,
+            commit_number=%s,
+            commit_content=%s,
+            changed_file_num=%s,
+            total_add_line=%s,
+            total_delete_line=%s
+            where  pr_number=%s and repo_name=%s"""
     # 链接云端数据库
     database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
                           charset='utf8')
@@ -100,13 +127,17 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
     cursor = database.cursor()
     database.ping(reconnect=True)
     # 自动找到最大的pr_number
-    select_max_index = """select * from pr_self where repo_name= %s order by pr_number desc limit 10"""
+    select_max_index = """select * from pr_self where repo_name= %s and state='open' order by pr_number """
     cursor.execute(select_max_index, [repo_name])
+    open_pr_dict = []
     had_data = cursor.fetchall()
     if had_data.__len__() != 0:
-        print(had_data[0])
-        index = had_data[0][0] - 1
-        print("pr_self============目前已到index为=============" + str(index))
+        for i in range(had_data.__len__()):
+            open_pr_dict.append(had_data[i][0])
+        open_pr_dict.sort()
+        print(open_pr_dict[0])
+        index = open_pr_dict[0] - 1
+        print("pr_self============目前开放状态的PR已到index为=============" + str(index))
 
     while index < max_num:
         try:
@@ -165,43 +196,89 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
             index = index + 1
             continue
         try:
-            sqlData = (
-                pr_number,
-                temp_url,
-                repo_name,
-                pr_user_id,
-                pr_user_name,
-                pr_author_association,
-                title,
-                body,
-                labels,
-                state,
-                time_reverse(created_at),
-                time_reverse(updated_at),
-                time_reverse(closed_at),
-                time_reverse(merged_at),
-                ((merged == True) and 1 or 0),
-                ((mergeable == True) and 1 or 0),
-                mergeable_state,
-                merge_commit_sha,
-                assignees_content,
-                requested_reviewers_content,
-                comments_number,
-                json.dumps(comments_content),
-                review_comments_number,
-                json.dumps(review_comments_content),
-                commit_number,
-                json.dumps(commit_content),
-                changed_file_num,
-                total_add_line,
-                total_delete_line)
-            database.ping(reconnect=True)
-            # 执行sql语句
-            cursor.execute(sql, sqlData)
-            # 提交到数据库执行
-            database.commit()
-            print("第", index, "行数据插入数据库成功: ", repo_name)
-            index = index + 1
+            if open_pr_dict.__contains__(index):
+                update_sqlData = (
+                    pr_user_id,
+                    pr_user_name,
+                    pr_author_association,
+                    title,
+                    body,
+                    labels,
+                    state,
+                    time_reverse(created_at),
+                    time_reverse(updated_at),
+                    time_reverse(closed_at),
+                    time_reverse(merged_at),
+                    ((merged == True) and 1 or 0),
+                    ((mergeable == True) and 1 or 0),
+                    mergeable_state,
+                    merge_commit_sha,
+                    assignees_content,
+                    requested_reviewers_content,
+                    comments_number,
+                    json.dumps(comments_content),
+                    review_comments_number,
+                    json.dumps(review_comments_content),
+                    commit_number,
+                    json.dumps(commit_content),
+                    changed_file_num,
+                    total_add_line,
+                    total_delete_line,
+                    pr_number,
+                    repo_name)
+                database.ping(reconnect=True)
+                # 执行sql语句
+                cursor.execute(update_sql, update_sqlData)
+                # 提交到数据库执行
+                database.commit()
+                print("第", index, "行数据更新数据库成功: ", repo_name)
+                temp_max_index = index
+                for i in range(open_pr_dict.__len__()):
+                    if open_pr_dict[i] == index:
+                        temp_max_index = i
+                        break
+                if temp_max_index == (open_pr_dict.__len__() - 1):
+                    index = index + 1
+                else:
+                    index = open_pr_dict[temp_max_index + 1]
+            else:
+                sqlData = (
+                    pr_number,
+                    temp_url,
+                    repo_name,
+                    pr_user_id,
+                    pr_user_name,
+                    pr_author_association,
+                    title,
+                    body,
+                    labels,
+                    state,
+                    time_reverse(created_at),
+                    time_reverse(updated_at),
+                    time_reverse(closed_at),
+                    time_reverse(merged_at),
+                    ((merged == True) and 1 or 0),
+                    ((mergeable == True) and 1 or 0),
+                    mergeable_state,
+                    merge_commit_sha,
+                    assignees_content,
+                    requested_reviewers_content,
+                    comments_number,
+                    json.dumps(comments_content),
+                    review_comments_number,
+                    json.dumps(review_comments_content),
+                    commit_number,
+                    json.dumps(commit_content),
+                    changed_file_num,
+                    total_add_line,
+                    total_delete_line)
+                database.ping(reconnect=True)
+                # 执行sql语句
+                cursor.execute(sql, sqlData)
+                # 提交到数据库执行
+                database.commit()
+                print("第", index, "行数据插入数据库成功: ", repo_name)
+                index = index + 1
         except Exception as e:
             # 如果发生错误则回滚
             print("第", index, "行数据插入数据库失败: ", "repo_name:", repo_name)

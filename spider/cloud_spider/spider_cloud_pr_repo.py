@@ -8,7 +8,7 @@ import json
 
 
 # 统计url中含有的元素数量
-def findUrlJsonCount(url_str,headers):
+def findUrlJsonCount(url_str, headers):
     url_str = url_str + "?per_page=100&anon=true&page="
     print(url_str)
     page = 1
@@ -28,7 +28,7 @@ def findUrlJsonCount(url_str,headers):
 
 
 # 封装成一个方法，让他方便外部调用
-def get_repo_info(index, num, owner_name, repo_name,headers):
+def get_repo_info(index, num, owner_name, repo_name, headers):
     # repo url拼接
     repo_url = "https://api.github.com/repos/" + owner_name + "/" + repo_name
     # 组织url 拼接，主要是为了找多少人 page后面的用拼接来确定到底有多少人，省的去页面爬了，太麻烦。
@@ -54,23 +54,36 @@ def get_repo_info(index, num, owner_name, repo_name,headers):
         project_domain,
         contributor_num,
         forks_count)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) """
-
+    # 更新sql语句
+    update_sql = """update pr_repo
+                   set owner_name=%s,
+                   owner_type=%s,
+                   team_size=%s,
+                   project_created_at=%s,
+                   project_updated_at=%s,
+                   project_pushed_at=%s,
+                   watchers=%s,
+                   stars=%s,
+                   use_language=%s,
+                   languages=%s,
+                   project_domain=%s,
+                   contributor_num=%s,
+                   forks_count=%s  
+                   where repo_name=%s"""
     # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',charset='utf8')
+    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
+                          charset='utf8')
     # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
     # 利用游标对象进行操作
     cursor.execute('select version()')
     data = cursor.fetchone()
-#找到目前是否已存该代码仓相关信息
+    # 找到目前是否已存该代码仓相关信息
     select_max_index = """select * from pr_repo where repo_name= %s"""
     cursor.execute(select_max_index, [repo_name])
     had_data = cursor.fetchall()
-    if had_data.__len__() != 0:
-        print(had_data)
-        database.close()
-        return
+
     while index < 1:
         try:
             repo_r = requests.get(repo_url, headers=headers)
@@ -117,11 +130,11 @@ def get_repo_info(index, num, owner_name, repo_name,headers):
 
             project_domain = json.dumps(topics)
             # 获取contributor的数量
-            contributor_num = findUrlJsonCount(repo_json_str["contributors_url"],headers)
+            contributor_num = findUrlJsonCount(repo_json_str["contributors_url"], headers)
             team_size = None
             # team_size的数量统计
             if repo_json_str["owner"]["type"].__eq__("Organization"):
-                team_size = findUrlJsonCount(org_url,headers)
+                team_size = findUrlJsonCount(org_url, headers)
 
         else:
             filename = 'repo_exception.csv'
@@ -132,31 +145,53 @@ def get_repo_info(index, num, owner_name, repo_name,headers):
 
         index = index + 1
         try:
-            sqlData = (
-                repo_id,
-                full_name,
-                repo_name,
-                owner_name,
-                owner_type,
-                team_size,
-                time_reverse(created_at),
-                time_reverse(updated_at),
-                time_reverse(pushed_at),
-                watchers,
-                stars,
-                use_language,
-                languages_json,
-                project_domain,
-                contributor_num,
-                forks_count)
-            print(
-                " repo_id full_name,repo_name,owner_name,owner_type,team_size,time_reverse(created_at),time_reverse(updated_at),time_reverse(pushed_at), watchers,stars,use_language,languages_json, project_domain,contributor_num,forks_count",
-                sqlData)
-            # 执行sql语句
-            cursor.execute(sql, sqlData)
-            # 提交到数据库执行
-            database.commit()
-            print("第", index, "行数据插入数据库成功: ", repo_name)
+            if had_data.__len__() != 0:
+                update_sqlData = (
+                    owner_name,
+                    owner_type,
+                    team_size,
+                    time_reverse(created_at),
+                    time_reverse(updated_at),
+                    time_reverse(pushed_at),
+                    watchers,
+                    stars,
+                    use_language,
+                    languages_json,
+                    project_domain,
+                    contributor_num,
+                    forks_count,
+                    repo_name)
+                # 执行sql语句
+                cursor.execute(update_sql, update_sqlData)
+                # 提交到数据库执行
+                database.commit()
+                print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "第", index, "行数据更新数据库成功: ", repo_name)
+            else:
+                sqlData = (
+                    repo_id,
+                    full_name,
+                    repo_name,
+                    owner_name,
+                    owner_type,
+                    team_size,
+                    time_reverse(created_at),
+                    time_reverse(updated_at),
+                    time_reverse(pushed_at),
+                    watchers,
+                    stars,
+                    use_language,
+                    languages_json,
+                    project_domain,
+                    contributor_num,
+                    forks_count)
+                print(
+                    " repo_id full_name,repo_name,owner_name,owner_type,team_size,time_reverse(created_at),time_reverse(updated_at),time_reverse(pushed_at), watchers,stars,use_language,languages_json, project_domain,contributor_num,forks_count",
+                    sqlData)
+                # 执行sql语句
+                cursor.execute(sql, sqlData)
+                # 提交到数据库执行
+                database.commit()
+                print("第", index, "行数据插入数据库成功: ", repo_name)
         except Exception as e:
             # 如果发生错误则回滚
             print("第", index, "行数据插入数据库失败: ", "repo_name:", repo_name)
