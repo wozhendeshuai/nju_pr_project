@@ -284,7 +284,7 @@ if __name__ == '__main__':
     repo_name ="moby"#"cocos2d-x"#"netbeans"#"yii2"##"dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello"#"zipkin"#"incubator-heron"# "Katello"#"zipkin"#"yii2"#"dubbo"#"react"#"tensorflow"# "opencv"#"phoenix"#"guacamole-client"# "helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"#"Katello" #"salt"  # "zipkin"#"angular.js"  # "symfony"# #"tensorflow"#"spring-boot"#"spring-framework"#"rails"
     # ranklib所能调的库
     alg_dict = {
-        #0: "MART",
+        0: "MART",
         1: "RankNet",
         2: "RankBoost",
         3: "AdaRank",
