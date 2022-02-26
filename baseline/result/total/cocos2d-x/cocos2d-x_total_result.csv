@@ -1,0 +1,13 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/ranklib/cocos2d-x/cocos2d-x_MART_result.csv,0.9178880507199665,0.34505530097614023,0.09746299177028038
+./result/ranklib/cocos2d-x/cocos2d-x_RankNet_result.csv,0.8241776789336389,0.17500698987654986,0.2045880023839527
+./result/ranklib/cocos2d-x/cocos2d-x_RankBoost_result.csv,0.8648313876699012,0.23837111217313484,0.14205363541101615
+./result/ranklib/cocos2d-x/cocos2d-x_AdaRank_result.csv,0.7517926038912959,0.06579506194296586,0.2636591378680553
+./result/ranklib/cocos2d-x/cocos2d-x_Coordinate_Ascent_result.csv,0.8789940771742608,0.25635435567367365,0.14339413973022144
+./result/ranklib/cocos2d-x/cocos2d-x_LambdaMART_result.csv,0.8904788481391493,0.28301266633543953,0.12211159442574362
+./result/ranklib/cocos2d-x/cocos2d-x_ListNet_result.csv,0.8370524215053691,0.18155088882498086,0.17511344496303607
+./result/ranklib/cocos2d-x/cocos2d-x_Random_Forests_result.csv,0.9258774362166272,0.3569562454321445,0.09476719146884216
+./result/xgboost/cocos2d-x/cocos2d-x_xgboost_result.csv,0.9101145257371694,0.32013475776282224,0.10884845737458788
+./result/bayesian_network/cocos2d-x/cocos2d-x_bayesian_network_result.csv,0.8702434162087865,0.23634793662755244,0.13205817065523728
+./result/fifo/cocos2d-x_FIFO_result.csv,0.6674168432704294,0.09071347248360652,0.3917956190224314
+./result/small_size_first/cocos2d-x_small_size_first_result.csv,0.7198481562182264,0.12607906622005507,0.3272959452092622
