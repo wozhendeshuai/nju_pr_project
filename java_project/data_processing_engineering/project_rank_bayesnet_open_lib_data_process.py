@@ -5,6 +5,7 @@ FIFO算法，根据pr创建的时间先创建，放在最前面，这样对上�
 真实排序：在该时刻之后，该X中，被相应，或者被关闭或者被合并等发生改变的时间，根据该时间顺序进行排序，进而获取真实排序TRUEY
 将FIFOY，与TRUEY进行比较，通过NDGC进行比较，判断排序效果
 '''
+import math
 import os
 import sys
 import csv
@@ -474,9 +475,15 @@ def get_data_by_repo_name(repo_name):
     for i in range(len(X_dispersed)):
         tmp = []
         for j in range(1, len(X_dispersed[i])):
-            tmp.append(X_dispersed[i][j])
+            if math.isnan(X_dispersed[i][j]):
+                tmp.append(0)
+            else:
+                tmp.append(X_dispersed[i][j])
         for j in X_successive[i]:
-            tmp.append(j)
+            if math.isnan(j):
+                tmp.append(0)
+            else:
+                tmp.append(j)
         X.append((X_dispersed[i][0], tmp))
     X_dict = dict(X)
     ##获取每个PR的响应时间
