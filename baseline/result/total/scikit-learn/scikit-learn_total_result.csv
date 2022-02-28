@@ -1,0 +1,13 @@
+file_path,ndcg_mean,mrr_mean,kendall_tau_distance_mean
+./result/ranklib/scikit-learn/scikit-learn_MART_result.csv,0.745503832160643,0.12899263112206208,0.27966459118852666
+./result/ranklib/scikit-learn/scikit-learn_RankNet_result.csv,0.6805621522310639,0.05422981864910113,0.36183694225670293
+./result/ranklib/scikit-learn/scikit-learn_RankBoost_result.csv,0.7020732809968885,0.04948360971619299,0.3102035533191925
+./result/ranklib/scikit-learn/scikit-learn_AdaRank_result.csv,0.6239839943623662,0.017344786011772133,0.4063819107657616
+./result/ranklib/scikit-learn/scikit-learn_Coordinate_Ascent_result.csv,0.7317957305893816,0.08218878725591201,0.2780072473582076
+./result/ranklib/scikit-learn/scikit-learn_LambdaMART_result.csv,0.7769175418721558,0.15827954395531726,0.24283525360423822
+./result/ranklib/scikit-learn/scikit-learn_ListNet_result.csv,0.7075037730391488,0.0691616228072024,0.30183419359180214
+./result/ranklib/scikit-learn/scikit-learn_Random_Forests_result.csv,0.8125103943317961,0.203928506547025,0.23087467201175385
+./result/xgboost/scikit-learn/scikit-learn_xgboost_result.csv,0.7811910634478092,0.16491295853292712,0.24725237004994888
+./result/bayesian_network/scikit-learn/scikit-learn_bayesian_network_result.csv,0.707251843881466,0.06838907885595737,0.3085851851959032
+./result/fifo/scikit-learn_FIFO_result.csv,0.7881127243448551,0.015207897992639727,0.45427142194248643
+./result/small_size_first/scikit-learn_small_size_first_result.csv,0.7764013189193126,0.01609994317698536,0.46930496116555104
