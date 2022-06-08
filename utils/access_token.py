@@ -1,6 +1,6 @@
 # 获取本地文件中的access_tocken相关值
 def get_token(num=0):
-    file = open('./token.txt', 'r')
+    file = open('D:\\PycharmProjects\\nju_pr_project\\utils\\token.txt', 'r')
     list = file.readlines()
     lines = len(list)
     #str = file.readline()

@@ -330,7 +330,7 @@ if __name__ == '__main__':
     if alg_index is None:
         raise Exception("无该算法"+alg_name)
     # 测试模型性能的文件路径
-    jar_path = "E:\\IdeaProjects\\pr_priority_cloud_demo\\pr-sorting-engine-9004\\src\\main\\java\\com\\jjyu\\ranklib\\RankLib-2.16.jar"
+    jar_path = "D:\\PycharmProjects\\nju_pr_project\\baseline\\RankLib-2.16.jar"
     file_path = "../data_processing_engineering/rank_data/" + repo_name + "/" + data_time + "/"
     path_exists_or_create(file_path)
     origin_data_path = file_path + repo_name + "_svm_rank_format_test_data_" + data_time + ".txt"
