@@ -10,6 +10,10 @@ from baseline.true_order import get_true_order_dict
 
 from utils.date_utils.date_function import is_weekday_commit \
     , project_age, get_latency_after_response, get_waiting_time, get_close_pr_time
+from utils.file_utils.file_function import get_file_directory_num, get_language_num, get_file_type_num, \
+    get_segs_added_num, get_segs_deleted_num, get_segs_updated_num, get_test_inclusion, get_subsystem_num, \
+    get_changes_files_modified_num, get_file_developer_num, get_file_developer_change_num, \
+    get_file_developer_recent_change_num
 from utils.num_utils.num_function import get_label_count \
     , get_workload, get_prev_prs, get_change_num \
     , get_accept_num, get_close_num, get_review_num \
@@ -47,6 +51,7 @@ updated_at_index = 21
 content_index = 22
 title_index = 23
 body_index = 24
+commit_content_index = 25
 
 
 # all_filename保存的是全集数据，train_filename,保存的是训练数据，test_filename保存的是测试数据，data为要写入数据列表.
@@ -106,6 +111,7 @@ def get_data_by_repo_name(repo_name):
                              11,  ##updated_at
                              6,  ##title
                              7,  ##body
+                             25,  ##commit_content
                              ]
 
     selected_data = []  ##保留有用的属性特征
@@ -116,11 +122,13 @@ def get_data_by_repo_name(repo_name):
         selected_data.append(tmp)
 
     process_data = []
+    pr_number_list = ''
     count = 0
     for item in selected_data:
         tmp = []
         ##pr_number
         tmp.append(item[0])
+        pr_number_list = pr_number_list + str(item[0]) + ','
         ##repo_name
         tmp.append(item[1])
         ##pr_user_id
@@ -203,10 +211,59 @@ def get_data_by_repo_name(repo_name):
         ##body
         tmp.append(item[22])
 
+        ##commit_content
+        tmp.append(item[23])
+
         count += 1
         process_data.append(tmp)
 
     print(count)
+    ##获得文件数据
+    file_data = dbConnection.getDataFromSql(
+        "select pr_number,repo_name,changed_file_name,sha,changed_file_status,lines_added_num,lines_deleted_num,lines_changed_num,contain_patch,patch_content from pr_file " +
+        "where repo_name='" + repo_name + "'  and pr_number in (" + pr_number_list[
+                                                                    0:pr_number_list.__len__() - 1] + ") order by pr_number"
+    )
+    file_dict = {}
+    index = 0
+    while index < file_data.__len__():
+        if file_dict.__contains__(file_data[index][0]) is False:
+            file_dict[file_data[index][0]] = {}
+        file_dict[file_data[index][0]][file_data[index][2]] = {file_data[index][9]}
+        index = index + 1
+    file_directory_num = get_file_directory_num(file_dict)
+    file_subsystem_num = get_subsystem_num(file_dict)
+    language_num = get_language_num(file_dict)
+    file_type_num = get_file_type_num(file_dict)
+    file_segs_added_num = get_segs_added_num(file_dict)
+    file_segs_deleted_num = get_segs_deleted_num(file_dict)
+    file_segs_updated_num = get_segs_updated_num(file_dict)
+    changes_files_modified_num = get_changes_files_modified_num(file_dict)
+
+    commit_developer_dict = {}
+    index = 0
+    while index < process_data.__len__():
+        if commit_developer_dict.__contains__(process_data[index][pr_number_index]) is False:
+            commit_developer_dict[process_data[index][pr_number_index]] = {}
+        commit_developer_dict[process_data[index][pr_number_index]] = process_data[index][commit_content_index]
+        index = index + 1
+    file_developer_num = get_file_developer_num(commit_developer_dict)
+    file_developer_change_num = get_file_developer_change_num(commit_developer_dict)
+
+    commit_developer_created_dict = {}
+    index = 0
+    while index < process_data.__len__():
+        if commit_developer_dict.__contains__(process_data[index][pr_number_index]) is False:
+            commit_developer_dict[process_data[index][pr_number_index]] = {}
+        commit_developer_created_dict[process_data[index][pr_number_index]] = {}
+        commit_developer_created_dict[process_data[index][pr_number_index]]['commit_content'] = process_data[index][
+            commit_content_index]
+        commit_developer_created_dict[process_data[index][pr_number_index]]['created_at'] = process_data[index][
+            created_at_index]
+        index = index + 1
+    file_developer_recent_change_num = get_file_developer_recent_change_num(commit_developer_created_dict)
+
+    file_test_inclusion = get_test_inclusion(file_dict)
 
     ##获得仓库年龄
     repo_data = dbConnection.getDataFromSql(
@@ -392,27 +449,6 @@ def get_data_by_repo_name(repo_name):
 
     pr_data = dict(pr_data)
 
-    # #  获取pr作者在代码仓的总提交成功率,接受概率，总的贡献给率，代码仓的贡献率
-    # pr_author_rate = get_pr_author_rate(pr_data)
-    #
-    # # 获取project上一周的平均删除，增加，改变的行的数量
-    # project_line_rate = get_project_line_rate(pr_data)
-    #
-    # # 计算pr根据所在周的周几，判断该周几的平均修改的行数，增加的数量，删除的数量
-    # line_weekday_rate = get_line_weekday_rate(pr_data)
-    #
-    # # 获取pr的平均删除，增加，改变的行的数量,不是一周一个单位了，而是pr的数量
-    # project_line_churn_rate = get_project_line_churn_rate(pr_data)
-    #
-    # # 根据当前pr创建的时间，计算所有pr的平均提交数量
-    # commits_average = get_commits_average(pr_data)
-    #
-    # # 根据当前pr创建的时间，计算所有pr的平均评论数，以及合并的pr的平均评论数
-    # avg_comments = get_avg_comments(pr_data)
-    #
-    # # 计算pr的合并时间，计算，从pr的打开状态到合并状态的平均天数，以及从打开状态到关闭状态的平均天数
-    # avg_latency = get_avg_latency(pr_data)
-
     X_dispersed = []  ##离散类型值
     X_successive = []  ##连续类型值
 
@@ -448,33 +484,20 @@ def get_data_by_repo_name(repo_name):
         total_add_line_dict[item[pr_number_index]] = item[total_add_line_index]
         total_delete_line_tmp.append(item[total_delete_line_index])
         total_delete_line_dict[item[pr_number_index]] = item[total_delete_line_index]
-        # X_successive.append([item[comments_number_index], item[review_comments_number_index], item[commit_number_index]
-        #                         , item[changed_file_num_index], item[total_add_line_index],
-        #                      item[total_delete_line_index]])
+
     # 将下面数据全部5等分，方便贝叶斯计算
     true_comments_number_dict = get_true_order_dict(comments_number_tmp, comments_number_dict)
-    true_review_comments_number_dict = get_true_order_dict(review_comments_number_tmp, review_comments_number_dict)
+
     true_commit_number_dict = get_true_order_dict(commit_number_tmp, commit_number_dict)
     true_changed_file_num_dict = get_true_order_dict(changed_file_num_tmp, changed_file_num_dict)
     true_total_add_line_dict = get_true_order_dict(total_add_line_tmp, total_add_line_dict)
     true_total_delete_line_dict = get_true_order_dict(total_delete_line_tmp, total_delete_line_dict)
 
-    # for key_temp in true_comments_number_dict.keys():
-    #     X_successive.append([true_comments_number_dict.get(key_temp), true_review_comments_number_dict.get(key_temp),
-    #                          true_commit_number_dict.get(key_temp)
-    #                             , true_changed_file_num_dict.get(key_temp), true_total_add_line_dict.get(key_temp),
-    #                          true_total_delete_line_dict.get(key_temp)])
     for key_temp in true_comments_number_dict.keys():
         X_successive.append([true_commit_number_dict.get(key_temp)
                                 , true_changed_file_num_dict.get(key_temp), true_total_add_line_dict.get(key_temp),
                              true_total_delete_line_dict.get(key_temp)])
 
-    # for i in range(len(X_dispersed)):
-    #     # X_dispersed[i].append(pr_author_rate[i]['self_accept_rate'])
-    #     # X_dispersed[i].append(pr_author_rate[i]['self_closed_num_rate'])
-    #     # X_dispersed[i].append(pr_author_rate[i]['self_contribution_rate'])
-    #     # X_dispersed[i].append(pr_author_rate[i]['project_accept_rate'])
-    #     X_dispersed[i].append(is_weekday[i])
     label_count_tmp = []
     workload_tmp = []
     pre_prs_tmp = []
@@ -501,55 +524,121 @@ def get_data_by_repo_name(repo_name):
         body_words_tmp.append(body_words[i])
         body_words_dict[i] = body_words[i]
     true_label_count_dict = get_true_order_dict(label_count_tmp, label_dict)
-    true_workload_dict = get_true_order_dict(workload_tmp, workload)
     true_pre_prs_dict = get_true_order_dict(pre_prs_tmp, pre_prs)
-    true_change_num_dict = get_true_order_dict(change_num_tmp, change_num)
-    true_accept_num_dict = get_true_order_dict(accept_num_tmp, accept_num)
-    true_close_num_dict = get_true_order_dict(close_num_tmp, close_num)
-    true_review_num_dict = get_true_order_dict(review_num_tmp, review_num)
-    true_participants_count_dict = get_true_order_dict(participants_count_tmp, participants_count)
     true_title_words_dict = get_true_order_dict(title_words_tmp, title_words_dict)
     true_body_words_dict = get_true_order_dict(body_words_tmp, body_words_dict)
 
+    file_directory_num_tmp = []
+    file_subsystem_num_tmp = []
+    language_num_tmp = []
+    file_type_num_tmp = []
+    file_segs_added_num_tmp = []
+    file_segs_deleted_num_tmp = []
+    file_segs_updated_num_tmp = []
+    changes_files_modified_num_tmp = []
+    file_developer_num_tmp = []
+    file_developer_change_num_tmp = []
+    file_developer_recent_change_num_tmp = []
+
+    for file_key in file_directory_num.keys():
+        file_directory_num_tmp.append(file_directory_num[file_key])
+        file_subsystem_num_tmp.append(file_subsystem_num[file_key])
+        language_num_tmp.append(language_num[file_key])
+        file_type_num_tmp.append(file_type_num[file_key])
+        file_segs_added_num_tmp.append(file_segs_added_num[file_key])
+        file_segs_deleted_num_tmp.append(file_segs_deleted_num[file_key])
+        file_segs_updated_num_tmp.append(file_segs_updated_num[file_key])
+        changes_files_modified_num_tmp.append(changes_files_modified_num[file_key])
+        file_developer_num_tmp.append(file_developer_num[file_key])
+        file_developer_change_num_tmp.append(file_developer_change_num[file_key])
+        file_developer_recent_change_num_tmp.append(file_developer_recent_change_num[file_key])
+
+    true_file_directory_num = get_true_order_dict(file_directory_num_tmp, file_directory_num)
+    true_file_subsystem_num = get_true_order_dict(file_subsystem_num_tmp, file_subsystem_num)
+    true_language_num = get_true_order_dict(language_num_tmp, language_num)
+    true_file_type_num = get_true_order_dict(file_type_num_tmp, file_type_num)
+    true_file_segs_added_num = get_true_order_dict(file_segs_added_num_tmp, file_segs_added_num)
+    true_file_segs_deleted_num = get_true_order_dict(file_segs_deleted_num_tmp, file_segs_deleted_num)
+    true_file_segs_updated_num = get_true_order_dict(file_segs_updated_num_tmp, file_segs_updated_num)
+    true_changes_files_modified_num = get_true_order_dict(changes_files_modified_num_tmp, changes_files_modified_num)
+    true_file_developer_num = get_true_order_dict(file_developer_num_tmp, file_developer_num)
+    true_file_developer_change_num = get_true_order_dict(file_developer_change_num_tmp, file_developer_change_num)
+    true_file_developer_recent_change_num = get_true_order_dict(file_developer_recent_change_num_tmp,
+                                                                file_developer_recent_change_num)
+
+    add_x = []
+
+    for item in process_data:
+        pr_number = item[pr_number_index]
+        tmp= []
+        if true_file_directory_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_directory_num[pr_number])
+
+        if true_file_subsystem_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_subsystem_num[pr_number])
+
+        if true_language_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_language_num[pr_number])
+
+        if true_file_type_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_type_num[pr_number])
+
+        if true_file_segs_added_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_segs_added_num[pr_number])
+
+        if true_file_segs_deleted_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_segs_deleted_num[pr_number])
+
+        if true_file_segs_updated_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_segs_updated_num[pr_number])
+
+        if true_changes_files_modified_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_changes_files_modified_num[pr_number])
+
+        if true_file_developer_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_developer_num[pr_number])
+
+        if true_file_developer_change_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_developer_change_num[pr_number])
+
+        if true_file_developer_recent_change_num.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(true_file_developer_recent_change_num[pr_number])
+
+        if file_test_inclusion.__contains__(pr_number) is False:
+            tmp.append(0)
+        else:
+            tmp.append(file_test_inclusion[pr_number])
+        add_x.append(tmp)
+
     for i in range(len(X_successive)):
         X_successive[i].append(true_label_count_dict[i])
-       # X_successive[i].append(true_workload_dict[i])
         X_successive[i].append(true_pre_prs_dict[i])
-        #X_successive[i].append(true_change_num_dict[i])
-        # X_successive[i].append(true_accept_num_dict[i])
-        # X_successive[i].append(true_close_num_dict[i])
-        # X_successive[i].append(true_review_num_dict[i])
-        # X_successive[i].append(true_participants_count_dict[i])
         X_successive[i].append(true_title_words_dict[i])
         X_successive[i].append(true_body_words_dict[i])
         for k in has_key_words[i]:
             X_successive[i].append(k)
-
-        # X_successive[i].append(project_line_rate[i]['deletions_per_week'])
-        # X_successive[i].append(project_line_rate[i]['additions_per_week'])
-        # X_successive[i].append(project_line_rate[i]['changes_per_week'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_deleted_week_days'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_added_week_days'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_changed_week_days'])
-        # X_successive[i].append(project_line_churn_rate[i]['deletions_per_pr'])
-        # X_successive[i].append(project_line_churn_rate[i]['additions_per_pr'])
-        # X_successive[i].append(project_line_churn_rate[i]['changes_per_pr'])
-        # X_successive[i].append(commits_average[i])
-        # X_successive[i].append(avg_comments[i]['comments_per_closed_pr'])
-        # X_successive[i].append(avg_comments[i]['comments_per_merged_pr'])
-        # X_successive[i].append(avg_latency[i]['close_latency'])
-        # X_successive[i].append(avg_latency[i]['merge_latency'])
-    #
-    # ###归一化
-    # X_successive = np.array(X_successive)
-    # mins = X_successive.min(0)  # 返回data矩阵中每一列中最小的元素，返回一个列表
-    # maxs = X_successive.max(0)  # 返回data矩阵中每一列中最大的元素，返回一个列表
-    # ranges = maxs - mins  # 最大值列表 - 最小值列表 = 差值列表
-    # normData = np.zeros(np.shape(X_successive))  # 生成一个与 data矩阵同规格的normData全0矩阵，用于装归一化后的数据
-    # row = X_successive.shape[0]  # 返回 data矩阵的行数
-    # normData = X_successive - np.tile(mins, (row, 1))  # data矩阵每一列数据都减去每一列的最小值
-    # normData = normData / np.tile(ranges, (row, 1))
-    # X_successive = normData.tolist()
 
     X = []
     for i in range(len(X_dispersed)):
@@ -558,9 +647,10 @@ def get_data_by_repo_name(repo_name):
             tmp.append(X_dispersed[i][j])
         for j in X_successive[i]:
             tmp.append(j)
+        for j in add_x[i]:
+            tmp.append(j)
         X.append((X_dispersed[i][0], tmp))
     X_dict = dict(X)
-
 
     ##获取每个PR的响应时间
     first_response_time = []
@@ -587,20 +677,6 @@ def get_data_by_repo_name(repo_name):
     # 这里计算每个prNumber对应的真实速度编号
     true_rate_label_dict = get_true_order_dict(Y1, first_response_time)
 
-    # ####响应时间
-    # Y_1 = []
-    # for item in Y1:
-    #     Y_1.append(item)
-    # ##是否被合并  (70%)
-    # Y_2 = []
-    # for item in process_data:
-    #     Y_2.append(item[8])
-    #
-    # ##最终的输出label [快/慢响应，是/否合并]
-    # Y = []
-    # for i in range(0, len(Y_1)):
-    #     Y.append([Y_1[i], Y_2[i]])
-
     row_data = []
 
     for key_item in true_rate_label_dict.keys():
@@ -615,7 +691,7 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="guacamole-client"#"storm"#"scikit-learn"#"moby"#"cocos2d-x"#"netbeans"#"yii2"#"dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"# "kuma"#"Katello"#"zipkin"#"yii2"
+    repo_name = "guacamole-client"  # "storm"#"scikit-learn"#"moby"#"cocos2d-x"#"netbeans"#"yii2"#"dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"helix"#"terraform"#"Ipython"#"kuma"#"incubator-heron"# "kuma"#"Katello"#"zipkin"#"yii2"
     file_path = "./bayesian_data/" + repo_name + "/"
     path_exists_or_create(file_path)
     all_filename = file_path + repo_name + "_bayes_rank_format_data.csv"
@@ -628,21 +704,12 @@ if __name__ == '__main__':
                'has_labels',
                'mergable_state',
                'has_assignees_content',
-              # 'is_weekday',
-               #'comment_num',
-               #'review_comment_num',
                'commit_num',
                'file_changed_num',
                'total_add_line',
                'total_delete_line',
                'label_count',
-               #'workload',
                'pre_prs',
-               #'change_num',
-             #  'accept_num',
-              # 'close_num',
-              # 'review_num',
-               #'participants_count',
                'title_words',
                'body_words',
                'has_bug',
@@ -650,23 +717,17 @@ if __name__ == '__main__':
                'has_feature',
                'has_improve',
                'has_refactor',
-               # 'deletions_per_week',
-               # 'additions_per_week',
-               # 'changes_per_week',
-               # 'per_lines_deleted_week_days',
-               # 'per_lines_added_week_days',
-               # 'per_lines_changed_week_days',
-               # 'deletions_per_pr',
-               # 'additions_per_pr',
-               # 'changes_per_pr',
-               # 'commits_average',
-               # 'comments_per_closed_pr',
-               # 'comments_per_merged_pr',
-               # 'close_latency',
-               # 'merge_latency'
-               # 'self_accept_rate',
-               # 'self_closed_num_rate',
-               # 'self_contribution_rate',
-               # 'project_accept_rate',
+               'directory_num',
+               'subsystem_num',
+               'language_num',
+               'file_type_num',
+               'segs_added_num',
+               'segs_deleted_num',
+               'segs_updated_num',
+               'changes_files_modified',
+               'file_developer_num',
+               'change_num',
+               'recent_change_num',
+               'testinclusion',
                ]
     text_save(all_filename, train_filename, test_filename, row_data, headers)

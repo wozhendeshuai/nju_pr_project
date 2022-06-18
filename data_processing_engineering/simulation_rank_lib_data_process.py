@@ -12,6 +12,9 @@ from baseline.true_order import get_true_order_dict
 import numpy as np
 from utils.date_utils.date_function import is_weekday_commit \
     , project_age, get_latency_after_response, get_waiting_time, get_close_pr_time
+from utils.file_utils.file_function import get_file_directory_num, get_language_num, get_file_type_num, \
+    get_segs_added_num, get_segs_deleted_num, get_segs_updated_num, get_subsystem_num, get_changes_files_modified_num, \
+    get_file_developer_num, get_file_developer_change_num, get_file_developer_recent_change_num, get_test_inclusion
 from utils.num_utils.num_function import get_label_count \
     , get_workload, get_prev_prs, get_change_num \
     , get_accept_num, get_close_num, get_review_num \
@@ -49,6 +52,7 @@ updated_at_index = 21
 content_index = 22
 title_index = 23
 body_index = 24
+commit_content_index = 25
 
 
 # all_filename保存的是全集数据，train_filename,保存的是训练数据，test_filename保存的是测试数据，data为要写入数据列表.
@@ -103,6 +107,7 @@ def get_data_by_repo_name(repo_name):
                              11,  ##updated_at
                              6,  ##title
                              7,  ##body
+                             25,  ##commit_content
                              ]
 
     selected_data = []  ##保留有用的属性特征
@@ -113,11 +118,13 @@ def get_data_by_repo_name(repo_name):
         selected_data.append(tmp)
 
     process_data = []
+    pr_number_list = ''
     count = 0
     for item in selected_data:
         tmp = []
         ##pr_number
         tmp.append(item[0])
+        pr_number_list = pr_number_list + str(item[0]) + ','
         ##repo_name
         tmp.append(item[1])
         ##pr_user_id
@@ -200,10 +207,59 @@ def get_data_by_repo_name(repo_name):
         ##body
         tmp.append(item[22])
 
+        ##commit_content
+        tmp.append(item[23])
+
         count += 1
         process_data.append(tmp)
 
     print(count)
+    ##获得文件数据
+    file_data = dbConnection.getDataFromSql(
+        "select pr_number,repo_name,changed_file_name,sha,changed_file_status,lines_added_num,lines_deleted_num,lines_changed_num,contain_patch,patch_content from pr_file " +
+        "where repo_name='" + repo_name + "'  and pr_number in (" + pr_number_list[
+                                                                    0:pr_number_list.__len__() - 1] + ") order by pr_number"
+    )
+    file_dict = {}
+    index = 0
+    while index < file_data.__len__():
+        if file_dict.__contains__(file_data[index][0]) is False:
+            file_dict[file_data[index][0]] = {}
+        file_dict[file_data[index][0]][file_data[index][2]] = {file_data[index][9]}
+        index = index + 1
+    file_directory_num = get_file_directory_num(file_dict)
+    file_subsystem_num = get_subsystem_num(file_dict)
+    language_num = get_language_num(file_dict)
+    file_type_num = get_file_type_num(file_dict)
+    file_segs_added_num = get_segs_added_num(file_dict)
+    file_segs_deleted_num = get_segs_deleted_num(file_dict)
+    file_segs_updated_num = get_segs_updated_num(file_dict)
+    changes_files_modified_num = get_changes_files_modified_num(file_dict)
+
+    commit_developer_dict = {}
+    index = 0
+    while index < process_data.__len__():
+        if commit_developer_dict.__contains__(process_data[index][pr_number_index]) is False:
+            commit_developer_dict[process_data[index][pr_number_index]] = {}
+        commit_developer_dict[process_data[index][pr_number_index]] = process_data[index][commit_content_index]
+        index = index + 1
+    file_developer_num = get_file_developer_num(commit_developer_dict)
+    file_developer_change_num = get_file_developer_change_num(commit_developer_dict)
+
+    commit_developer_created_dict = {}
+    index = 0
+    while index < process_data.__len__():
+        if commit_developer_dict.__contains__(process_data[index][pr_number_index]) is False:
+            commit_developer_dict[process_data[index][pr_number_index]] = {}
+        commit_developer_created_dict[process_data[index][pr_number_index]] = {}
+        commit_developer_created_dict[process_data[index][pr_number_index]]['commit_content'] = process_data[index][
+            commit_content_index]
+        commit_developer_created_dict[process_data[index][pr_number_index]]['created_at'] = process_data[index][
+            created_at_index]
+        index = index + 1
+    file_developer_recent_change_num = get_file_developer_recent_change_num(commit_developer_created_dict)
+
+    file_test_inclusion = get_test_inclusion(file_dict)
 
     ##获得仓库年龄
     repo_data = dbConnection.getDataFromSql(
@@ -418,49 +474,82 @@ def get_data_by_repo_name(repo_name):
             [item[pr_number_index], item[pr_author_association_index], item[labels_index], item[mergeable_state_index]
                 , item[assignees_content_index]])
 
-    # for item in process_data:
-    #     X_successive.append([item[comments_number_index], item[review_comments_number_index], item[commit_number_index]
-    #                             , item[changed_file_num_index], item[total_add_line_index],
-    #                          item[total_delete_line_index]])
     for item in process_data:
-        X_successive.append([ item[commit_number_index], item[changed_file_num_index], item[total_add_line_index],
+        X_successive.append([item[commit_number_index], item[changed_file_num_index], item[total_add_line_index],
                              item[total_delete_line_index]])
-    # for i in range(len(X_dispersed)):
-    #     X_dispersed[i].append(pr_author_rate[i]['self_accept_rate'])
-    #     X_dispersed[i].append(pr_author_rate[i]['self_closed_num_rate'])
-    #     X_dispersed[i].append(pr_author_rate[i]['self_contribution_rate'])
-    #     X_dispersed[i].append(pr_author_rate[i]['project_accept_rate'])
-    #     X_dispersed[i].append(is_weekday[i])
 
     for i in range(len(X_successive)):
-        # X_successive[i].append(Proj_age[i])
+
         X_successive[i].append(label_dict[i])
-        # X_successive[i].append(workload[i])
         X_successive[i].append(pre_prs[i])
-        # X_successive[i].append(change_num[i])
-        # X_successive[i].append(accept_num[i])
-        # X_successive[i].append(close_num[i])
-        # X_successive[i].append(review_num[i])
-        # X_successive[i].append(participants_count[i])
+
         X_successive[i].append(title_words[i])
         X_successive[i].append(body_words[i])
         for k in has_key_words[i]:
             X_successive[i].append(k)
 
-        # X_successive[i].append(project_line_rate[i]['deletions_per_week'])
-        # X_successive[i].append(project_line_rate[i]['additions_per_week'])
-        # X_successive[i].append(project_line_rate[i]['changes_per_week'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_deleted_week_days'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_added_week_days'])
-        # X_successive[i].append(line_weekday_rate[i]['per_lines_changed_week_days'])
         X_successive[i].append(project_line_churn_rate[i]['deletions_per_pr'])
         X_successive[i].append(project_line_churn_rate[i]['additions_per_pr'])
         X_successive[i].append(project_line_churn_rate[i]['changes_per_pr'])
         X_successive[i].append(commits_average[i])
-        # X_successive[i].append(avg_comments[i]['comments_per_closed_pr'])
-        # X_successive[i].append(avg_comments[i]['comments_per_merged_pr'])
-        # X_successive[i].append(avg_latency[i]['close_latency'])
-        # X_successive[i].append(avg_latency[i]['merge_latency'])
+
+    for item in process_data:
+        pr_number = item[pr_number_index]
+        pr_id = item[pr_id_index]
+        if file_directory_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_directory_num[pr_number])
+
+        if file_subsystem_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_subsystem_num[pr_number])
+
+        if language_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(language_num[pr_number])
+
+        if file_type_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_type_num[pr_number])
+
+        if file_segs_added_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_segs_added_num[pr_number])
+
+        if file_segs_deleted_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_segs_deleted_num[pr_number])
+
+        if file_segs_updated_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_segs_updated_num[pr_number])
+
+        if changes_files_modified_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(changes_files_modified_num[pr_number])
+
+        if file_developer_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_developer_num[pr_number])
+
+        if file_developer_change_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_developer_change_num[pr_number])
+
+        if file_developer_recent_change_num.__contains__(pr_number) is False:
+            X_successive[pr_id].append(0)
+        else:
+            X_successive[pr_id].append(file_developer_recent_change_num[pr_number])
 
     ###归一化
     X_successive = np.array(X_successive)
@@ -486,12 +575,14 @@ def get_data_by_repo_name(repo_name):
                 tmp.append(0)
             else:
                 tmp.append(j)
+        if file_test_inclusion.__contains__(X_dispersed[i][0]) is False:
+            tmp.append(0)
+        else:
+            tmp.append(file_test_inclusion[X_dispersed[i][0]])
         X.append((X_dispersed[i][0], tmp))
     X_dict = dict(X)
 
-
-
-    #获取每个PR的响应时间
+    # 获取每个PR的响应时间
     first_response_time = []
     for item in process_data:
         tmp = []
@@ -547,7 +638,7 @@ def get_data_by_repo_name(repo_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    repo_name ="guacamole-client"#"storm"#"scikit-learn"#"moby"#"cocos2d-x"#"netbeans"#"yii2"#"dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"helix"#"terraform"#"Ipython"# "kuma"#"incubator-heron"#"kuma"#"incubator-heron"#"Katello"#"zipkin"#"yii2"
+    repo_name = "guacamole-client"  # "storm"#"scikit-learn"#"moby"#"cocos2d-x"#"netbeans"#"yii2"#"dubbo"#"react"#"tensorflow"#"opencv"#"phoenix"#"helix"#"terraform"#"Ipython"# "kuma"#"incubator-heron"#"kuma"#"incubator-heron"#"Katello"#"zipkin"#"yii2"
     file_path = "./rank_data/" + repo_name + "/"
     path_exists_or_create(file_path)
 
@@ -604,5 +695,17 @@ if __name__ == '__main__':
                'close_latency',
                'merge_latency',
                'response_speed',
-               'if_merged']
+               'if_merged',
+                'directory_num',
+               'subsystem_num',
+               'language_num',
+               'file_type_num',
+               'segs_added_num',
+               'segs_deleted_num',
+               'segs_updated_num',
+               'changes_files_modified',
+               'file_developer_num',
+               'change_num',
+               'recent_change_num',
+               'testinclusion',]
 '''

@@ -27,9 +27,6 @@ def test_directory_num():
             file_dict[data[index][0]] = {}
         file_dict[data[index][0]][data[index][2]] = {data[index][9]}
         index = index + 1
-    # for key in file_dict.keys():
-    #     print("key: "+str(key))
-    #     print("file_name:  "+file_dict[key].__str__())
     file_directory_num = get_file_directory_num(file_dict)
     for key in file_directory_num.keys():
         print("key: " + str(key) + "     file_directory_num:  " + file_directory_num[key].__str__())

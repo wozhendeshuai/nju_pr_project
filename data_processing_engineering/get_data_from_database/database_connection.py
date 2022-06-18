@@ -5,7 +5,7 @@ import pymysql
 def getDataFromSql(sqlOrder):
     ##连接数据库
     conn = pymysql.connect(
-        host="172.19.241.129",
+        host="127.0.0.1",#"172.19.241.129",
         port=3306,  # 端口号
         user="root",  # 数据库用户
         password="root",  # 数据库密码
