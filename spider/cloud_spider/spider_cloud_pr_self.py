@@ -120,9 +120,9 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
             total_delete_line=%s
             where  pr_number=%s and repo_name=%s"""
     # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
-                          charset='utf8')
-    # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
+    # database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
+    #                       charset='utf8')
+    database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
     database.ping(reconnect=True)
@@ -283,7 +283,7 @@ def get_pr_self_info(index, max_num, owner_name, repo_name, headers):
             # 如果发生错误则回滚
             print("第", index, "行数据插入数据库失败: ", "repo_name:", repo_name)
             filename = repo_name + '_exception.csv'
-            if e.args[0] == 1062 or e.args[1].__contains__("Duplicate"):
+            if e.args[0] == 1062 or e.args[1].__contains__("Duplicate") or e.args[0] == 1366:
                 index = index + 1
                 continue
             write_file(index, "user",

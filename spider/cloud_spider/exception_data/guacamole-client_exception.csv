@@ -41,3 +41,7 @@ guacamole-client, 696, 2022-01-19 16:27:59 , 404{'message': 'Not Found', 'docume
 guacamole-client, 697, 2022-01-19 16:28:00 , 404{'message': 'Not Found', 'documentation_url': 'https://docs.github.com/rest/reference/pulls#get-a-pull-request'}
 guacamole-client, 698, 2022-01-19 16:28:01 , 404{'message': 'Not Found', 'documentation_url': 'https://docs.github.com/rest/reference/pulls#get-a-pull-request'}
 guacamole-client, 699, 2022-01-19 16:28:02 , 404{'message': 'Not Found', 'documentation_url': 'https://docs.github.com/rest/reference/pulls#get-a-pull-request'}
+guacamole-client, 0, 2022-06-15 00:59:34 , 404{'message': 'Not Found', 'documentation_url': 'https://docs.github.com/rest/reference/pulls#get-a-pull-request'}
+user, 213, 2022-06-15 01:09:27 , 第213行数据插入数据库失败: repo_name:guacamole-client (1366, "Incorrect string value: '\\xF0\\x9F\\x8E\\x93\\x0D\\x0A...' for column 'body' at row 1")
+user, 213, 2022-06-15 11:29:40 , 第213行数据插入数据库失败: repo_name:guacamole-client (1366, "Incorrect string value: '\\xF0\\x9F\\x8E\\x93\\x0D\\x0A...' for column 'body' at row 1")
+user, 213, 2022-06-15 11:30:52 , 第213行数据插入数据库失败: repo_name:guacamole-client (1366, "Incorrect string value: '\\xF0\\x9F\\x8E\\x93\\x0D\\x0A...' for column 'body' at row 1")

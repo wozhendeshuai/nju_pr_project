@@ -28,9 +28,9 @@ def get_pr_file_info(index, maxNum, owner_name, repo_name, headers):
     # 	"""
 
     # 链接云端数据库
-    database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
-                          charset='utf8')
-    # database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
+    # database = db.connect(host='172.19.241.129', port=3306, user='root', password='root', db='pr_second',
+    #                       charset='utf8')
+    database = db.connect(host='127.0.0.1', port=3306, user='root', password='root', db='pr_second', charset='utf8')
     # 创建游标对象
     cursor = database.cursor()
     # 利用游标对象进行操作
