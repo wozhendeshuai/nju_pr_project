@@ -1,0 +1,106 @@
+PR创建者,PR创建者的身份,评论过的用户数量（含PR创建者自身）,评论过该PR创建者的用户（含PR创建者自身）,评论过的用户数量（不含PR创建者自身）,评论过该PR创建者的用户（不含PR创建者自身）
+mike-jumper,CONTRIBUTOR,16,"{'holograph', 'bmullan', 'mike-jumper', 'tworcester', 'lukasmrtvy', 'alallier', 'limenghui614', 'docelmo', 'lchanouha', 'doctorfree', 'necouchman', 'julianmsanchez', 'jmuehlner', 'Vict0rC', 'lshahar', 'patlachance'}",15,"{'holograph', 'bmullan', 'tworcester', 'lukasmrtvy', 'alallier', 'limenghui614', 'docelmo', 'lchanouha', 'doctorfree', 'necouchman', 'julianmsanchez', 'jmuehlner', 'Vict0rC', 'lshahar', 'patlachance'}"
+nrbrt,CONTRIBUTOR,2,"{'nrbrt', 'mike-jumper'}",1,{'mike-jumper'}
+jmuehlner,CONTRIBUTOR,3,"{'mike-jumper', 'necouchman', 'jmuehlner'}",2,"{'mike-jumper', 'necouchman'}"
+tylermauthe,CONTRIBUTOR,2,"{'tylermauthe', 'jmuehlner'}",1,{'jmuehlner'}
+OllieJones,NONE,3,"{'mike-jumper', 'necouchman', 'OllieJones'}",2,"{'mike-jumper', 'necouchman'}"
+hguehl,CONTRIBUTOR,4,"{'mike-jumper', 'jmuehlner', 'hguehl', 'wnovak'}",3,"{'mike-jumper', 'jmuehlner', 'wnovak'}"
+ljruiten,NONE,2,"{'mike-jumper', 'ljruiten'}",1,{'mike-jumper'}
+annieweng,NONE,4,"{'mike-jumper', 'necouchman', 'jmuehlner', 'annieweng'}",3,"{'mike-jumper', 'necouchman', 'jmuehlner'}"
+wnovak,NONE,2,"{'mike-jumper', 'wnovak'}",1,{'mike-jumper'}
+heinzbeinz,NONE,3,"{'mike-jumper', 'necouchman', 'heinzbeinz'}",2,"{'mike-jumper', 'necouchman'}"
+efrecon,NONE,3,"{'efrecon', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+necouchman,CONTRIBUTOR,36,"{'mike-jumper', 'LeBrad', 'echu2013', 'keers', 'vampywiz17', 'JPedroGon', 'trengri', 'dwoo2dwoo', 'red-erik', 'puneetshukla-siemens', 'tuxcrafter', 'gripfastistech', 'ceharris', 'BongoEADGC6', 'timwelch', 'UbuntuEvangelist', 'justvanbloom', 'necouchman', 'jmuehlner', 'uvtrip', 'zhangjianpinghik', 'Tyler-', 'manolan1', 'tworcester', 'jeremylarose', 'markusheiliger', 'Saphirim', 'JoelB', 'lorodoes', 'DerDanilo', 'ralfbecker', 'michaelbarkdoll', 'spaceone', 'nfantone', 'docdawning', 'drhy-nz'}",35,"{'mike-jumper', 'LeBrad', 'echu2013', 'keers', 'vampywiz17', 'JPedroGon', 'trengri', 'dwoo2dwoo', 'red-erik', 'puneetshukla-siemens', 'tuxcrafter', 'gripfastistech', 'ceharris', 'BongoEADGC6', 'timwelch', 'UbuntuEvangelist', 'justvanbloom', 'jmuehlner', 'uvtrip', 'zhangjianpinghik', 'Tyler-', 'manolan1', 'tworcester', 'jeremylarose', 'markusheiliger', 'Saphirim', 'JoelB', 'lorodoes', 'DerDanilo', 'ralfbecker', 'michaelbarkdoll', 'spaceone', 'nfantone', 'docdawning', 'drhy-nz'}"
+teschnei,CONTRIBUTOR,2,"{'mike-jumper', 'teschnei'}",1,{'mike-jumper'}
+alt36,NONE,3,"{'mike-jumper', 'necouchman', 'alt36'}",2,"{'mike-jumper', 'necouchman'}"
+chrisgavin,CONTRIBUTOR,1,{'mike-jumper'},1,{'mike-jumper'}
+dotmaster,NONE,3,"{'mike-jumper', 'necouchman', 'dotmaster'}",2,"{'mike-jumper', 'necouchman'}"
+ceharris,CONTRIBUTOR,3,"{'ceharris', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+nacx,MEMBER,3,"{'mike-jumper', 'necouchman', 'nacx'}",2,"{'mike-jumper', 'necouchman'}"
+chipitsine,NONE,2,"{'mike-jumper', 'chipitsine'}",1,{'mike-jumper'}
+lightpriest,CONTRIBUTOR,3,"{'mike-jumper', 'necouchman', 'jmuehlner'}",3,"{'mike-jumper', 'necouchman', 'jmuehlner'}"
+flangelo,CONTRIBUTOR,4,"{'mike-jumper', 'necouchman', 'flangelo', 'heyan01'}",3,"{'mike-jumper', 'necouchman', 'heyan01'}"
+djrm05,CONTRIBUTOR,3,"{'mike-jumper', 'necouchman', 'djrm05'}",2,"{'mike-jumper', 'necouchman'}"
+steffen-moser,NONE,2,"{'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+jamhall,NONE,0,,0,
+IT-Experte,CONTRIBUTOR,2,"{'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+schleyk,NONE,3,"{'mike-jumper', 'necouchman', 'schleyk'}",2,"{'mike-jumper', 'necouchman'}"
+darchons,CONTRIBUTOR,3,"{'darchons', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+FlyingOE,NONE,3,"{'FlyingOE', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+jaredfrees,NONE,3,"{'mike-jumper', 'necouchman', 'jaredfrees'}",2,"{'mike-jumper', 'necouchman'}"
+netromnetrom,CONTRIBUTOR,1,{'necouchman'},1,{'necouchman'}
+WojoInc,CONTRIBUTOR,3,"{'WojoInc', 'necouchman', 'mike-jumper'}",2,"{'necouchman', 'mike-jumper'}"
+jolentes,CONTRIBUTOR,3,"{'mike-jumper', 'necouchman', 'jolentes'}",2,"{'mike-jumper', 'necouchman'}"
+daniquir,NONE,0,,0,
+krisss85,NONE,3,"{'krisss85', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+scottpas,CONTRIBUTOR,2,"{'mike-jumper', 'scottpas'}",1,{'mike-jumper'}
+jjamorozo,NONE,2,"{'jjamorozo', 'necouchman'}",1,{'necouchman'}
+JoelB,CONTRIBUTOR,3,"{'JoelB', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+ccy,NONE,1,{'necouchman'},1,{'necouchman'}
+leetxyz,CONTRIBUTOR,4,"{'mike-jumper', 'necouchman', 'berndhose', 'leetxyz'}",3,"{'mike-jumper', 'necouchman', 'berndhose'}"
+kbudde,NONE,2,"{'kbudde', 'necouchman'}",1,{'necouchman'}
+felfell,CONTRIBUTOR,2,"{'felfell', 'necouchman'}",1,{'necouchman'}
+Vict0rC,CONTRIBUTOR,4,"{'necouchman', 'mike-jumper', 'Vict0rC', 'odolezal'}",3,"{'necouchman', 'mike-jumper', 'odolezal'}"
+sporeno,NONE,3,"{'mike-jumper', 'necouchman', 'sporeno'}",2,"{'mike-jumper', 'necouchman'}"
+berndhose,NONE,3,"{'mike-jumper', 'necouchman', 'berndhose'}",2,"{'mike-jumper', 'necouchman'}"
+InfocertAutomationTeam,NONE,1,{'mike-jumper'},1,{'mike-jumper'}
+dg-hasimoto,CONTRIBUTOR,3,"{'mike-jumper', 'necouchman', 'dg-hasimoto'}",2,"{'mike-jumper', 'necouchman'}"
+m-khan-glyptodon,CONTRIBUTOR,2,"{'mike-jumper', 'm-khan-glyptodon'}",1,{'mike-jumper'}
+mlewissmith,CONTRIBUTOR,3,"{'mike-jumper', 'necouchman', 'mlewissmith'}",2,"{'mike-jumper', 'necouchman'}"
+P-Zs,CONTRIBUTOR,2,"{'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+avwx,CONTRIBUTOR,2,"{'mike-jumper', 'avwx'}",1,{'mike-jumper'}
+dwydler,NONE,3,"{'mike-jumper', 'necouchman', 'dwydler'}",2,"{'mike-jumper', 'necouchman'}"
+Inperpetuammemoriam,CONTRIBUTOR,1,{'necouchman'},1,{'necouchman'}
+trgbishi,NONE,3,"{'mike-jumper', 'necouchman', 'trgbishi'}",2,"{'mike-jumper', 'necouchman'}"
+scluff,CONTRIBUTOR,3,"{'scluff', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+XYUU,CONTRIBUTOR,3,"{'mike-jumper', 'necouchman', 'XYUU'}",2,"{'mike-jumper', 'necouchman'}"
+siacali,NONE,4,"{'doctorfree', 'necouchman', 'siacali', 'mike-jumper'}",3,"{'doctorfree', 'necouchman', 'mike-jumper'}"
+theggers,NONE,1,{'mike-jumper'},1,{'mike-jumper'}
+hanyi0121,NONE,2,"{'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+vrana,CONTRIBUTOR,2,"{'vrana', 'necouchman'}",1,{'necouchman'}
+bprfh,CONTRIBUTOR,2,"{'necouchman', 'bprfh'}",1,{'necouchman'}
+asutosh936,NONE,4,"{'mike-jumper', 'necouchman', 'benrubson', 'asutosh936'}",3,"{'mike-jumper', 'necouchman', 'benrubson'}"
+DouglasHeriot,CONTRIBUTOR,2,"{'necouchman', 'DouglasHeriot'}",1,{'necouchman'}
+echu2013,CONTRIBUTOR,4,"{'msilveirabr', 'mike-jumper', 'necouchman', 'echu2013'}",3,"{'msilveirabr', 'mike-jumper', 'necouchman'}"
+holograph,CONTRIBUTOR,3,"{'holograph', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+darksimpson,CONTRIBUTOR,2,"{'necouchman', 'darksimpson'}",1,{'necouchman'}
+jcharaoui,CONTRIBUTOR,3,"{'jcharaoui', 'jlabegg', 'necouchman'}",2,"{'jlabegg', 'necouchman'}"
+JordiRoman,CONTRIBUTOR,2,"{'necouchman', 'JordiRoman'}",1,{'necouchman'}
+sergey-davtyan,NONE,0,,0,
+ss10sb,NONE,2,"{'necouchman', 'ss10sb'}",1,{'necouchman'}
+jsf9k,CONTRIBUTOR,3,"{'jsf9k', 'necouchman', 'felddy'}",2,"{'necouchman', 'felddy'}"
+rsg98,CONTRIBUTOR,2,"{'necouchman', 'rsg98'}",1,{'necouchman'}
+divyeshg94,NONE,0,,0,
+rwanito,CONTRIBUTOR,2,"{'necouchman', 'rwanito'}",1,{'necouchman'}
+quantumhu,CONTRIBUTOR,0,,0,
+doctorfree,NONE,4,"{'lchanouha', 'doctorfree', 'necouchman', 'mike-jumper'}",3,"{'lchanouha', 'necouchman', 'mike-jumper'}"
+mildis,CONTRIBUTOR,4,"{'mike-jumper', 'necouchman', 'tworcester', 'mildis'}",3,"{'mike-jumper', 'necouchman', 'tworcester'}"
+letiemble,CONTRIBUTOR,2,"{'necouchman', 'letiemble'}",1,{'necouchman'}
+michimau,NONE,1,{'necouchman'},1,{'necouchman'}
+tworcester,CONTRIBUTOR,5,"{'mike-jumper', 'tworcester', 'michaelmiklis', 'lchanouha', 'necouchman'}",4,"{'mike-jumper', 'michaelmiklis', 'lchanouha', 'necouchman'}"
+anfabio,NONE,1,{'necouchman'},1,{'necouchman'}
+rbm0407,CONTRIBUTOR,2,"{'necouchman', 'rbm0407'}",1,{'necouchman'}
+BojanZelic,CONTRIBUTOR,2,"{'BojanZelic', 'necouchman'}",1,{'necouchman'}
+tschoonj,CONTRIBUTOR,1,{'tschoonj'},0,
+dev-seomoon,CONTRIBUTOR,3,"{'necouchman', 'dev-seomoon', 'OctopusET'}",2,"{'necouchman', 'OctopusET'}"
+Eomhyunjun,CONTRIBUTOR,0,,0,
+OctopusET,CONTRIBUTOR,2,"{'necouchman', 'OctopusET'}",1,{'necouchman'}
+petzsch,CONTRIBUTOR,7,"{'mike-jumper', 'tworcester', 'JackWolfard', 'necouchman', 'trident25', 'jbpaux', 'petzsch'}",6,"{'mike-jumper', 'tworcester', 'JackWolfard', 'necouchman', 'trident25', 'jbpaux'}"
+mire3212,CONTRIBUTOR,3,"{'mire3212', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+h8h,CONTRIBUTOR,2,"{'h8h', 'mike-jumper'}",1,{'mike-jumper'}
+jbpaux,CONTRIBUTOR,3,"{'jbpaux', 'necouchman', 'mike-jumper'}",2,"{'necouchman', 'mike-jumper'}"
+myjimmy,CONTRIBUTOR,2,"{'myjimmy', 'mike-jumper'}",1,{'mike-jumper'}
+nw-engineer,CONTRIBUTOR,3,"{'mike-jumper', 'necouchman', 'nw-engineer'}",2,"{'mike-jumper', 'necouchman'}"
+scottcwang,CONTRIBUTOR,3,"{'scottcwang', 'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+alubbock,NONE,2,"{'mike-jumper', 'alubbock'}",1,{'mike-jumper'}
+radove,NONE,1,{'radove'},0,
+MoergJ,NONE,0,,0,
+smart2128,NONE,1,{'smart2128'},0,
+ClassicGOD,CONTRIBUTOR,1,{'ClassicGOD'},0,
+mtannertdev,CONTRIBUTOR,1,{'mtannertdev'},0,
+xens,CONTRIBUTOR,1,{'xens'},0,
+webtroter,CONTRIBUTOR,2,"{'webtroter', 'necouchman'}",1,{'necouchman'}
+dependabot[bot],NONE,4,"{'dependabot[bot]', 'mike-jumper', 'necouchman', 'jmuehlner'}",3,"{'mike-jumper', 'necouchman', 'jmuehlner'}"
+dstndstn,CONTRIBUTOR,2,"{'mike-jumper', 'dstndstn'}",1,{'mike-jumper'}
+MarcelloModica,NONE,2,"{'mike-jumper', 'necouchman'}",2,"{'mike-jumper', 'necouchman'}"
+Niubbo75,NONE,2,"{'necouchman', 'Niubbo75'}",1,{'necouchman'}
